@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Cycle & Astro — Maquettes P0 · King Daveblessing</title>
+  <meta name="description" content="Maquettes haute-fidélité mobile-first Cycle & Astro — 4 piliers, nuit cosmique KD." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <p class="page-label">Cycle & Astro · Maquettes HF P0</p>
+  <p class="page-hint">Shell 390×844 · navigation hash · données démo FR · charte noir/or KD. Clique un écran ou navigue dans le téléphone.</p>
+  <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
+
+  <div class="phone" role="application" aria-label="Cycle & Astro">
+    <div class="stars" aria-hidden="true"></div>
+    <div class="status-bar">
+      <span id="clock">12:59</span>
+      <span class="icons">▮▮▮ · 100%</span>
+    </div>
+    <div class="app">
+      <div class="views" id="views">
+
+        <!-- 1. Splash / Welcome -->
+        <section class="view no-nav" id="view-splash" data-screen="splash" data-label="Splash / Welcome">
+          <div class="splash">
+            <div class="halo" aria-hidden="true"></div>
+            <p class="brand-kd">★ KING DAVEBLESSING ★</p>
+            <h1 class="brand-name">Cycle &amp; Astro</h1>
+            <p class="pillars-line">Cycle · Lune · Astro · Chemin</p>
+            <div class="divider" style="width:60%;margin:12px auto;"></div>
+            <p class="tagline">Chaque jour, un miroir doux : ton cycle, la Lune, les astres, et ton chemin — réunis, sans jargon médical.</p>
+            <div class="welcome-pillars" aria-label="Les quatre piliers">
+              <div class="wp"><div class="g">◉</div><div class="t">Cycle</div><div class="d">Ton corps, en douceur</div></div>
+              <div class="wp"><div class="g">☾</div><div class="t">Lune</div><div class="d">Rythmes du ciel</div></div>
+              <div class="wp"><div class="g">✦</div><div class="t">Astro</div><div class="d">Message du jour</div></div>
+              <div class="wp"><div class="g">8</div><div class="t">Chemin</div><div class="d">Boussole personnelle</div></div>
+            </div>
+            <div class="cta-wrap">
+              <button class="btn btn-primary" data-go="onboarding">Commencer</button>
+              <button class="btn btn-ghost" data-go="today">Voir la démo (skip)</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Onboarding disclaimer -->
+        <section class="view no-nav" id="view-onboarding" data-screen="onboarding" data-label="Onboarding disclaimer">
+          <div class="progress">
+            <div class="meta"><span>Étape 1 / 7</span><span>Disclaimer</span></div>
+            <div class="progress-bar"><span style="width:14%"></span></div>
+          </div>
+          <h2 class="h-serif h1" style="margin-bottom:8px;">Avant de commencer</h2>
+          <p class="body-muted" style="margin-bottom:14px;">Une lecture importante — bienveillance avant tout.</p>
+          <div class="disclaimer-box">
+            <p><strong>Cycle &amp; Astro n’est pas un dispositif médical.</strong></p>
+            <p style="margin-top:10px;">Les informations sur le cycle, la Lune, l’astrologie et le chemin de vie sont proposées à titre <strong>informatif et de bien-être personnel</strong>.</p>
+            <p style="margin-top:10px;">Elles ne constituent <strong>ni un diagnostic, ni un conseil médical, ni un moyen de contraception ou de conception</strong>.</p>
+            <p style="margin-top:10px;">Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="disclaimerCheck" />
+            <span>J’ai lu et j’accepte ce disclaimer. Je comprends que cette app est un outil de bien-être, pas un avis médical.</span>
+          </label>
+          <button class="btn btn-primary" id="btnAcceptDisclaimer" disabled data-go="today">Continuer</button>
+          <button class="btn btn-ghost" data-go="splash">Quitter</button>
+          <p class="tiny" style="text-align:center;margin-top:16px;">Tu pourras relire ce texte dans Profil → Santé &amp; disclaimer.</p>
+        </section>
+
+        <!-- 3. Hub Aujourd’hui -->
+        <section class="view" id="view-today" data-screen="today" data-label="Hub Aujourd’hui" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="market" type="button">← Market</button>
+            <span class="title">Cycle &amp; Astro</span>
+            <div class="side right"><button class="back" data-go="profile" type="button">Profil</button></div>
+          </div>
+          <div class="greeting">
+            <p class="hello">Bonjour, Aïcha ✦</p>
+            <p class="date">Mardi 22 septembre 2026</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Résumé du jour</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+              <div class="card-row"><span class="body-muted">Phase cycle</span><span class="phase-badge">Lutéale · estimation</span></div>
+              <div class="card-row"><span class="body-muted">Lune</span><span style="color:var(--silver);">☾ Gibbeuse décroissante</span></div>
+              <div class="card-row"><span class="body-muted">Astro</span><span style="color:var(--gold-soft);">Patience &amp; précision</span></div>
+              <div class="card-row"><span class="body-muted">Chemin</span><span style="color:var(--gold);">8 — La maîtrise</span></div>
+            </div>
+            <p class="footnote">Estimation basée sur tes saisies — pas un avis médical.</p>
+          </div>
+
+          <div class="grid-2">
+            <button class="pillar-card" data-go="cycle" type="button">
+              <span class="label">Cycle</span>
+              <span class="glyph">◉</span>
+              <span class="value">Jour 22</span>
+              <span class="sub">Ralentir et ressentir</span>
+            </button>
+            <button class="pillar-card" data-go="moon" type="button">
+              <span class="label">Lune</span>
+              <span class="glyph">☾</span>
+              <span class="value">Gibbeuse</span>
+              <span class="sub">Écoute ce qui se termine</span>
+            </button>
+            <button class="pillar-card" data-go="astro" type="button">
+              <span class="label">Astro</span>
+              <span class="glyph">✦</span>
+              <span class="value">Vierge</span>
+              <span class="sub">Message du jour</span>
+            </button>
+            <button class="pillar-card" data-go="path" type="button">
+              <span class="label">Chemin</span>
+              <span class="glyph">8</span>
+              <span class="value">Maîtrise</span>
+              <span class="sub">Axes à explorer</span>
+            </button>
+          </div>
+
+          <button class="btn btn-primary" data-go="journal" type="button">+ Check-in rapide</button>
+          <div class="card tapable section-gap" data-go="astro" style="margin-top:12px;cursor:pointer;" role="button" tabindex="0">
+            <h3 class="h-serif h3">Insight doux</h3>
+            <p class="body">Ta phase lutéale croise une lune décroissante — un moment propice pour ralentir, sans obligation. Une piste, pas une cause.</p>
+            <p class="tiny" style="margin-top:8px;">Suggestif · non médical</p>
+          </div>
+        </section>
+
+        <!-- 4. Cycle -->
+        <section class="view" id="view-cycle" data-screen="cycle" data-label="Cycle" data-nav="cycle">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Cycle</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="card">
+            <div class="cal-head">
+              <button class="cal-nav" type="button" aria-label="Mois précédent">‹</button>
+              <span class="month">Septembre 2026</span>
+              <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
+            </div>
+            <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle"></div>
+            <div class="cal-legend">
+              <span><i class="dot dot-period"></i> Règles (saisies)</span>
+              <span><i class="dot dot-today"></i> Aujourd’hui</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Phase actuelle</h3>
+            <p class="h-serif" style="font-size:18px;letter-spacing:0.08em;margin-bottom:6px;">Phase lutéale</p>
+            <p class="body" style="margin-bottom:4px;">« Ralentir et ressentir »</p>
+            <p class="italic">Invitation douce : écouter ton énergie, noter ce qui revient, sans te juger.</p>
+            <p class="footnote">Estimation basée sur tes saisies — pas un avis médical. Jamais un diagnostic.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Prochaines règles</h3>
+            <p class="body">Estimation → vers le <strong style="color:var(--gold);">2 octobre 2026</strong></p>
+            <p class="tiny" style="margin-top:6px;">Longueur cycle moyenne : 28 j · règles : 5 j (modifiables)</p>
+          </div>
+
+          <button class="btn btn-ghost" type="button" id="btnEditPeriod">+ Ajouter / corriger une période</button>
+        </section>
+
+        <!-- 5. Lune -->
+        <section class="view" id="view-moon" data-screen="moon" data-label="Lune" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Lune</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="moon-hero">
+            <div class="moon-visual" aria-hidden="true" title="Gibbeuse décroissante"></div>
+            <p class="h-serif h1">Gibbeuse décroissante</p>
+            <p class="italic" style="margin-top:6px;">22 septembre 2026 · illumination ~62 %</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Énergie du jour</h3>
+            <p class="body">Une piste pour ralentir et écouter ce qui se termine. La Lune décroissante invite au lâcher-prise — sans obligation, juste une invitation.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Phases du mois</h3>
+            <div class="grid-2" style="margin-bottom:0;">
+              <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">○</div>
+                <div class="h-serif" style="font-size:10px;">Nouvelle</div>
+                <div class="tiny">12 sept.</div>
+              </div>
+              <div class="card selected" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">◐</div>
+                <div class="h-serif" style="font-size:10px;">1<sup>er</sup> quartier</div>
+                <div class="tiny">14 sept.</div>
+              </div>
+              <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;">●</div>
+                <div class="h-serif" style="font-size:10px;">Pleine</div>
+                <div class="tiny">26 sept.</div>
+              </div>
+              <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">◑</div>
+                <div class="h-serif" style="font-size:10px;">Dernier q.</div>
+                <div class="tiny">4 oct.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="cal-head">
+              <button class="cal-nav" type="button">‹</button>
+              <span class="month">Calendrier lunaire</span>
+              <button class="cal-nav" type="button">›</button>
+            </div>
+            <div class="cal-grid" id="moonCalendar" aria-label="Calendrier lunaire"></div>
+          </div>
+        </section>
+
+        <!-- 6. Astro -->
+        <section class="view" id="view-astro" data-screen="astro" data-label="Astro" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Astro du jour</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-row" style="margin-bottom:12px;">
+              <div>
+                <p class="h-serif" style="font-size:14px;letter-spacing:0.1em;">Mardi 22 septembre</p>
+                <p class="italic">Vierge — Terre — Mutable · Mercure</p>
+              </div>
+              <div class="natal-badge sun" aria-hidden="true">♍</div>
+            </div>
+            <h3 class="h-serif h3">Message du jour</h3>
+            <p class="body">Analyse, précision et attention aux détails seront tes atouts. L’énergie du jour invite à la patience — une piste, pas une sentence.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Phase lunaire</h3>
+            <div class="card-row">
+              <span class="body">Gibbeuse décroissante</span>
+              <span style="font-size:28px;color:var(--silver);">☾</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Positions (aperçu)</h3>
+            <div class="planetary-list">
+              <span class="k">Soleil</span><span class="v">en Vierge</span>
+              <span class="k">Lune</span><span class="v">en Gémeaux</span>
+              <span class="k">Mercure</span><span class="v">en Vierge</span>
+              <span class="k">Vénus</span><span class="v">en Scorpion</span>
+            </div>
+            <p class="tiny" style="margin-top:10px;">L’astro guide, elle ne dicte pas.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Niveaux d’énergie</h3>
+            <div class="energy-row">
+              <span class="name">Énergie solaire</span><span class="pct">55 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:55%"></div></div>
+            </div>
+            <div class="energy-row">
+              <span class="name">Clarté mentale</span><span class="pct">72 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:72%"></div></div>
+            </div>
+            <div class="energy-row">
+              <span class="name">Ouverture émotionnelle</span><span class="pct">40 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:40%"></div></div>
+            </div>
+            <div class="energy-row">
+              <span class="name">Ancrage</span><span class="pct">68 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:68%"></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Favorable aujourd’hui</h3>
+            <div class="chips">
+              <span class="chip selected">Santé &amp; bien-être</span>
+              <span class="chip selected">Organisation</span>
+              <span class="chip selected">Travail précis</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Mon thème natal lite</h3>
+            <div class="natal-row">
+              <div class="natal-badge sun">☉</div>
+              <div class="meta"><div class="k">Soleil</div><div class="v">Vierge</div></div>
+            </div>
+            <div class="natal-row">
+              <div class="natal-badge moon">☾</div>
+              <div class="meta"><div class="k">Lune</div><div class="v">Cancer</div></div>
+            </div>
+            <div class="natal-row">
+              <div class="natal-badge asc">↑</div>
+              <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
+            </div>
+            <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
+          </div>
+        </section>
+
+        <!-- 7. Chemin de vie -->
+        <section class="view" id="view-path" data-screen="path" data-label="Chemin de vie" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Chemin de vie</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="path-hero">
+            <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ NOMBRE ✦</p>
+            <div class="num">8</div>
+            <div class="title">La maîtrise</div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Lecture douce</h3>
+            <p class="body">Ton chemin de vie 8 évoque la maîtrise, l’abondance et la responsabilité — des axes à explorer, librement. Ce n’est pas un destin figé : juste une boussole.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Invitations</h3>
+            <ul class="invite-list">
+              <li>Honorer ta capacité à structurer et à diriger avec cœur.</li>
+              <li>Équilibrer ambition et repos — la force se cultive aussi dans le calme.</li>
+              <li>Voir l’abondance comme circulation, pas comme pression.</li>
+              <li>Choisir la maîtrise de soi avant la maîtrise des autres.</li>
+            </ul>
+          </div>
+
+          <p class="footnote">Ce n’est pas un destin figé. Juste une boussole à explorer — tu restes libre.</p>
+        </section>
+
+        <!-- 8. Journal / check-in -->
+        <section class="view" id="view-journal" data-screen="journal" data-label="Journal / check-in" data-nav="journal">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Check-in</span>
+            <div class="side right"><button class="back" type="button" id="toggleHistory">Historique</button></div>
+          </div>
+
+          <div id="checkinForm">
+            <p class="body-muted" style="margin-bottom:8px;">Aujourd’hui · 22 sept.</p>
+            <h3 class="h-serif h3">Comment tu te sens ?</h3>
+            <div class="chips" id="moodChips">
+              <button type="button" class="chip" data-mood="sereine">Sereine</button>
+              <button type="button" class="chip" data-mood="fatiguee">Fatiguée</button>
+              <button type="button" class="chip selected" data-mood="energique">Énergique</button>
+              <button type="button" class="chip" data-mood="sensible">Sensible</button>
+              <button type="button" class="chip" data-mood="motivee">Motivée</button>
+              <button type="button" class="chip" data-mood="calme">Besoin de calme</button>
+            </div>
+
+            <h3 class="h-serif h3">Symptômes soft</h3>
+            <div class="symptom-list" id="symptomList">
+              <label class="symptom-item"><input type="checkbox" /> Crampes légères</label>
+              <label class="symptom-item selected"><input type="checkbox" checked /> Fatigue</label>
+              <label class="symptom-item"><input type="checkbox" /> Ballonnements</label>
+              <label class="symptom-item"><input type="checkbox" /> Appétit changeant</label>
+              <label class="symptom-item selected"><input type="checkbox" checked /> Sensibilité émotionnelle</label>
+              <label class="symptom-item"><input type="checkbox" /> Sommeil agité</label>
+              <label class="symptom-item"><input type="checkbox" /> Peau sensible</label>
+              <label class="symptom-item"><input type="checkbox" /> Motivation</label>
+            </div>
+
+            <h3 class="h-serif h3">Énergie <span class="tiny" id="energyLabel">3 / 5</span></h3>
+            <div class="energy-slider" id="energySlider">
+              <button type="button" data-e="1">1</button>
+              <button type="button" data-e="2">2</button>
+              <button type="button" class="selected" data-e="3">3</button>
+              <button type="button" data-e="4">4</button>
+              <button type="button" data-e="5">5</button>
+            </div>
+
+            <h3 class="h-serif h3">Note (optionnel)</h3>
+            <textarea class="textarea" placeholder="Quelques mots pour toi…" id="noteField">Journée douce, un peu de fatigue en fin d’après-midi.</textarea>
+
+            <button class="btn btn-primary" type="button" id="btnSaveCheckin">Enregistrer</button>
+            <p class="tiny" style="text-align:center;margin-top:10px;">Liste soft · aucun terme pathologique · pas un avis médical.</p>
+          </div>
+
+          <div id="historyPanel" hidden>
+            <h3 class="h-serif h3">Historique récent</h3>
+            <div class="card" style="padding:4px 12px;">
+              <div class="history-item">
+                <span class="d">22 sep</span>
+                <span class="c">Énergique · fatigue, sensibilité</span>
+                <span class="e">3/5</span>
+              </div>
+              <div class="history-item">
+                <span class="d">21 sep</span>
+                <span class="c">Sereine</span>
+                <span class="e">4/5</span>
+              </div>
+              <div class="history-item">
+                <span class="d">20 sep</span>
+                <span class="c">Sensible · besoin de calme</span>
+                <span class="e">2/5</span>
+              </div>
+              <div class="history-item">
+                <span class="d">18 sep</span>
+                <span class="c">Motivée · énergie haute</span>
+                <span class="e">5/5</span>
+              </div>
+            </div>
+            <button class="btn btn-ghost" type="button" id="backToCheckin">Retour au check-in</button>
+          </div>
+        </section>
+
+        <!-- 9. Profil / Réglages -->
+        <section class="view" id="view-profile" data-screen="profile" data-label="Profil / Réglages" data-nav="profile">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Profil</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="profile-hero">
+            <div class="avatar">A</div>
+            <p class="name">Aïcha</p>
+            <p class="tags">Soleil Vierge · Chemin 8 · Abidjan</p>
+          </div>
+
+          <div class="card" style="padding:4px 14px;">
+            <ul class="menu-list">
+              <li><button type="button" data-go="path">Mon chemin de vie <span class="chev">›</span></button></li>
+              <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev">›</span></button></li>
+              <li><button type="button">Modifier mes infos <span class="chev">›</span></button></li>
+              <li><button type="button">Intentions <span class="chev">›</span></button></li>
+            </ul>
+          </div>
+
+          <h3 class="h-serif h3 section-gap">Réglages</h3>
+          <div class="card" style="padding:4px 14px;">
+            <ul class="menu-list">
+              <li><button type="button">Notifications <span class="chev">›</span></button></li>
+              <li><button type="button">Données &amp; confidentialité <span class="chev">›</span></button></li>
+              <li><button type="button" id="btnShowDisclaimer">Santé &amp; disclaimer <span class="chev">›</span></button></li>
+              <li><button type="button">À propos <span class="chev">›</span></button></li>
+            </ul>
+          </div>
+
+          <div class="card" id="disclaimerReread" hidden>
+            <h3 class="h-serif h3">Santé &amp; disclaimer</h3>
+            <div class="disclaimer-box">
+              <p><strong>Cycle &amp; Astro n’est pas un dispositif médical.</strong></p>
+              <p style="margin-top:8px;">Infos cycle, Lune, astro et chemin de vie = bien-être personnel uniquement. Pas de diagnostic, pas de conseil clinique, pas de contraception / conception.</p>
+              <p style="margin-top:8px;">Pour ta santé : un·e professionnel·le.</p>
+            </div>
+            <p class="tiny" style="margin-top:10px;">Accepté le 17 sept. 2026 · démo locale</p>
+            <button class="btn btn-ghost btn-sm" type="button" id="btnHideDisclaimer" style="margin-top:10px;width:auto;">Fermer</button>
+          </div>
+
+          <button class="btn btn-primary" type="button" data-go="market" style="margin-top:8px;">← Retour au Market</button>
+          <p class="tiny" style="text-align:center;margin-top:12px;">Route cible Market : #/cycle-astro · alias #/cycle</p>
+        </section>
+
+        <!-- Market stub -->
+        <section class="view no-nav" id="view-market" data-screen="market" data-label="Retour Market (stub)">
+          <div class="splash" style="justify-content:center;">
+            <p class="brand-kd">KING DAVEBLESSING MARKET</p>
+            <h1 class="brand-name" style="font-size:20px;">Retour Market</h1>
+            <p class="tagline">Stub de navigation — en prod, ceci ramène au shell Market (#/ ou home). Aucune modification du repo Market dans ce livrable.</p>
+            <div class="cta-wrap">
+              <button class="btn btn-primary" data-go="today">Revenir à Cycle &amp; Astro</button>
+              <button class="btn btn-ghost" data-go="splash">Splash</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <nav class="bottom-nav" id="bottomNav" aria-label="Navigation principale">
+        <button class="nav-item active" data-go="today" type="button"><span class="ico">✦</span>Aujourd’hui</button>
+        <button class="nav-item" data-go="cycle" type="button"><span class="ico">◉</span>Cycle</button>
+        <button class="nav-item" data-go="journal" type="button"><span class="ico">✎</span>Journal</button>
+        <button class="nav-item" data-go="profile" type="button"><span class="ico">◎</span>Plus</button>
+      </nav>
+
+      <div class="toast" id="toast" role="status"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
