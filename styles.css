@@ -1370,3 +1370,126 @@ body {
     border: none;
   }
 }
+
+
+/* —— Lecture complète (#/reading) —— */
+.persona-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 4px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  border-radius: 999px;
+}
+.persona-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 8px 6px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.persona-btn.active {
+  background: linear-gradient(135deg, rgba(201,162,39,0.25), rgba(201,162,39,0.08));
+  color: var(--gold-2);
+  box-shadow: 0 0 16px rgba(201, 162, 39, 0.2);
+}
+.persona-btn:hover { color: var(--gold-soft); }
+
+.field input[type="text"] {
+  width: 100%;
+  background: #121212;
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  border-radius: var(--radius-sm);
+  color: var(--cream);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+}
+.field input[type="text"]:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.15);
+}
+
+.reading-id .read-name {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--gold-2);
+  margin: 0 0 4px;
+}
+.reading-id .read-meta {
+  font-size: 13px;
+  color: var(--gold-soft);
+}
+
+.synth-grid {
+  list-style: none;
+  margin-top: 8px;
+}
+.synth-grid li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 13px;
+}
+.synth-grid li:last-child { border-bottom: none; }
+.synth-grid .k {
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.synth-grid strong {
+  color: var(--gold-2);
+  font-weight: 600;
+  text-align: right;
+  font-size: 13px;
+}
+
+.vibe-badge {
+  display: inline-block;
+  margin: 4px 0 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  color: var(--gold);
+  font-family: var(--font-serif);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+}
+
+.sign-line {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--gold-2);
+  margin-bottom: 8px;
+}
+
+.gift-list {
+  list-style: none;
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.gift-list li {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(201, 162, 39, 0.1);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  color: var(--gold-soft);
+  font-size: 12px;
+}
+
+.reading-body .body:last-child { margin-bottom: 0 !important; }

@@ -353,6 +353,7 @@
               <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
             </div>
             <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-go="reading" style="margin-top:12px;width:auto;">Lecture complète chemin / soleil →</button>
           </div>
         </section>
 
@@ -384,6 +385,9 @@
               <li>Choisir la maîtrise de soi avant la maîtrise des autres.</li>
             </ul>
           </div>
+
+          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Voir la lecture complète</button>
+          <p class="tiny" style="text-align:center;margin-top:8px;">Chemin · jour · signe &amp; décan · dons · axes</p>
 
           <p class="footnote">Ce n’est pas un destin figé. Juste une boussole à explorer — tu restes libre.</p>
         </section>
@@ -481,6 +485,7 @@
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
               <li><button type="button" data-go="path">Mon chemin de vie <span class="chev">›</span></button></li>
+              <li><button type="button" data-go="reading">Lecture complète <span class="chev">›</span></button></li>
               <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev">›</span></button></li>
               <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev">›</span></button></li>
               <li><button type="button">Modifier mes infos <span class="chev">›</span></button></li>
@@ -513,6 +518,101 @@
           <p class="tiny" style="text-align:center;margin-top:12px;">Route cible Market : #/cycle-astro · alias #/cycle</p>
         </section>
 
+
+
+        <!-- 11. Lecture complète Chemin / Astro -->
+        <section class="view" id="view-reading" data-screen="reading" data-label="Lecture complète" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="path" type="button">← Chemin</button>
+            <span class="title">Lecture complète</span>
+            <div class="side right"></div>
+          </div>
+
+          <h2 class="h-serif h1" style="margin-bottom:4px;">Lecture complète</h2>
+          <p class="body-muted" style="margin-bottom:12px;">Chemin de vie · vibration du jour · signe &amp; décan — une boussole, pas un destin.</p>
+
+          <div class="persona-toggle" role="tablist" aria-label="Persona démo">
+            <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha">Profil démo · Aïcha</button>
+            <button type="button" class="persona-btn" id="btnPersonaKrizoua" data-persona="krizoua">Exemple KD · Krizoua</button>
+          </div>
+
+          <div class="card" id="readingFormCard">
+            <form id="readingForm" novalidate>
+              <label class="field">
+                <span class="field-label">Prénom / nom (optionnel)</span>
+                <input type="text" id="readName" name="name" placeholder="Ex. Aïcha" autocomplete="name" />
+              </label>
+              <label class="field">
+                <span class="field-label">Date de naissance</span>
+                <input type="date" id="readBirth" name="birth" required />
+              </label>
+              <label class="field">
+                <span class="field-label">Lieu (optionnel)</span>
+                <input type="text" id="readPlace" name="place" placeholder="Ex. Abidjan" />
+              </label>
+              <button class="btn btn-primary" type="submit" id="btnGenerateReading">Générer la lecture</button>
+            </form>
+          </div>
+
+          <div id="readingOutput" hidden>
+
+            <!-- 1. En-tête identité -->
+            <div class="card reading-id" id="readBlockId">
+              <p class="tiny" style="letter-spacing:0.16em;color:var(--gold);margin-bottom:6px;">✦ IDENTITÉ ✦</p>
+              <p class="read-name" id="outName">—</p>
+              <p class="read-meta" id="outBirthPlace">—</p>
+            </div>
+
+            <!-- 2. Synthèse chiffres -->
+            <div class="card">
+              <h3 class="h-serif h3">Synthèse chiffres</h3>
+              <ul class="synth-grid" id="outSynth">
+                <li><span class="k">Chemin de vie</span><strong id="outLifePath">—</strong></li>
+                <li><span class="k">Jour · vibration</span><strong id="outDayVibe">—</strong></li>
+                <li><span class="k">Signe · décan</span><strong id="outSignDecan">—</strong></li>
+              </ul>
+            </div>
+
+            <!-- 3. Chemin de vie -->
+            <div class="path-hero" style="padding-top:8px;">
+              <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ CHEMIN DE VIE ✦</p>
+              <div class="num" id="outPathNum">—</div>
+              <div class="title" id="outPathTitle">—</div>
+            </div>
+            <div class="card">
+              <div class="body reading-body" id="outPathBody"></div>
+            </div>
+
+            <!-- 4. Vibration jour -->
+            <div class="card">
+              <h3 class="h-serif h3">Vibration du jour de naissance</h3>
+              <p class="vibe-badge"><span id="outVibeNum">—</span></p>
+              <p class="body" id="outVibeText">—</p>
+            </div>
+
+            <!-- 5. Signe & décan -->
+            <div class="card">
+              <h3 class="h-serif h3">Signe &amp; décan</h3>
+              <p class="sign-line" id="outSignLine">—</p>
+              <p class="body" id="outSignTraits">—</p>
+            </div>
+
+            <!-- 6. Dons & compétences -->
+            <div class="card">
+              <h3 class="h-serif h3">Dons &amp; compétences</h3>
+              <ul class="gift-list" id="outGifts"></ul>
+            </div>
+
+            <!-- 7. Axes / invitations -->
+            <div class="card">
+              <h3 class="h-serif h3">Axes / invitations</h3>
+              <ul class="invite-list" id="outInvites"></ul>
+            </div>
+
+            <!-- 8. Disclaimer -->
+            <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical. Pour toute question de santé, consulte un·e professionnel·le.</p>
+          </div>
+        </section>
 
         <!-- 10. Calculateur de menstruation -->
         <section class="view" id="view-calculator" data-screen="calculator" data-label="Calculateur de menstruation" data-nav="profile">

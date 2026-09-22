@@ -24,13 +24,13 @@ python3 -m http.server 8765
 ```
 
 Puis : [http://127.0.0.1:8765/](http://127.0.0.1:8765/)  
-Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/calculator` · `#/moon` · `#/astro` · `#/path` · `#/journal` · `#/profile`
+Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/calculator` · `#/moon` · `#/astro` · `#/path` · `#/reading` · `#/journal` · `#/profile`
 
 ## Fichiers
 
 | Fichier | Rôle |
 |---------|------|
-| `index.html` | Shell mobile + 10 écrans (+ stub Market, calculateur) |
+| `index.html` | Shell mobile + 11 écrans (+ stub Market, calculateur, lecture complète) |
 | `styles.css` | Tokens KD, stars, cards, typo Cinzel/Inter, bottom nav, calendriers |
 | `app.js` | Router hash, calendriers démo, micro-interactions, données Aïcha |
 | `README.md` | Ce fichier |
@@ -43,10 +43,11 @@ Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/calculator` · `#/moo
 4. **Cycle** — calendrier mois, phase lutéale soft, estimation prochaines règles, disclaimer  
 5. **Lune** — phase du jour + énergie douce + calendrier lunaire simplifié  
 6. **Astro** — message du jour + natal lite + énergies + tags favorables  
-7. **Chemin de vie** — nombre 8 + lecture + invitations (pas destin figé)  
-8. **Journal / check-in** — humeur, symptômes soft, énergie, historique  
-9. **Profil / Réglages** — disclaimer relisible + Retour au Market  
-10. **Calculateur de menstruation** — estimations prochaines règles + phase soft (entrée Cycle / Hub / Plus)  
+7. **Chemin de vie** — nombre 8 + lecture + invitations + CTA lecture complète  
+8. **Lecture complète** `#/reading` — template 8 blocs + générateur + toggle Krizoua / Aïcha  
+9. **Journal / check-in** — humeur, symptômes soft, énergie, historique  
+10. **Profil / Réglages** — disclaimer relisible + Retour au Market  
+11. **Calculateur de menstruation** — estimations prochaines règles + phase soft (entrée Cycle / Hub / Plus)  
 
 Bottom nav : **Aujourd’hui · Cycle · Journal · Plus**.  
 Sélecteur d’écrans au-dessus du téléphone (desktop) pour revue rapide Chef / Dave.
@@ -86,7 +87,7 @@ Ne pas coller en fond UI. Références moodboard :
 
 ## Alignement docs
 
-Bible · wireframes · features P0 · PLAN-P0 dans `/workspace/cycle-astro/docs/`.
+Bible · wireframes · features P0 · PLAN-P0 · **TEMPLATE-LECTURE-CHEMIN-v0** dans `/workspace/cycle-astro/docs/`.
 
 ---
 
