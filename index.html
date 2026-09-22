@@ -108,6 +108,9 @@
             </div>
             <p class="footnote">Estimation basée sur tes saisies — pas un avis médical.</p>
           </div>
+          <p class="calc-hub-link">
+            <button type="button" class="btn-link" data-go="calculator">Calculateur de menstruation →</button>
+          </p>
 
           <div class="grid-2">
             <button class="pillar-card" data-go="cycle" type="button">
@@ -208,6 +211,7 @@
             </div>
           </div>
 
+          <button class="btn btn-primary" type="button" data-go="calculator">Calculateur</button>
           <button class="btn btn-ghost" type="button" id="btnEditPeriod">+ Ajouter / corriger une période</button>
         </section>
 
@@ -477,6 +481,7 @@
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
               <li><button type="button" data-go="path">Mon chemin de vie <span class="chev">›</span></button></li>
+              <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev">›</span></button></li>
               <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev">›</span></button></li>
               <li><button type="button">Modifier mes infos <span class="chev">›</span></button></li>
               <li><button type="button">Intentions <span class="chev">›</span></button></li>
@@ -506,6 +511,67 @@
 
           <button class="btn btn-primary" type="button" data-go="market" style="margin-top:8px;">← Retour au Market</button>
           <p class="tiny" style="text-align:center;margin-top:12px;">Route cible Market : #/cycle-astro · alias #/cycle</p>
+        </section>
+
+
+        <!-- 10. Calculateur de menstruation -->
+        <section class="view" id="view-calculator" data-screen="calculator" data-label="Calculateur de menstruation" data-nav="profile">
+          <div class="app-header">
+            <button class="back" data-go="cycle" type="button">← Cycle</button>
+            <span class="title">Calculateur</span>
+            <div class="side right"></div>
+          </div>
+
+          <h2 class="h-serif h1" style="margin-bottom:6px;">Calculateur de menstruation</h2>
+          <p class="body-muted" style="margin-bottom:14px;">Estime tes prochaines règles à partir de tes saisies — en douceur, sans jargon médical.</p>
+
+          <div class="card" id="calcFormCard">
+            <form id="calcForm" novalidate>
+              <label class="field">
+                <span class="field-label">Début des dernières règles</span>
+                <input type="date" id="calcLastStart" name="lastStart" required />
+              </label>
+              <label class="field">
+                <span class="field-label">Durée des règles (jours)</span>
+                <input type="number" id="calcPeriodLen" name="periodLen" min="2" max="10" value="5" inputmode="numeric" required />
+              </label>
+              <label class="field">
+                <span class="field-label">Longueur moyenne du cycle (jours)</span>
+                <input type="number" id="calcCycleLen" name="cycleLen" min="21" max="45" value="28" inputmode="numeric" required />
+              </label>
+              <button class="btn btn-primary" type="submit" id="btnCalc">Calculer</button>
+            </form>
+          </div>
+
+          <div class="card calc-results" id="calcResults" hidden>
+            <div class="calc-summary">
+              <div class="calc-ring-mini" aria-hidden="true">
+                <svg viewBox="0 0 80 80" width="72" height="72">
+                  <circle class="ring-track" cx="40" cy="40" r="30" />
+                  <circle class="ring-progress" id="calcRingProgress" cx="40" cy="40" r="30"
+                    stroke-dasharray="0 188.5" stroke-dashoffset="0"
+                    transform="rotate(-90 40 40)" />
+                </svg>
+                <div class="calc-ring-center">
+                  <span class="day-num" id="calcDayNum">—</span>
+                  <span class="day-label">Jour</span>
+                </div>
+              </div>
+              <div class="calc-summary-meta">
+                <p class="calc-phase" id="calcPhaseLabel">Phase estimée</p>
+                <p class="tiny" id="calcDayLine">Jour du cycle</p>
+              </div>
+            </div>
+            <ul class="calc-kv" id="calcKv">
+              <li><span>Prochaines règles</span><strong id="calcNextStart">—</strong></li>
+              <li><span>Fin estimée</span><strong id="calcNextEnd">—</strong></li>
+            </ul>
+            <h3 class="h-serif h3" style="margin-top:12px;">3 prochaines périodes</h3>
+            <ul class="calc-upcoming" id="calcUpcoming"></ul>
+            <p class="footnote" style="margin-top:12px;">Estimations à titre informatif / bien-être. Pas un avis médical.</p>
+          </div>
+
+          <p class="footnote" id="calcDisclaimerAlways">Estimations à titre informatif / bien-être. Pas un avis médical.</p>
         </section>
 
         <!-- Market stub -->

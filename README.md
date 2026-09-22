@@ -24,13 +24,13 @@ python3 -m http.server 8765
 ```
 
 Puis : [http://127.0.0.1:8765/](http://127.0.0.1:8765/)  
-Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/moon` · `#/astro` · `#/path` · `#/journal` · `#/profile`
+Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/calculator` · `#/moon` · `#/astro` · `#/path` · `#/journal` · `#/profile`
 
 ## Fichiers
 
 | Fichier | Rôle |
 |---------|------|
-| `index.html` | Shell mobile + 9 écrans (+ stub Market) |
+| `index.html` | Shell mobile + 10 écrans (+ stub Market, calculateur) |
 | `styles.css` | Tokens KD, stars, cards, typo Cinzel/Inter, bottom nav, calendriers |
 | `app.js` | Router hash, calendriers démo, micro-interactions, données Aïcha |
 | `README.md` | Ce fichier |
@@ -46,6 +46,7 @@ Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/moon` · `#/astro` ·
 7. **Chemin de vie** — nombre 8 + lecture + invitations (pas destin figé)  
 8. **Journal / check-in** — humeur, symptômes soft, énergie, historique  
 9. **Profil / Réglages** — disclaimer relisible + Retour au Market  
+10. **Calculateur de menstruation** — estimations prochaines règles + phase soft (entrée Cycle / Hub / Plus)  
 
 Bottom nav : **Aujourd’hui · Cycle · Journal · Plus**.  
 Sélecteur d’écrans au-dessus du téléphone (desktop) pour revue rapide Chef / Dave.

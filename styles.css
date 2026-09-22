@@ -1226,6 +1226,139 @@ body {
 .ph-dot.ovulatoire { background: rgba(201, 162, 39, 0.55); border: 1px solid var(--gold); }
 .ph-dot.luteale { background: var(--gold); box-shadow: 0 0 8px rgba(201, 162, 39, 0.5); }
 
+
+/* —— Calculateur de menstruation —— */
+.calc-hub-link {
+  text-align: center;
+  margin: -4px 0 14px;
+}
+.field {
+  display: block;
+  margin-bottom: 14px;
+}
+.field-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+  font-family: var(--font-serif);
+}
+.field input[type="date"],
+.field input[type="number"] {
+  width: 100%;
+  background: var(--black-2);
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--gold-soft);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color-scheme: dark;
+}
+.field input[type="date"]:focus,
+.field input[type="number"]:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+.field input[type="number"]::-webkit-inner-spin-button {
+  opacity: 0.6;
+}
+.calc-results { margin-top: 4px; }
+.calc-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.calc-ring-mini {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+.calc-ring-mini svg { display: block; }
+.calc-ring-mini .ring-track {
+  fill: none;
+  stroke: rgba(201, 162, 39, 0.15);
+  stroke-width: 6;
+}
+.calc-ring-mini .ring-progress {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.calc-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.calc-ring-center .day-num {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--gold);
+  line-height: 1;
+}
+.calc-ring-center .day-label {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.calc-summary-meta .calc-phase {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--gold-soft);
+}
+.calc-kv {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(201, 162, 39, 0.15);
+}
+.calc-kv li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 13px;
+  color: var(--muted);
+}
+.calc-kv li strong {
+  color: var(--gold);
+  font-weight: 500;
+  text-align: right;
+}
+.calc-upcoming {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.calc-upcoming li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 13px;
+  color: var(--gold-soft);
+}
+.calc-upcoming .n {
+  color: var(--gold);
+  font-family: var(--font-serif);
+  font-size: 12px;
+  min-width: 22px;
+}
+.calc-upcoming .r { flex: 1; }
+
 @media (max-width: 420px) {
   body { padding: 0; }
   .page-label, .page-hint, .screen-picker { display: none; }
