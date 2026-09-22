@@ -44,7 +44,7 @@ Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/calculator` · `#/moo
 5. **Lune** — phase du jour + énergie douce + calendrier lunaire simplifié  
 6. **Astro** — message du jour + natal lite + énergies + tags favorables  
 7. **Chemin de vie** — nombre 8 + lecture + invitations + CTA lecture complète  
-8. **Lecture complète** `#/reading` — template 8 blocs + générateur + toggle Krizoua / Aïcha  
+8. **Lecture détaillée** `#/reading` — générateur Gemini (mission, forces, ombres, plan 7j, miroirs…) + Krizoua verbatim  
 9. **Journal / check-in** — humeur, symptômes soft, énergie, historique  
 10. **Profil / Réglages** — disclaimer relisible + Retour au Market  
 11. **Calculateur de menstruation** — estimations prochaines règles + phase soft (entrée Cycle / Hub / Plus)  

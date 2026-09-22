@@ -2,7 +2,7 @@
 
 **Produit :** Cycle & Astro · King Daveblessing  
 **Pilier :** Chemin de vie (+ natal lite soleil / décan)  
-**Version :** v0 · septembre 2026  
+**Version :** v0.12 enrichi (Gemini) · septembre 2026  
 **Ton :** bienveillant, non dogmatique — **boussole**, pas destin figé  
 **Langue :** FR
 
@@ -16,20 +16,31 @@ Formulations à privilégier : « évoque », « peut suggérer », « invitatio
 
 ---
 
-## Structure obligatoire (8 blocs)
+## Structure obligatoire — niveau **Gemini** (9 blocs riches)
 
-| # | Section | Contenu minimum |
-|---|---------|-----------------|
-| 1 | **En-tête identité** | Prénom / nom · date de naissance · lieu (si connu) |
-| 2 | **Synthèse chiffres** | Chemin de vie · Jour de naissance (vibration) · Signe solaire + décan |
-| 3 | **Chemin de vie** | Nombre + titre + lecture 2–4 paragraphes |
-| 4 | **Vibration du jour de naissance** | Nombre réduit + sens court |
-| 5 | **Signe & décan** | Signe + n° de décan + traits (non absolus) |
-| 6 | **Dons & compétences** | Liste à puces (personnalisable / démo) |
-| 7 | **Axes / invitations** | 3–5 pistes d’exploration (anti-fatalisme) |
-| 8 | **Disclaimer** | Bien-être · pas destin figé · pas avis médical |
+> **Style cible :** long, structuré, nuancé, pédagogique — phrases complètes, vocabulaire riche mais accessible, ton premium bienveillant.  
+> **Pas** de textes courts de 2 phrases. Chaque section tient en **cards** UI distinctes (mode généré).
 
-UI cible maquettes : hash **`#/reading`** (« Lecture complète »), accessible depuis `#/path` et (optionnel) `#/astro`.
+| # | Section | Contenu minimum (densité Gemini) |
+|---|---------|----------------------------------|
+| 1 | **En-tête identité** | Prénom / nom · date · lieu (si fournis) |
+| 2 | **Tableau synthèse** | Chemin · Jour (vibration) · Signe · Décan |
+| 3 | **Chemin de vie (détail)** | Titre + **rappel de calcul** · **Mission d’âme** (1 § dense) · **Forces** (5–7 puces détaillées) · **Défis / ombres** (4–6 puces + transformation) · **En relations / en travail / en énergie perso** (3 mini-§) |
+| 4 | **Vibration du jour** | Sens du nombre · **alliance avec le chemin** · implication concrète |
+| 5 | **Signe + décan** | Élément · modalités · planète · note de décan · **alliance avec le chemin** · style relationnel |
+| 6 | **Domaines de compétences** | 6–10 pistes concrètes adaptées **chemin × signe** |
+| 7 | **Plan d’exploration 7 jours** | Actions douces, non dogmatiques (1 / jour) |
+| 8 | **Questions miroir** | 5 questions d’introspection |
+| 9 | **Disclaimer** | Bien-être · pas destin figé · pas avis médical / diagnostic |
+
+UI cible maquettes : hash **`#/reading`** (« **Lecture détaillée** » · sous-titre « Analyse approfondie · style guide KD »), accessible depuis `#/path` et (optionnel) `#/astro`.
+
+### Deux modes d’affichage
+
+| Mode | Quand | Rendu |
+|------|-------|-------|
+| **Krizoua verbatim** | Persona « Exemple KD · Krizoua » (17/10/1983) | Texte Dave **tel quel** (`KRIZOUA_VERBATIM_TEXT`) — `textContent` / pre-wrap · **ne pas reformuler** |
+| **Générateur structuré** | Toute autre date / Aïcha | Cards HTML riches (sections ci-dessus) via `buildReading` + `renderReading` |
 
 ---
 
@@ -105,7 +116,7 @@ Chaque signe ≈ 30 jours → **3 décans** d’environ 10 jours :
 
 *(Textes longs stockés dans le générateur JS / contenus éditoriaux KD.)*
 
-### Vibrations du jour 1–9 — sens courts
+### Vibrations du jour 1–9 — sens (générateur : versions longues + alliance + concret)
 
 | N° | Sens (invitation) |
 |----|-------------------|
@@ -182,7 +193,7 @@ Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce
 | Fichier | Rôle |
 |---------|------|
 | `mockups/index.html` | Écran `#/reading` + CTA depuis `#/path` / `#/astro` |
-| `mockups/app.js` | `reduceDigits`, `lifePath`, `dayVibe`, `sunSignDecan`, dictionnaires, fill UI |
+| `mockups/app.js` | `reduceDigits`, `lifePath`, `dayVibe`, `sunSignDecan`, `PATH_COPY` / `SIGN_COPY` / `DAY_VIBE_COPY` enrichis, `buildReading`, `renderReading` (cards Gemini), Krizoua verbatim |
 | `mockups/styles.css` | Blocs lecture, synthèse, toggle persona |
 
 **Personas démo :**

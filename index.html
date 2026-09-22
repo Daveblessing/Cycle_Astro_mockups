@@ -353,7 +353,7 @@
               <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
             </div>
             <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
-            <button class="btn btn-ghost btn-sm" type="button" data-go="reading" style="margin-top:12px;width:auto;">Lecture complète chemin / soleil →</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-go="reading" style="margin-top:12px;width:auto;">Lecture détaillée chemin / soleil →</button>
           </div>
         </section>
 
@@ -386,7 +386,7 @@
             </ul>
           </div>
 
-          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Voir la lecture complète</button>
+          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Voir la lecture détaillée</button>
           <p class="tiny" style="text-align:center;margin-top:8px;">Chemin · jour · signe &amp; décan · dons · axes</p>
 
           <p class="footnote">Ce n’est pas un destin figé. Juste une boussole à explorer — tu restes libre.</p>
@@ -485,7 +485,7 @@
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
               <li><button type="button" data-go="path">Mon chemin de vie <span class="chev">›</span></button></li>
-              <li><button type="button" data-go="reading">Lecture complète <span class="chev">›</span></button></li>
+              <li><button type="button" data-go="reading">Lecture détaillée <span class="chev">›</span></button></li>
               <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev">›</span></button></li>
               <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev">›</span></button></li>
               <li><button type="button">Modifier mes infos <span class="chev">›</span></button></li>
@@ -520,16 +520,16 @@
 
 
 
-        <!-- 11. Lecture complète Chemin / Astro -->
-        <section class="view" id="view-reading" data-screen="reading" data-label="Lecture complète" data-nav="today">
+        <!-- 11. Lecture détaillée Chemin / Astro -->
+        <section class="view" id="view-reading" data-screen="reading" data-label="Lecture détaillée" data-nav="today">
           <div class="app-header">
             <button class="back" data-go="path" type="button">← Chemin</button>
-            <span class="title">Lecture complète</span>
+            <span class="title">Lecture détaillée</span>
             <div class="side right"></div>
           </div>
 
-          <h2 class="h-serif h1" style="margin-bottom:4px;">Lecture complète</h2>
-          <p class="body-muted" style="margin-bottom:12px;">Chemin de vie · vibration du jour · signe &amp; décan — une boussole, pas un destin.</p>
+          <h2 class="h-serif h1" style="margin-bottom:4px;">Lecture détaillée</h2>
+          <p class="body-muted" style="margin-bottom:12px;">Analyse approfondie · style guide KD — chemin · vibration du jour · signe &amp; décan. Une boussole, pas un destin.</p>
 
           <div class="persona-toggle" role="tablist" aria-label="Persona démo">
             <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha">Profil démo · Aïcha</button>
@@ -550,7 +550,7 @@
                 <span class="field-label">Lieu (optionnel)</span>
                 <input type="text" id="readPlace" name="place" placeholder="Ex. Abidjan" />
               </label>
-              <button class="btn btn-primary" type="submit" id="btnGenerateReading">Générer la lecture</button>
+              <button class="btn btn-primary btn-generate-reading" type="submit" id="btnGenerateReading">✦ Générer une lecture détaillée</button>
             </form>
           </div>
 
@@ -574,9 +574,9 @@
                 <p class="read-meta" id="outBirthPlace">—</p>
               </div>
 
-              <!-- 2. Synthèse chiffres -->
+              <!-- 2. Tableau synthèse -->
               <div class="card">
-                <h3 class="h-serif h3">Synthèse chiffres</h3>
+                <h3 class="h-serif h3">Synthèse</h3>
                 <ul class="synth-grid" id="outSynth">
                   <li><span class="k">Chemin de vie</span><strong id="outLifePath">—</strong></li>
                   <li><span class="k">Jour · vibration</span><strong id="outDayVibe">—</strong></li>
@@ -584,13 +584,14 @@
                 </ul>
               </div>
 
-              <!-- 3. Chemin de vie -->
+              <!-- 3. Chemin de vie (détail Gemini) -->
               <div class="path-hero" style="padding-top:8px;">
                 <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ CHEMIN DE VIE ✦</p>
                 <div class="num" id="outPathNum">—</div>
                 <div class="title" id="outPathTitle">—</div>
               </div>
               <div class="card">
+                <p class="calc-reminder tiny" id="outPathCalc"></p>
                 <div class="body reading-body" id="outPathBody"></div>
               </div>
 
@@ -598,30 +599,39 @@
               <div class="card">
                 <h3 class="h-serif h3">Vibration du jour de naissance</h3>
                 <p class="vibe-badge"><span id="outVibeNum">—</span></p>
-                <p class="body" id="outVibeText">—</p>
+                <div class="body" id="outVibeText">—</div>
               </div>
 
               <!-- 5. Signe & décan -->
               <div class="card">
                 <h3 class="h-serif h3">Signe &amp; décan</h3>
                 <p class="sign-line" id="outSignLine">—</p>
-                <p class="body" id="outSignTraits">—</p>
+                <div class="body" id="outSignTraits">—</div>
               </div>
 
-              <!-- 6. Dons & compétences -->
+              <!-- 6. Domaines de compétences -->
               <div class="card">
-                <h3 class="h-serif h3">Dons &amp; compétences</h3>
-                <ul class="gift-list" id="outGifts"></ul>
+                <h3 class="h-serif h3">Domaines de compétences suggérés</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Pistes concrètes adaptées à ton chemin × signe — à explorer librement, sans dogme.</p>
+                <ul class="read-bullets domains-list" id="outGifts"></ul>
               </div>
 
-              <!-- 7. Axes / invitations -->
+              <!-- 7. Plan 7 jours -->
               <div class="card">
-                <h3 class="h-serif h3">Axes / invitations</h3>
-                <ul class="invite-list" id="outInvites"></ul>
+                <h3 class="h-serif h3">Plan d’exploration · 7 jours</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Actions douces, non dogmatiques — ajuste selon ton rythme et ton cycle.</p>
+                <ul class="read-bullets week-list" id="outWeekPlan"></ul>
               </div>
 
-              <!-- 8. Disclaimer -->
-              <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical. Pour toute question de santé, consulte un·e professionnel·le.</p>
+              <!-- 8. Questions miroir -->
+              <div class="card">
+                <h3 class="h-serif h3">Questions miroir</h3>
+                <ul class="read-bullets mirror-list" id="outMirrors"></ul>
+              </div>
+
+              <!-- 9. Disclaimer -->
+              <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
+
             </div>
           </div>
         </section>

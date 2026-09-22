@@ -1541,3 +1541,71 @@ body {
   font-family: var(--font-serif);
   text-align: center;
 }
+
+/* —— Lecture détaillée Gemini-style —— */
+.btn-generate-reading {
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 24px rgba(201, 162, 39, 0.28);
+}
+.calc-reminder {
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.45;
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.read-subh {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--gold-2);
+  margin: 16px 0 8px;
+  letter-spacing: 0.03em;
+}
+.read-sec:first-child .read-subh { margin-top: 0; }
+.read-tri .read-subh { margin-top: 14px; }
+.gold-em {
+  color: var(--gold);
+  font-weight: 600;
+}
+.read-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.read-bullets li {
+  position: relative;
+  padding: 8px 0 8px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gold-soft);
+}
+.read-bullets li:last-child { border-bottom: none; }
+.read-bullets li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  font-size: 8px;
+  color: var(--gold);
+  opacity: 0.85;
+}
+.domains-list li,
+.week-list li,
+.mirror-list li {
+  color: var(--cream);
+}
+.mirror-list li::before { content: '?'; font-size: 11px; font-weight: 700; top: 7px; }
+.reading-body .body {
+  color: var(--gold-soft);
+  line-height: 1.55;
+  font-size: 13.5px;
+}
+#outVibeText .body,
+#outSignTraits .body {
+  color: var(--gold-soft);
+  line-height: 1.55;
+  font-size: 13.5px;
+}

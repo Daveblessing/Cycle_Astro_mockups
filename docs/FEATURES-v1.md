@@ -98,7 +98,10 @@
 - [x] Exemple Krizoua = **texte Dave verbatim** (Sinfra) dans UI `#/reading` + `TEMPLATE-LECTURE-CHEMIN-v0.md`
 - [x] Ton boussole / anti-fatalisme + disclaimer bien-être sous la lecture
 - [x] **AC :** Krizoua affiche le texte long mot pour mot (chemin 3 · jour 17/8 · Balance 3e décan · compétences RP/négo/coaching…)
-- [ ] **AC :** calculateur menstruation `#/calculator` inchangé / non régressé
+- [x] **P0.12 enrichi (Gemini)** — générateur structuré : Mission d’âme, Forces 5–7, Ombres+transformation, Relations/Travail/Énergie, vibration (sens+alliance+concret), signe×décan riche, 6–10 domaines chemin×signe, plan 7 jours, 5 questions miroir — UI cards « Lecture détaillée »
+- [x] Labels UI : « Lecture détaillée » / « Analyse approfondie · style guide KD » + CTA « Générer une lecture détaillée »
+- [x] Docs : `TEMPLATE-LECTURE-CHEMIN-v0.md` niveau Gemini + note FEATURES P0.12 enrichi
+- [x] **AC :** calculateur menstruation `#/calculator` inchangé / non régressé
 
 ## P1 — Should-have v1
 
