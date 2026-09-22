@@ -187,6 +187,17 @@
 ---
 
 
+
+### P0.13 Profil complet multi-personnes (maquette)
+- [x] Formulaire prénom / nom / genre / date / heure / ville sur `#/reading` (alias `#/profil-complet`)
+- [x] Sortie profil complet : synthèse pills, chemin, astro+décan, numérique, chiffres de chance, couleurs & parfums, cultiver/axes, plan 7j, miroirs, disclaimer
+- [x] Genre adapte le ton (elle / il / iel) — pas de contenu médical
+- [x] Pas de faux ascendant sans heure (note explicite)
+- [x] `localStorage ca_profile_v1` + profils récents (max 5)
+- [x] Aïcha = seed démo ; générateur = données formulaire ; Krizoua verbatim conservé
+- [x] Docs : `PROFILE-COMPLET-v0.md` + note TEMPLATE
+- [x] **AC :** toute personne obtient un profil propre ; multi-profils OK sur le même téléphone
+
 ## Maquettes UX — v3.3
 - [x] **v3.3 UX polish** — sophistiqué (glass/or/typo/transitions) + manipulation simplifiée (CTA piliers, chips hub, formulaires Lecture/Calculateur, nav glow, ripple/toast)
 

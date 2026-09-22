@@ -45,7 +45,7 @@ Hash exemples : `#/splash` · `#/today` · `#/cycle` · `#/calculator` · `#/moo
 5. **Lune** — phase du jour + énergie douce + calendrier lunaire simplifié  
 6. **Astro** — message du jour + natal lite + énergies + tags favorables  
 7. **Chemin de vie** — nombre 8 + lecture + invitations + CTA lecture complète  
-8. **Lecture détaillée** `#/reading` — générateur Gemini (mission, forces, ombres, plan 7j, miroirs…) + Krizoua verbatim  
+8. **Profil complet** `#/reading` (alias `#/profil-complet`) — formulaire multi-personnes (prénom, nom, genre, date, heure, ville) · chemin · astro · numérique · chiffres/couleurs/parfums de chance · plan 7j · Krizoua verbatim  
 9. **Journal / check-in** — humeur, symptômes soft, énergie, historique  
 10. **Profil / Réglages** — disclaimer relisible + Retour au Market  
 11. **Calculateur de menstruation** — estimations prochaines règles + phase soft (entrée Cycle / Hub / Plus)  
@@ -95,6 +95,10 @@ Bible · wireframes · features P0 · PLAN-P0 · **TEMPLATE-LECTURE-CHEMIN-v0** 
 *King Daveblessing · Cycle & Astro · v3.3 · septembre 2026*
 
 
+
+## Changelog v3.3+
+
+- **Profil complet multi-personnes** — toute personne entre ses données → profil soigné ; `ca_profile_v1` + récents (max 5) ; chance (chiffres/couleurs/parfums) ; genre elle/il/iel ; pas de faux ascendant.
 
 ## Changelog v3.3
 

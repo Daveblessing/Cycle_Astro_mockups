@@ -1,6 +1,6 @@
 /**
  * Cycle & Astro · v3.3
- * Navigation hash légère + données démo (pas de backend)
+ * Navigation hash légère + profil complet multi-personnes (pas de backend)
  * King Daveblessing · Abidjan · FR · polish premium / manipulation simple
  */
 (function () {
@@ -51,6 +51,8 @@
 
   const SCREEN_ALIASES = {
     calc: 'calculator',
+    'profil-complet': 'reading',
+    profil: 'reading',
   };
 
   const NAV_MAP = {
@@ -761,17 +763,24 @@
 
   const PERSONAS = {
     aicha: {
+      firstName: 'Aïcha',
+      lastName: '',
       name: 'Aïcha',
+      gender: 'femme',
       birth: '1998-09-17',
+      birthTime: '',
       place: 'Abidjan (CI)',
-      gifts: null, // from path defaults
+      gifts: null,
     },
     krizoua: {
+      firstName: 'Krizoua',
+      lastName: 'Yako Jean',
       name: 'Krizoua Yako Jean',
+      gender: 'homme',
       birth: '1983-10-17',
-      place: 'Sinfra (Côte d\'Ivoire)',
+      birthTime: '',
+      place: "Sinfra (Côte d'Ivoire)",
       gifts: ['Relations publiques (RP)', 'Négociation', 'Coaching', 'Stratégie'],
-      // Extra invites for KD example (merge with path)
       extraInvites: [
         'Associer créativité (3) et structure / impact (8) dans tes projets.',
         'Utiliser ton sens relationnel Balance pour ouvrir des portes, pas pour t’oublier.',
@@ -779,6 +788,227 @@
       ],
     },
   };
+
+  const PROFILE_KEY = 'ca_profile_v1';
+  const RECENT_KEY = 'ca_profiles_recent_v1';
+  const RECENT_MAX = 5;
+
+  const LUCK_BY_PATH = {
+    1: { colors: ['Rouge vif', 'Or', 'Blanc éclat'], scents: ['Poivre rose', 'Bois de cèdre', 'Agrumes zestés'] },
+    2: { colors: ['Blanc nacré', 'Rose poudré', 'Argent doux'], scents: ['Rose', 'Vanille douce', 'Thé blanc'] },
+    3: { colors: ['Jaune soleil', 'Turquoise', 'Corail'], scents: ['Fleur d’oranger', 'Bergamote', 'Mangue légère'] },
+    4: { colors: ['Vert forêt', 'Brun terre', 'Bleu ardoise'], scents: ['Vétiver', 'Bois de santal', 'Romarin'] },
+    5: { colors: ['Orange vif', 'Bleu ciel', 'Multicolore'], scents: ['Menthe', 'Gingembre', 'Citron vert'] },
+    6: { colors: ['Rose profond', 'Vert jade', 'Crème'], scents: ['Jasmin', 'Lavande', 'Miel floral'] },
+    7: { colors: ['Violet indigo', 'Blanc lunaire', 'Bleu nuit'], scents: ['Encens doux', 'Sauge', 'Myrrhe légère'] },
+    8: { colors: ['Noir profond', 'Or antique', 'Pourpre'], scents: ['Oud', 'Cuir doux', 'Patchouli'] },
+    9: { colors: ['Rouge rubis', 'Blanc pur', 'Or rose'], scents: ['Rose de Damas', 'Ambre', 'Encens floral'] },
+  };
+
+  const LUCK_BY_ELEMENT = {
+    Feu: { colors: ['Rouge', 'Orange', 'Or'], scents: ['Cannelle', 'Poivre', 'Gingembre'] },
+    Terre: { colors: ['Vert olive', 'Brun', 'Beige'], scents: ['Vétiver', 'Terre humide', 'Cèdre'] },
+    Air: { colors: ['Bleu ciel', 'Jaune pâle', 'Blanc'], scents: ['Bergamote', 'Menthe', 'Fleur d’oranger'] },
+    Eau: { colors: ['Bleu océan', 'Vert d’eau', 'Argent'], scents: ['Lotus', 'Pluie', 'Jasmin'] },
+  };
+
+  function genderVoice(gender) {
+    const g = gender || 'unspecified';
+    if (g === 'femme') {
+      return {
+        key: 'femme',
+        subject: 'elle',
+        Subject: 'Elle',
+        object: 'la',
+        poss: 'sa',
+        possM: 'son',
+        neo: 'née',
+        adj: 'e',
+        pronounLine: 'elle',
+      };
+    }
+    if (g === 'homme') {
+      return {
+        key: 'homme',
+        subject: 'il',
+        Subject: 'Il',
+        object: 'le',
+        poss: 'sa',
+        possM: 'son',
+        neo: 'né',
+        adj: '',
+        pronounLine: 'il',
+      };
+    }
+    return {
+      key: 'unspecified',
+      subject: 'iel',
+      Subject: 'Iel',
+      object: 'leu',
+      poss: 'sa',
+      possM: 'son',
+      neo: 'né·e',
+      adj: '·e',
+      pronounLine: 'iel',
+    };
+  }
+
+  function letterValue(ch) {
+    const c = ch.toUpperCase();
+    if (c >= 'A' && c <= 'Z') return c.charCodeAt(0) - 64;
+    // accents FR simplifiés
+    const map = {
+      À: 1, Á: 1, Â: 1, Ä: 1, Ã: 1,
+      È: 5, É: 5, Ê: 5, Ë: 5,
+      Ì: 9, Í: 9, Î: 9, Ï: 9,
+      Ò: 15, Ó: 15, Ô: 15, Ö: 15,
+      Ù: 21, Ú: 21, Û: 21, Ü: 21,
+      Ý: 25, Ÿ: 25,
+      Ç: 3, Ñ: 14,
+    };
+    return map[c] || 0;
+  }
+
+  function isVowelLetter(ch) {
+    const c = ch.toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return 'AEIOUY'.indexOf(c) >= 0;
+  }
+
+  function nameNumber(str, vowelsOnly) {
+    const s = String(str || '');
+    let sum = 0;
+    for (let i = 0; i < s.length; i++) {
+      const ch = s[i];
+      if (!/[A-Za-zÀ-ÿ]/.test(ch)) continue;
+      if (vowelsOnly && !isVowelLetter(ch)) continue;
+      sum += letterValue(ch);
+    }
+    return sum ? reduceDigits(sum) : null;
+  }
+
+  function expressionNumber(fullName) {
+    return nameNumber(fullName, false);
+  }
+
+  function soulNumber(fullName) {
+    return nameNumber(fullName, true);
+  }
+
+  function luckyNumbersFrom(lp, day, dayVibe, birthIso) {
+    const parts = String(birthIso || '').split('-');
+    const month = parts.length >= 2 ? Number(parts[1]) : 0;
+    const year = parts.length >= 1 ? Number(parts[0]) : 0;
+    const yearV = year ? reduceDigits(year) : null;
+    const set = [];
+    function push(n) {
+      if (n == null || n === 0) return;
+      const v = Number(n);
+      if (!set.includes(v)) set.push(v);
+    }
+    push(lp);
+    push(dayVibe);
+    push(day);
+    push(month);
+    push(yearV);
+    push(reduceDigits((lp || 0) + (dayVibe || 0)));
+    // keep max 6 symbolic numbers
+    return set.slice(0, 6);
+  }
+
+  function luckyStyle(lp, element) {
+    const byPath = LUCK_BY_PATH[lp] || LUCK_BY_PATH[8];
+    const byEl = LUCK_BY_ELEMENT[element] || { colors: [], scents: [] };
+    const colors = [];
+    const scents = [];
+    (byPath.colors || []).forEach((c) => { if (!colors.includes(c)) colors.push(c); });
+    (byEl.colors || []).forEach((c) => { if (!colors.includes(c)) colors.push(c); });
+    (byPath.scents || []).forEach((c) => { if (!scents.includes(c)) scents.push(c); });
+    (byEl.scents || []).forEach((c) => { if (!scents.includes(c)) scents.push(c); });
+    return { colors: colors.slice(0, 5), scents: scents.slice(0, 5) };
+  }
+
+  function loadLastProfile() {
+    try {
+      const raw = localStorage.getItem(PROFILE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveLastProfile(profile) {
+    try {
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+    } catch (e) { /* ignore */ }
+    pushRecentProfile(profile);
+  }
+
+  function loadRecentProfiles() {
+    try {
+      const raw = localStorage.getItem(RECENT_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function pushRecentProfile(profile) {
+    if (!profile || !profile.birthIso) return;
+    let list = loadRecentProfiles().filter((p) => {
+      return !(
+        p.birthIso === profile.birthIso &&
+        (p.firstName || '') === (profile.firstName || '') &&
+        (p.lastName || '') === (profile.lastName || '')
+      );
+    });
+    list.unshift({
+      firstName: profile.firstName || '',
+      lastName: profile.lastName || '',
+      name: profile.name || '',
+      gender: profile.gender || 'unspecified',
+      birthIso: profile.birthIso,
+      birthTime: profile.birthTime || '',
+      place: profile.place || '',
+      lifePath: profile.lifePath,
+      sign: profile.sign,
+      savedAt: Date.now(),
+    });
+    list = list.slice(0, RECENT_MAX);
+    try {
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list));
+    } catch (e) { /* ignore */ }
+    renderRecentProfiles();
+  }
+
+  function renderRecentProfiles() {
+    const wrap = document.getElementById('recentProfiles');
+    const listEl = document.getElementById('recentProfilesList');
+    if (!wrap || !listEl) return;
+    const list = loadRecentProfiles();
+    if (!list.length) {
+      wrap.hidden = true;
+      listEl.innerHTML = '';
+      return;
+    }
+    wrap.hidden = false;
+    listEl.innerHTML = list
+      .map((p, i) => {
+        const label =
+          escapeHtml((p.firstName || p.name || 'Profil') + (p.lastName ? ' ' + p.lastName : '')) +
+          ' · ' +
+          escapeHtml(p.birthIso || '') +
+          (p.lifePath ? ' · chemin ' + p.lifePath : '');
+        return (
+          '<li><button type="button" class="recent-item" data-recent-index="' +
+          i +
+          '" data-ripple>' +
+          label +
+          '</button></li>'
+        );
+      })
+      .join('');
+  }
 
   function formatBirthFr(iso) {
     const parts = String(iso).split('-');
@@ -801,7 +1031,30 @@
     return Number(parts[2]) + ' ' + months[Number(parts[1])] + ' ' + parts[0];
   }
 
-  function buildReading(name, birthIso, place, giftsOverride, extraInvites) {
+  function buildReading(input, birthIso, place, giftsOverride, extraInvites) {
+    // Compat: buildReading(name, ...) OR buildReading({ firstName, lastName, gender, birthTime, ... })
+    let firstName = '';
+    let lastName = '';
+    let gender = 'unspecified';
+    let birthTime = '';
+    let name = '';
+    if (input && typeof input === 'object') {
+      firstName = (input.firstName || '').trim();
+      lastName = (input.lastName || '').trim();
+      gender = input.gender || 'unspecified';
+      birthTime = (input.birthTime || '').trim();
+      place = input.place != null ? input.place : place;
+      birthIso = input.birthIso || input.birth || birthIso;
+      giftsOverride = input.giftsOverride != null ? input.giftsOverride : giftsOverride;
+      extraInvites = input.extraInvites != null ? input.extraInvites : extraInvites;
+      name = (input.name || [firstName, lastName].filter(Boolean).join(' ')).trim();
+    } else {
+      name = String(input || '').trim();
+      const parts = name.split(/\s+/);
+      firstName = parts[0] || '';
+      lastName = parts.slice(1).join(' ');
+    }
+
     const lp = lifePathFromDate(birthIso);
     const dv = dayVibeFromDate(birthIso);
     const ss = sunSignDecan(birthIso);
@@ -814,6 +1067,8 @@
       (DECAN_RULERS[ss.sign] && DECAN_RULERS[ss.sign][ss.decan]) ||
       (signMeta && signMeta.planet) ||
       '—';
+    const voice = genderVoice(gender);
+    const fullName = name || firstName || 'Lecteur·rice';
 
     const weekPlan = (path.weekPlan || path.invites || []).slice();
     if (extraInvites && extraInvites.length) {
@@ -839,10 +1094,57 @@
       ' · décan : ' +
       ruler;
 
+    const expr = expressionNumber(fullName);
+    const soul = soulNumber(fullName);
+    const luckNums = luckyNumbersFrom(lp, dv.day, dv.vibe, birthIso);
+    const luckStyle = luckyStyle(lp, signMeta ? signMeta.element : '');
+
+    const cultivate = (path.strengths || []).slice(0, 4).map((s) => {
+      return 'Cultiver : ' + s.replace(/\s*—\s*.*$/, '').trim();
+    });
+    if (!cultivate.length) {
+      cultivate.push('Cultiver la clarté de ton intention cette semaine.');
+    }
+
+    const attention = (path.shadows || []).slice(0, 4).map((s) => {
+      const parts = String(s).split('→');
+      if (parts.length > 1) return 'Attention : ' + parts[0].trim() + ' — piste : ' + parts[1].trim();
+      return 'Attention : ' + s;
+    });
+    if (!attention.length) {
+      attention.push('Attention : éviter de figer cette lecture comme un destin.');
+    }
+
+    // Légères adaptations de ton selon le genre (phrases courtes)
+    const forceLead =
+      voice.key === 'femme'
+        ? 'Elle peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.'
+        : voice.key === 'homme'
+          ? 'Il peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.'
+          : 'Iel peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.';
+
+    const whatCanDo =
+      voice.key === 'femme'
+        ? 'Ce qu’elle peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.'
+        : voice.key === 'homme'
+          ? 'Ce qu’il peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.'
+          : 'Ce qu’iel peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.';
+
+    const ascNote = birthTime
+      ? 'Heure saisie : ' +
+        birthTime +
+        ' — l’ascendant précis nécessite aussi un lieu géolocalisé et une éphéméride ; non calculé dans cette maquette (signe solaire + décan seulement).'
+      : 'Ascendant non calculé sans heure de naissance — signe solaire et décan uniquement.';
+
     return {
-      name: name || 'Lecteur·rice',
+      firstName: firstName,
+      lastName: lastName,
+      name: fullName,
+      gender: gender,
+      voice: voice,
       birthIso: birthIso,
       birthFr: formatBirthFr(birthIso),
+      birthTime: birthTime,
       place: place || '',
       lifePath: lp,
       pathTitle: path.title,
@@ -854,6 +1156,8 @@
       inWork: path.inWork || '',
       inEnergy: path.inEnergy || '',
       pathParas: path.paras || [],
+      forceLead: forceLead,
+      whatCanDo: whatCanDo,
       day: dv.day,
       dayVibe: dv.vibe,
       dayVibeShort: typeof dayCopy === 'string' ? dayCopy : dayCopy.short || '',
@@ -872,6 +1176,14 @@
       decanRuler: ruler,
       signLine: signLine,
       pathSignAlliance: alliancePathSign(lp, path.title, signMeta),
+      ascNote: ascNote,
+      expression: expr,
+      soul: soul,
+      luckyNumbers: luckNums,
+      luckyColors: luckStyle.colors,
+      luckyScents: luckStyle.scents,
+      cultivate: cultivate,
+      attention: attention,
       domains: domains,
       gifts: domains,
       weekPlan: weekPlan.slice(0, 7),
@@ -912,11 +1224,13 @@
       if (el) el.innerHTML = html;
     };
 
+    const neo = (data.voice && data.voice.neo) || 'né·e';
     set('outName', data.name);
-    set(
-      'outBirthPlace',
-      data.birthFr + (data.place ? ' · ' + data.place : '')
-    );
+    let meta = neo + ' le ' + data.birthFr;
+    if (data.place) meta += ' à ' + data.place;
+    if (data.birthTime) meta += ' · ' + data.birthTime;
+    set('outBirthPlace', meta);
+
     set('outLifePath', data.lifePath + ' · ' + data.pathTitle);
     set('outDayVibe', data.day + ' → vibration ' + data.dayVibe);
     set(
@@ -927,6 +1241,28 @@
         data.decan +
         'e décan'
     );
+    set('outElement', data.signElement || '—');
+
+    const pills = document.getElementById('outSynthPills');
+    if (pills) {
+      const items = [
+        { k: 'Chemin', v: String(data.lifePath) },
+        { k: 'Signe', v: (data.signGlyph ? data.signGlyph + ' ' : '') + data.sign },
+        { k: 'Vib. jour', v: String(data.dayVibe) },
+        { k: 'Élément', v: data.signElement || '—' },
+      ];
+      pills.innerHTML = items
+        .map(
+          (it) =>
+            '<span class="synth-pill"><span class="pk">' +
+            escapeHtml(it.k) +
+            '</span><span class="pv">' +
+            escapeHtml(it.v) +
+            '</span></span>'
+        )
+        .join('');
+    }
+
     set('outPathNum', String(data.lifePath));
     set('outPathTitle', data.pathTitle);
     set('outPathCalc', data.pathCalc || '');
@@ -938,6 +1274,9 @@
         '<p class="body">' +
         escapeHtml(data.mission) +
         '</p>' +
+        '<p class="body" style="margin-top:8px;">' +
+        escapeHtml(data.forceLead || '') +
+        '</p>' +
         '</div>' +
         '<div class="read-sec">' +
         '<h4 class="read-subh">Forces</h4>' +
@@ -946,6 +1285,11 @@
         '<div class="read-sec">' +
         '<h4 class="read-subh">Défis / ombres — et comment les transformer</h4>' +
         ulHtml(data.shadows, 'read-bullets') +
+        '</div>' +
+        '<div class="read-sec">' +
+        '<p class="body">' +
+        escapeHtml(data.whatCanDo || '') +
+        '</p>' +
         '</div>' +
         '<div class="read-sec read-tri">' +
         '<h4 class="read-subh">En relations</h4>' +
@@ -977,6 +1321,11 @@
         '</p>'
     );
 
+    set('outNumPath', String(data.lifePath) + ' · ' + data.pathTitle);
+    set('outNumDay', data.day + ' → ' + data.dayVibe);
+    set('outNumExpr', data.expression != null ? String(data.expression) : '— (nom requis)');
+    set('outNumSoul', data.soul != null ? String(data.soul) : '— (nom requis)');
+
     set('outSignLine', data.signLine || data.sign + ' · ' + data.decan + 'e décan');
     setHtml(
       'outSignTraits',
@@ -995,6 +1344,40 @@
         escapeHtml(data.signRelational) +
         '</p>'
     );
+
+    const ascEl = document.getElementById('outAscNote');
+    if (ascEl) {
+      ascEl.hidden = false;
+      ascEl.textContent = data.ascNote || '';
+    }
+
+    const luckN = document.getElementById('outLuckyNumbers');
+    if (luckN) {
+      luckN.innerHTML = (data.luckyNumbers || [])
+        .map((n) => '<span class="luck-chip num">' + escapeHtml(String(n)) + '</span>')
+        .join('');
+    }
+    const luckC = document.getElementById('outLuckyColors');
+    if (luckC) {
+      luckC.innerHTML = (data.luckyColors || [])
+        .map((n) => '<span class="luck-chip color">' + escapeHtml(n) + '</span>')
+        .join('');
+    }
+    const luckS = document.getElementById('outLuckyScents');
+    if (luckS) {
+      luckS.innerHTML = (data.luckyScents || [])
+        .map((n) => '<span class="luck-chip scent">' + escapeHtml(n) + '</span>')
+        .join('');
+    }
+
+    const cult = document.getElementById('outCultivate');
+    if (cult) {
+      cult.innerHTML = (data.cultivate || []).map((g) => '<li>' + escapeHtml(g) + '</li>').join('');
+    }
+    const att = document.getElementById('outAttention');
+    if (att) {
+      att.innerHTML = (data.attention || []).map((g) => '<li>' + escapeHtml(g) + '</li>').join('');
+    }
 
     const gifts = document.getElementById('outGifts');
     if (gifts) {
@@ -1018,7 +1401,6 @@
         .join('');
     }
 
-    // legacy invites container if still present
     const invites = document.getElementById('outInvites');
     if (invites) {
       invites.innerHTML = (data.weekPlan || data.invites || [])
@@ -1026,17 +1408,68 @@
         .join('');
     }
 
+    saveLastProfile(data);
     out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function fillReadingForm(personaKey) {
     const p = PERSONAS[personaKey] || PERSONAS.aicha;
-    const nameEl = document.getElementById('readName');
+    const first = document.getElementById('readFirstName');
+    const last = document.getElementById('readLastName');
+    const gender = document.getElementById('readGender');
     const birthEl = document.getElementById('readBirth');
+    const timeEl = document.getElementById('readBirthTime');
     const placeEl = document.getElementById('readPlace');
-    if (nameEl) nameEl.value = p.name;
+    const nameEl = document.getElementById('readName');
+    if (first) first.value = p.firstName || p.name || '';
+    if (last) last.value = p.lastName || '';
+    if (gender) gender.value = p.gender || 'unspecified';
     if (birthEl) birthEl.value = p.birth;
+    if (timeEl) timeEl.value = p.birthTime || '';
     if (placeEl) placeEl.value = p.place;
+    if (nameEl) nameEl.value = p.name || [p.firstName, p.lastName].filter(Boolean).join(' ');
+  }
+
+  function fillReadingFormFromProfile(p) {
+    if (!p) return;
+    const first = document.getElementById('readFirstName');
+    const last = document.getElementById('readLastName');
+    const gender = document.getElementById('readGender');
+    const birthEl = document.getElementById('readBirth');
+    const timeEl = document.getElementById('readBirthTime');
+    const placeEl = document.getElementById('readPlace');
+    const nameEl = document.getElementById('readName');
+    if (first) first.value = p.firstName || '';
+    if (last) last.value = p.lastName || '';
+    if (gender) gender.value = p.gender || 'unspecified';
+    if (birthEl) birthEl.value = p.birthIso || p.birth || '';
+    if (timeEl) timeEl.value = p.birthTime || '';
+    if (placeEl) placeEl.value = p.place || '';
+    if (nameEl) {
+      nameEl.value =
+        p.name || [p.firstName, p.lastName].filter(Boolean).join(' ');
+    }
+  }
+
+  function readFormPayload() {
+    const firstName = ((document.getElementById('readFirstName') || {}).value || '').trim();
+    const lastName = ((document.getElementById('readLastName') || {}).value || '').trim();
+    const gender = ((document.getElementById('readGender') || {}).value || 'unspecified');
+    const birth = ((document.getElementById('readBirth') || {}).value || '').trim();
+    const birthTime = ((document.getElementById('readBirthTime') || {}).value || '').trim();
+    const place = ((document.getElementById('readPlace') || {}).value || '').trim();
+    const name = [firstName, lastName].filter(Boolean).join(' ');
+    const nameEl = document.getElementById('readName');
+    if (nameEl) nameEl.value = name;
+    return {
+      firstName: firstName,
+      lastName: lastName,
+      name: name,
+      gender: gender,
+      birthIso: birth,
+      birthTime: birthTime,
+      place: place,
+    };
   }
 
   function setPersonaActive(key) {
@@ -1053,7 +1486,9 @@
     if (formCard) formCard.style.opacity = '0.55';
     if (btn) btn.disabled = true;
     setTimeout(() => {
-      try { done(); } finally {
+      try {
+        done();
+      } finally {
         if (loading) loading.hidden = true;
         if (formCard) formCard.style.opacity = '';
         if (btn) btn.disabled = false;
@@ -1062,27 +1497,45 @@
   }
 
   function generateFromForm() {
-    const name = (document.getElementById('readName') || {}).value || '';
-    const birth = (document.getElementById('readBirth') || {}).value || '';
-    const place = (document.getElementById('readPlace') || {}).value || '';
-    if (!birth) {
+    const payload = readFormPayload();
+    if (!payload.firstName) {
+      toast('Indique un prénom');
+      const el = document.getElementById('readFirstName');
+      if (el) el.focus();
+      return;
+    }
+    if (!payload.birthIso) {
       toast('Indique une date de naissance');
       return;
     }
     const k = PERSONAS.krizoua;
     // Exemple KD : texte Dave verbatim — pas de reconstruction
     if (
-      birth === k.birth &&
-      (name.trim() === k.name || name.toLowerCase().includes('krizoua'))
+      payload.birthIso === k.birth &&
+      (payload.name === k.name ||
+        payload.firstName.toLowerCase().includes('krizoua') ||
+        payload.name.toLowerCase().includes('krizoua'))
     ) {
       withReadingLoading(() => {
         setPersonaActive('krizoua');
         renderKrizouaVerbatim();
+        // Persist form identity anyway for multi-person UX
+        saveLastProfile({
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          name: payload.name || k.name,
+          gender: payload.gender || 'homme',
+          birthIso: payload.birthIso,
+          birthTime: payload.birthTime,
+          place: payload.place || k.place,
+          lifePath: 3,
+          sign: 'Balance',
+        });
         toast('Exemple KD · Krizoua ✦');
       });
       return;
     }
-    const data = buildReading(name.trim(), birth, place.trim(), null, null);
+    const data = buildReading(payload);
     if (!data) {
       toast('Date invalide');
       return;
@@ -1090,7 +1543,7 @@
     withReadingLoading(() => {
       setPersonaActive('aicha');
       renderReading(data);
-      toast('Lecture générée ✦');
+      toast('Profil complet généré ✦');
     });
   }
 
@@ -1110,7 +1563,15 @@
         setPersonaActive('aicha');
         fillReadingForm('aicha');
         const p = PERSONAS.aicha;
-        const data = buildReading(p.name, p.birth, p.place, null, null);
+        const data = buildReading({
+          firstName: p.firstName,
+          lastName: p.lastName,
+          name: p.name,
+          gender: p.gender,
+          birthIso: p.birth,
+          birthTime: p.birthTime || '',
+          place: p.place,
+        });
         renderReading(data);
       });
     }
@@ -1122,8 +1583,46 @@
       });
     }
 
-    // Default: Aïcha filled, output hidden until generate OR auto on first visit
-    fillReadingForm('aicha');
+    const recentList = document.getElementById('recentProfilesList');
+    if (recentList) {
+      recentList.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-recent-index]');
+        if (!btn) return;
+        const idx = Number(btn.getAttribute('data-recent-index'));
+        const list = loadRecentProfiles();
+        const p = list[idx];
+        if (!p) return;
+        fillReadingFormFromProfile(p);
+        setPersonaActive('aicha');
+        if (
+          p.birthIso === PERSONAS.krizoua.birth &&
+          ((p.name || '').toLowerCase().includes('krizoua') ||
+            (p.firstName || '').toLowerCase().includes('krizoua'))
+        ) {
+          renderKrizouaVerbatim();
+          return;
+        }
+        const data = buildReading({
+          firstName: p.firstName,
+          lastName: p.lastName,
+          name: p.name,
+          gender: p.gender,
+          birthIso: p.birthIso,
+          birthTime: p.birthTime || '',
+          place: p.place,
+        });
+        if (data) renderReading(data);
+      });
+    }
+
+    // Prefill: last saved profile, else Aïcha seed
+    const last = loadLastProfile();
+    if (last && last.birthIso) {
+      fillReadingFormFromProfile(last);
+    } else {
+      fillReadingForm('aicha');
+    }
+    renderRecentProfiles();
   }
 
   /* —— Calculateur de menstruation —— */

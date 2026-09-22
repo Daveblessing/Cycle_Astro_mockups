@@ -112,7 +112,7 @@
           </div>
           <div class="hub-chips" aria-label="Raccourcis">
             <button type="button" class="hub-chip" data-go="calculator" data-ripple>◉ Calculateur</button>
-            <button type="button" class="hub-chip" data-go="reading" data-ripple>✦ Lecture</button>
+            <button type="button" class="hub-chip" data-go="reading" data-ripple>✦ Profil complet</button>
           </div>
 
           <div class="grid-2 pillars-grid">
@@ -356,7 +356,7 @@
               <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
             </div>
             <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
-            <button class="btn btn-ghost btn-sm" type="button" data-go="reading" style="margin-top:12px;width:auto;">Lecture détaillée chemin / soleil →</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-go="reading" style="margin-top:12px;width:auto;">Profil complet chemin / soleil →</button>
           </div>
         </section>
 
@@ -389,7 +389,7 @@
             </ul>
           </div>
 
-          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Voir la lecture détaillée</button>
+          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Générer mon profil complet</button>
           <p class="tiny" style="text-align:center;margin-top:8px;">Chemin · jour · signe &amp; décan · dons · axes</p>
 
           <p class="footnote">Ce n’est pas un destin figé. Juste une boussole à explorer — tu restes libre.</p>
@@ -488,7 +488,7 @@
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
               <li><button type="button" data-go="path">Mon chemin de vie <span class="chev">›</span></button></li>
-              <li><button type="button" data-go="reading">Lecture détaillée <span class="chev">›</span></button></li>
+              <li><button type="button" data-go="reading">Profil complet <span class="chev">›</span></button></li>
               <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev">›</span></button></li>
               <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev">›</span></button></li>
               <li><button type="button">Modifier mes infos <span class="chev">›</span></button></li>
@@ -524,42 +524,66 @@
 
 
         <!-- 11. Lecture détaillée Chemin / Astro -->
-        <section class="view" id="view-reading" data-screen="reading" data-label="Lecture détaillée" data-nav="today">
+        <section class="view" id="view-reading" data-screen="reading" data-label="Profil complet" data-nav="today">
           <div class="app-header">
             <button class="back" data-go="today" type="button">← Aujourd’hui</button>
-            <span class="title">Lecture</span>
+            <span class="title">Profil</span>
             <div class="side right"></div>
           </div>
 
-          <h2 class="h-serif h1" style="margin-bottom:4px;">Lecture détaillée</h2>
-          <p class="body-muted" style="margin-bottom:12px;">Analyse approfondie · style guide KD — chemin · vibration du jour · signe &amp; décan. Une boussole, pas un destin.</p>
+          <h2 class="h-serif h1" style="margin-bottom:4px;">Profil complet</h2>
+          <p class="body-muted" style="margin-bottom:12px;">Toute personne · chemin · astro · chiffres &amp; couleurs de chance · boussole douce, pas un destin.</p>
 
           <div class="persona-toggle krizoua-toggle" role="tablist" aria-label="Mode lecture">
-            <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha" data-ripple>Générateur · Aïcha</button>
+            <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha" data-ripple>Démo · Aïcha</button>
             <button type="button" class="persona-btn persona-krizoua" id="btnPersonaKrizoua" data-persona="krizoua" data-ripple>✦ Krizoua verbatim</button>
           </div>
 
           <div class="card glass-card" id="readingFormCard">
-            <form id="readingForm" class="simple-form" novalidate>
+            <form id="readingForm" class="simple-form profile-form" novalidate>
+              <div class="form-row-2">
+                <label class="field">
+                  <span class="field-label">Prénom <em class="req">*</em></span>
+                  <input type="text" id="readFirstName" name="firstName" placeholder="Ex. Aïcha" autocomplete="given-name" required />
+                </label>
+                <label class="field">
+                  <span class="field-label">Nom</span>
+                  <input type="text" id="readLastName" name="lastName" placeholder="Ex. Koné" autocomplete="family-name" />
+                </label>
+              </div>
               <label class="field">
-                <span class="field-label">Nom</span>
-                <input type="text" id="readName" name="name" placeholder="Ex. Aïcha" autocomplete="name" />
+                <span class="field-label">Genre <span class="opt">(optionnel)</span></span>
+                <select id="readGender" name="gender">
+                  <option value="unspecified">Non précisé</option>
+                  <option value="femme">Femme</option>
+                  <option value="homme">Homme</option>
+                </select>
               </label>
               <label class="field">
-                <span class="field-label">Date</span>
+                <span class="field-label">Date de naissance <em class="req">*</em></span>
                 <input type="date" id="readBirth" name="birth" required />
               </label>
               <label class="field">
-                <span class="field-label">Lieu</span>
-                <input type="text" id="readPlace" name="place" placeholder="Ex. Abidjan" />
+                <span class="field-label">Heure de naissance <span class="opt">(recommandée)</span></span>
+                <input type="time" id="readBirthTime" name="birthTime" />
               </label>
-              <button class="btn btn-primary btn-lg btn-generate-reading" type="submit" id="btnGenerateReading" data-ripple>✦ Générer</button>
+              <label class="field">
+                <span class="field-label">Ville de naissance</span>
+                <input type="text" id="readPlace" name="place" placeholder="Ex. Abidjan" autocomplete="address-level2" />
+              </label>
+              <!-- legacy hidden name for Krizoua detect / compat -->
+              <input type="hidden" id="readName" name="name" value="" />
+              <button class="btn btn-primary btn-lg btn-generate-reading" type="submit" id="btnGenerateReading" data-ripple>✦ Générer mon profil complet</button>
             </form>
-            <p class="tiny form-hint" id="readingEmptyHint">3 champs · un tap · lecture douce (pas un destin).</p>
+            <p class="tiny form-hint" id="readingEmptyHint">Prénom + date · le reste affine la lecture (heure → note ascendant).</p>
+            <div id="recentProfiles" class="recent-profiles" hidden>
+              <p class="tiny recent-label">Profils récents</p>
+              <ul class="recent-list" id="recentProfilesList"></ul>
+            </div>
           </div>
           <div class="loading-state" id="readingLoading" hidden>
             <div class="loading-orb" aria-hidden="true"></div>
-            <p class="body-muted">Génération de ta lecture…</p>
+            <p class="body-muted">Génération de ton profil complet…</p>
           </div>
 
           <div id="readingOutput" hidden>
@@ -573,22 +597,24 @@
               <p class="footnote" id="readVerbatimDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
             </div>
 
-            <!-- Mode générateur structuré (autres dates / Aïcha) -->
+            <!-- Mode générateur structuré (multi-personnes) -->
             <div id="readStructuredWrap">
               <!-- 1. En-tête identité -->
               <div class="card reading-id" id="readBlockId">
-                <p class="tiny" style="letter-spacing:0.16em;color:var(--gold);margin-bottom:6px;">✦ IDENTITÉ ✦</p>
+                <p class="tiny" style="letter-spacing:0.16em;color:var(--gold);margin-bottom:6px;">✦ PROFIL COMPLET ✦</p>
                 <p class="read-name" id="outName">—</p>
                 <p class="read-meta" id="outBirthPlace">—</p>
               </div>
 
-              <!-- 2. Tableau synthèse -->
+              <!-- 2. Synthèse pills -->
               <div class="card">
                 <h3 class="h-serif h3">Synthèse</h3>
+                <div class="synth-pills" id="outSynthPills" aria-label="Synthèse rapide"></div>
                 <ul class="synth-grid" id="outSynth">
                   <li><span class="k">Chemin de vie</span><strong id="outLifePath">—</strong></li>
-                  <li><span class="k">Jour · vibration</span><strong id="outDayVibe">—</strong></li>
                   <li><span class="k">Signe · décan</span><strong id="outSignDecan">—</strong></li>
+                  <li><span class="k">Vibration jour</span><strong id="outDayVibe">—</strong></li>
+                  <li><span class="k">Élément</span><strong id="outElement">—</strong></li>
                 </ul>
               </div>
 
@@ -603,42 +629,79 @@
                 <div class="body reading-body" id="outPathBody"></div>
               </div>
 
-              <!-- 4. Vibration jour -->
+              <!-- 4. Astro -->
               <div class="card">
-                <h3 class="h-serif h3">Vibration du jour de naissance</h3>
-                <p class="vibe-badge"><span id="outVibeNum">—</span></p>
-                <div class="body" id="outVibeText">—</div>
-              </div>
-
-              <!-- 5. Signe & décan -->
-              <div class="card">
-                <h3 class="h-serif h3">Signe &amp; décan</h3>
+                <h3 class="h-serif h3">Astrologie · signe &amp; décan</h3>
                 <p class="sign-line" id="outSignLine">—</p>
                 <div class="body" id="outSignTraits">—</div>
+                <p class="body-muted asc-note" id="outAscNote" hidden></p>
               </div>
 
-              <!-- 6. Domaines de compétences -->
+              <!-- 5. Profil numérique -->
               <div class="card">
-                <h3 class="h-serif h3">Domaines de compétences suggérés</h3>
-                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Pistes concrètes adaptées à ton chemin × signe — à explorer librement, sans dogme.</p>
+                <h3 class="h-serif h3">Profil numérique</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Chemin · vibration du jour · expression / âme simplifiés (lettres du nom, A=1…).</p>
+                <ul class="synth-grid" id="outNumProfile">
+                  <li><span class="k">Chemin</span><strong id="outNumPath">—</strong></li>
+                  <li><span class="k">Jour · vib.</span><strong id="outNumDay">—</strong></li>
+                  <li><span class="k">Expression</span><strong id="outNumExpr">—</strong></li>
+                  <li><span class="k">Âme (voyelles)</span><strong id="outNumSoul">—</strong></li>
+                </ul>
+                <div class="body" id="outVibeText" style="margin-top:10px;">—</div>
+                <p class="vibe-badge" style="margin-top:8px;"><span id="outVibeNum">—</span></p>
+              </div>
+
+              <!-- 6. Chiffres de chance -->
+              <div class="card">
+                <h3 class="h-serif h3">Chiffres de chance</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Suggestions symboliques dérivées du chemin, du jour et de la date — pas une garantie.</p>
+                <div class="luck-chips" id="outLuckyNumbers"></div>
+              </div>
+
+              <!-- 7. Couleurs & parfums -->
+              <div class="card">
+                <h3 class="h-serif h3">Couleurs &amp; parfums de chance</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Suggestions bien-être (chemin × élément) — à explorer librement, sans dogme.</p>
+                <div class="luck-block">
+                  <p class="tiny luck-k">Couleurs</p>
+                  <div class="luck-chips colors" id="outLuckyColors"></div>
+                </div>
+                <div class="luck-block" style="margin-top:10px;">
+                  <p class="tiny luck-k">Parfums / notes</p>
+                  <div class="luck-chips scents" id="outLuckyScents"></div>
+                </div>
+              </div>
+
+              <!-- 8. Cultiver / Axes -->
+              <div class="card">
+                <h3 class="h-serif h3">Ce que tu peux cultiver</h3>
+                <ul class="read-bullets" id="outCultivate"></ul>
+                <h3 class="h-serif h3" style="margin-top:14px;">Axes d’attention</h3>
+                <ul class="read-bullets" id="outAttention"></ul>
+              </div>
+
+              <!-- 9. Domaines -->
+              <div class="card">
+                <h3 class="h-serif h3">Domaines à explorer</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Pistes concrètes chemin × signe — invitations, pas prescriptions.</p>
                 <ul class="read-bullets domains-list" id="outGifts"></ul>
               </div>
 
-              <!-- 7. Plan 7 jours -->
+              <!-- 10. Plan 7 jours -->
               <div class="card">
                 <h3 class="h-serif h3">Plan d’exploration · 7 jours</h3>
-                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Actions douces, non dogmatiques — ajuste selon ton rythme et ton cycle.</p>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Actions douces — ajuste selon ton rythme.</p>
                 <ul class="read-bullets week-list" id="outWeekPlan"></ul>
               </div>
 
-              <!-- 8. Questions miroir -->
+              <!-- 11. Questions miroir -->
               <div class="card">
                 <h3 class="h-serif h3">Questions miroir</h3>
                 <ul class="read-bullets mirror-list" id="outMirrors"></ul>
               </div>
 
-              <!-- 9. Disclaimer -->
-              <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
+              <!-- 12. Disclaimer -->
+              <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Chiffres, couleurs et parfums sont des suggestions symboliques. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
 
             </div>
           </div>

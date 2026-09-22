@@ -213,3 +213,16 @@ Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce
 ---
 
 *Template Lecture Chemin v0 — Cycle & Astro · King Daveblessing · Abidjan*
+
+---
+
+## Extension · Profil complet (v0 · sept. 2026)
+
+Le même écran `#/reading` (alias `#/profil-complet`) accueille désormais un **profil complet multi-personnes** :
+
+- Champs enrichis : prénom, nom, genre, heure, ville  
+- Sections ajoutées : chiffres de chance, couleurs & parfums, profil numérique (expression/âme), cultiver / axes d’attention  
+- Genre → ton elle/il/iel ; heure absente → *ascendant non calculé* (pas de faux calcul)  
+- Persistance locale `ca_profile_v1` + récents (max 5)  
+
+Voir **`PROFILE-COMPLET-v0.md`**. Krizoua verbatim et le calculateur menstruation restent inchangés.

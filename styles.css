@@ -1779,3 +1779,110 @@ body {
 .page-label { color: #d4af37; opacity: 0.95; }
 .nav-item.active { color: #e8c547; }
 .btn-primary { color: #0a0a0a; }
+
+
+/* —— Profil complet v3.3 —— */
+.profile-form .form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.profile-form .req { color: var(--gold); font-style: normal; }
+.profile-form .opt { opacity: 0.65; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.profile-form select {
+  width: 100%;
+  appearance: none;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,162,39,0.28);
+  color: var(--cream);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: inherit;
+}
+.synth-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.synth-pill {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 72px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(201,162,39,0.35);
+  background: linear-gradient(135deg, rgba(201,162,39,0.12), rgba(255,255,255,0.03));
+}
+.synth-pill .pk {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+}
+.synth-pill .pv {
+  font-family: Cinzel, serif;
+  font-size: 13px;
+  color: var(--cream);
+}
+.luck-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.luck-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(201,162,39,0.3);
+  background: rgba(255,255,255,0.04);
+  font-size: 13px;
+  color: var(--cream);
+}
+.luck-chip.num {
+  min-width: 40px;
+  justify-content: center;
+  font-family: Cinzel, serif;
+  font-size: 16px;
+  color: var(--gold);
+  border-color: rgba(201,162,39,0.55);
+  box-shadow: 0 0 18px rgba(201,162,39,0.12);
+}
+.luck-chip.color { border-color: rgba(247,240,216,0.25); }
+.luck-chip.scent { border-style: dashed; }
+.luck-k {
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.asc-note {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(201,162,39,0.06);
+  border: 1px dashed rgba(201,162,39,0.28);
+}
+.recent-profiles { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(201,162,39,0.18); }
+.recent-label { letter-spacing: 0.14em; color: var(--gold); margin-bottom: 8px; }
+.recent-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.recent-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(201,162,39,0.22);
+  background: rgba(255,255,255,0.03);
+  color: var(--cream);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.recent-item:hover, .recent-item:focus-visible {
+  border-color: rgba(201,162,39,0.55);
+  box-shadow: 0 0 16px rgba(201,162,39,0.12);
+  outline: none;
+}
