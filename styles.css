@@ -1021,6 +1021,211 @@ body {
 /* Scrollbar soft */
 .view::-webkit-scrollbar { width: 0; }
 
+
+
+/* —— Cycle menstruel hero (hub) —— */
+.cycle-hero {
+  border-color: rgba(201, 162, 39, 0.35);
+  box-shadow: var(--glow-gold);
+  cursor: pointer;
+}
+.cycle-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.cycle-hero-title {
+  margin-bottom: 0;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+}
+.cycle-hero-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.cycle-ring-wrap {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  flex-shrink: 0;
+}
+.cycle-ring {
+  display: block;
+  transform: rotate(0deg);
+}
+.cycle-ring .ring-track {
+  fill: none;
+  stroke: rgba(201, 162, 39, 0.12);
+  stroke-width: 8;
+}
+.cycle-ring .ring-period {
+  fill: none;
+  stroke: #c98a8a;
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.cycle-ring .ring-progress {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(201, 162, 39, 0.45));
+}
+.cycle-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.cycle-ring-center .day-num {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+.cycle-ring-center .day-den {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.cycle-ring-center .day-label {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-top: 4px;
+  opacity: 0.8;
+}
+.cycle-hero-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cycle-next {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--gold-soft);
+}
+.cycle-next strong { color: var(--gold); }
+.cycle-next .est {
+  color: var(--muted);
+  font-size: 11px;
+}
+.cycle-cta {
+  width: auto;
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 9px 16px;
+}
+
+.pillar-card .label {
+  line-height: 1.25;
+}
+
+/* —— Cycle screen: today + 4 phases —— */
+.cycle-today-card {
+  border-color: rgba(201, 162, 39, 0.28);
+  text-align: center;
+  padding: 14px 16px;
+}
+.cycle-today-line {
+  font-size: 14px;
+  color: var(--gold-soft);
+  letter-spacing: 0.02em;
+}
+.cycle-today-line strong { color: var(--gold); }
+
+.phases-ring-card { text-align: center; }
+.phases-ring {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  margin: 8px auto 14px;
+}
+.phases-svg { display: block; }
+.phases-track {
+  fill: none;
+  stroke: rgba(201, 162, 39, 0.1);
+  stroke-width: 14;
+}
+.phase-arc {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: butt;
+  opacity: 0.55;
+}
+.phase-menstruelle { stroke: #c98a8a; opacity: 0.75; }
+.phase-folliculaire { stroke: rgba(200, 208, 220, 0.55); }
+.phase-ovulatoire { stroke: rgba(201, 162, 39, 0.45); }
+.phase-luteale { stroke: rgba(201, 162, 39, 0.35); }
+.phase-luteale.is-current {
+  stroke: var(--gold);
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(201, 162, 39, 0.5));
+  stroke-width: 16;
+}
+.phases-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.phases-center-phase {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.phases-center-day {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.phases-legend {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: left;
+  margin: 0 4px 4px;
+}
+.phases-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phases-legend li.is-current {
+  color: var(--gold);
+  font-weight: 500;
+}
+.ph-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.ph-dot.menstruelle { background: #c98a8a; }
+.ph-dot.folliculaire { background: var(--silver-dim); }
+.ph-dot.ovulatoire { background: rgba(201, 162, 39, 0.55); border: 1px solid var(--gold); }
+.ph-dot.luteale { background: var(--gold); box-shadow: 0 0 8px rgba(201, 162, 39, 0.5); }
+
 @media (max-width: 420px) {
   body { padding: 0; }
   .page-label, .page-hint, .screen-picker { display: none; }

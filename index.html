@@ -27,11 +27,11 @@
             <div class="halo" aria-hidden="true"></div>
             <p class="brand-kd">★ KING DAVEBLESSING ★</p>
             <h1 class="brand-name">Cycle &amp; Astro</h1>
-            <p class="pillars-line">Cycle · Lune · Astro · Chemin</p>
+            <p class="pillars-line">calendrier menstruel · lune · astro · chemin de vie</p>
             <div class="divider" style="width:60%;margin:12px auto;"></div>
             <p class="tagline">Chaque jour, un miroir doux : ton cycle, la Lune, les astres, et ton chemin — réunis, sans jargon médical.</p>
             <div class="welcome-pillars" aria-label="Les quatre piliers">
-              <div class="wp"><div class="g">◉</div><div class="t">Cycle</div><div class="d">Ton corps, en douceur</div></div>
+              <div class="wp"><div class="g">◉</div><div class="t">Cycle menstruel</div><div class="d">Ton corps, en douceur</div></div>
               <div class="wp"><div class="g">☾</div><div class="t">Lune</div><div class="d">Rythmes du ciel</div></div>
               <div class="wp"><div class="g">✦</div><div class="t">Astro</div><div class="d">Message du jour</div></div>
               <div class="wp"><div class="g">8</div><div class="t">Chemin</div><div class="d">Boussole personnelle</div></div>
@@ -78,20 +78,40 @@
             <p class="date">Mardi 22 septembre 2026</p>
           </div>
 
-          <div class="card">
-            <h3 class="h-serif h3">Résumé du jour</h3>
-            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-              <div class="card-row"><span class="body-muted">Phase cycle</span><span class="phase-badge">Lutéale · estimation</span></div>
-              <div class="card-row"><span class="body-muted">Lune</span><span style="color:var(--silver);">☾ Gibbeuse décroissante</span></div>
-              <div class="card-row"><span class="body-muted">Astro</span><span style="color:var(--gold-soft);">Patience &amp; précision</span></div>
-              <div class="card-row"><span class="body-muted">Chemin</span><span style="color:var(--gold);">8 — La maîtrise</span></div>
+          <div class="card cycle-hero" data-go="cycle" role="button" tabindex="0">
+            <div class="cycle-hero-top">
+              <h3 class="h-serif h3 cycle-hero-title">Cycle menstruel</h3>
+              <span class="phase-badge">Phase lutéale</span>
+            </div>
+            <div class="cycle-hero-body">
+              <div class="cycle-ring-wrap" aria-hidden="true">
+                <svg class="cycle-ring" viewBox="0 0 120 120" width="108" height="108">
+                  <circle class="ring-track" cx="60" cy="60" r="48" />
+                  <circle class="ring-period" cx="60" cy="60" r="48"
+                    stroke-dasharray="54 248" stroke-dashoffset="0"
+                    transform="rotate(-90 60 60)" />
+                  <circle class="ring-progress" cx="60" cy="60" r="48"
+                    stroke-dasharray="238.76 301.59" stroke-dashoffset="0"
+                    transform="rotate(-90 60 60)" />
+                </svg>
+                <div class="cycle-ring-center">
+                  <span class="day-num">22</span>
+                  <span class="day-den">/ 28</span>
+                  <span class="day-label">Jour</span>
+                </div>
+              </div>
+              <div class="cycle-hero-meta">
+                <p class="cycle-next">Prochaines règles · vers le <strong>2 oct.</strong> <span class="est">(estimation)</span></p>
+                <p class="cycle-invite italic">« Ralentir et ressentir »</p>
+                <button class="btn btn-primary btn-sm cycle-cta" data-go="cycle" type="button">Voir le calendrier</button>
+              </div>
             </div>
             <p class="footnote">Estimation basée sur tes saisies — pas un avis médical.</p>
           </div>
 
           <div class="grid-2">
             <button class="pillar-card" data-go="cycle" type="button">
-              <span class="label">Cycle</span>
+              <span class="label">Cycle menstruel</span>
               <span class="glyph">◉</span>
               <span class="value">Jour 22</span>
               <span class="sub">Ralentir et ressentir</span>
@@ -125,11 +145,54 @@
         </section>
 
         <!-- 4. Cycle -->
-        <section class="view" id="view-cycle" data-screen="cycle" data-label="Cycle" data-nav="cycle">
+        <section class="view" id="view-cycle" data-screen="cycle" data-label="Cycle menstruel" data-nav="cycle">
           <div class="app-header">
             <button class="back" data-go="today" type="button">← Aujourd’hui</button>
-            <span class="title">Cycle</span>
+            <span class="title">Cycle menstruel</span>
             <div class="side right"></div>
+          </div>
+
+          <div class="card cycle-today-card">
+            <p class="cycle-today-line">Aujourd’hui · <strong>Jour 22</strong> · Phase <strong>lutéale</strong></p>
+            <p class="italic" style="margin-top:4px;">« Ralentir et ressentir »</p>
+          </div>
+
+          <div class="card phases-ring-card">
+            <h3 class="h-serif h3">Les 4 phases</h3>
+            <div class="phases-ring" role="list" aria-label="Phases du cycle menstruel">
+              <svg class="phases-svg" viewBox="0 0 200 200" width="168" height="168" aria-hidden="true">
+                <circle class="phases-track" cx="100" cy="100" r="72" />
+                <circle class="phase-arc phase-menstruelle" cx="100" cy="100" r="72"
+                  stroke-dasharray="80.78 371.61" stroke-dashoffset="0.00"
+                  transform="rotate(-90 100 100)" />
+                <circle class="phase-arc phase-folliculaire" cx="100" cy="100" r="72"
+                  stroke-dasharray="129.25 323.14" stroke-dashoffset="-80.78"
+                  transform="rotate(-90 100 100)" />
+                <circle class="phase-arc phase-ovulatoire" cx="100" cy="100" r="72"
+                  stroke-dasharray="48.47 403.92" stroke-dashoffset="-210.04"
+                  transform="rotate(-90 100 100)" />
+                <circle class="phase-arc phase-luteale is-current" cx="100" cy="100" r="72"
+                  stroke-dasharray="193.88 258.51" stroke-dashoffset="-258.51"
+                  transform="rotate(-90 100 100)" />
+              </svg>
+              <div class="phases-center">
+                <span class="phases-center-phase">Lutéale</span>
+                <span class="phases-center-day">Jour 22 / 28</span>
+              </div>
+            </div>
+            <ul class="phases-legend">
+              <li><i class="ph-dot menstruelle"></i> Menstruelle</li>
+              <li><i class="ph-dot folliculaire"></i> Folliculaire</li>
+              <li><i class="ph-dot ovulatoire"></i> Ovulatoire</li>
+              <li class="is-current"><i class="ph-dot luteale"></i> Lutéale</li>
+            </ul>
+            <p class="footnote">Estimation basée sur tes saisies — pas un avis médical. Jamais un diagnostic.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Prochaines règles</h3>
+            <p class="body">Estimation → vers le <strong style="color:var(--gold);">2 octobre 2026</strong></p>
+            <p class="tiny" style="margin-top:6px;">Longueur cycle moyenne : 28 j · règles : 5 j (modifiables)</p>
           </div>
 
           <div class="card">
@@ -138,25 +201,11 @@
               <span class="month">Septembre 2026</span>
               <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
             </div>
-            <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle"></div>
+            <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle menstruel"></div>
             <div class="cal-legend">
-              <span><i class="dot dot-period"></i> Règles (saisies)</span>
+              <span><i class="dot dot-period"></i> Jours de règles</span>
               <span><i class="dot dot-today"></i> Aujourd’hui</span>
             </div>
-          </div>
-
-          <div class="card">
-            <h3 class="h-serif h3">Phase actuelle</h3>
-            <p class="h-serif" style="font-size:18px;letter-spacing:0.08em;margin-bottom:6px;">Phase lutéale</p>
-            <p class="body" style="margin-bottom:4px;">« Ralentir et ressentir »</p>
-            <p class="italic">Invitation douce : écouter ton énergie, noter ce qui revient, sans te juger.</p>
-            <p class="footnote">Estimation basée sur tes saisies — pas un avis médical. Jamais un diagnostic.</p>
-          </div>
-
-          <div class="card">
-            <h3 class="h-serif h3">Prochaines règles</h3>
-            <p class="body">Estimation → vers le <strong style="color:var(--gold);">2 octobre 2026</strong></p>
-            <p class="tiny" style="margin-top:6px;">Longueur cycle moyenne : 28 j · règles : 5 j (modifiables)</p>
           </div>
 
           <button class="btn btn-ghost" type="button" id="btnEditPeriod">+ Ajouter / corriger une période</button>
@@ -476,7 +525,7 @@
 
       <nav class="bottom-nav" id="bottomNav" aria-label="Navigation principale">
         <button class="nav-item active" data-go="today" type="button"><span class="ico">✦</span>Aujourd’hui</button>
-        <button class="nav-item" data-go="cycle" type="button"><span class="ico">◉</span>Cycle</button>
+        <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel"><span class="ico">◉</span>Cycle</button>
         <button class="nav-item" data-go="journal" type="button"><span class="ico">✎</span>Journal</button>
         <button class="nav-item" data-go="profile" type="button"><span class="ico">◎</span>Plus</button>
       </nav>

@@ -315,7 +315,7 @@
       splash: '1 · Splash',
       onboarding: '2 · Disclaimer',
       today: '3 · Aujourd’hui',
-      cycle: '4 · Cycle',
+      cycle: '4 · Cycle menstruel',
       moon: '5 · Lune',
       astro: '6 · Astro',
       path: '7 · Chemin',
