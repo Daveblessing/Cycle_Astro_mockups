@@ -186,6 +186,10 @@
 
 ---
 
+
+## Maquettes UX — v3.3
+- [x] **v3.3 UX polish** — sophistiqué (glass/or/typo/transitions) + manipulation simplifiée (CTA piliers, chips hub, formulaires Lecture/Calculateur, nav glow, ripple/toast)
+
 ## Definition of Done v1 (interne)
 
 - [ ] Tous les **P0** cochés avec AC validés  

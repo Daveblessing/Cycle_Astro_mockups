@@ -1,8 +1,9 @@
-# Cycle & Astro — Maquettes HTML haute-fidélité P0
+# Cycle & Astro — Maquettes HTML · v3.3
 
 **Marque :** King Daveblessing · nuit cosmique noir/or  
 **Viewport cible :** 390 × 844 (shell téléphone dans la page)  
 **Langue UI :** Français · ton bienveillant, non médical  
+**Version :** v3.3 · polish premium + manipulation simplifiée  
 **Date :** 22 septembre 2026
 
 ## Ouvrir
@@ -91,7 +92,24 @@ Bible · wireframes · features P0 · PLAN-P0 · **TEMPLATE-LECTURE-CHEMIN-v0** 
 
 ---
 
-*King Daveblessing · Cycle & Astro · maquettes P0 · septembre 2026*
+*King Daveblessing · Cycle & Astro · v3.3 · septembre 2026*
+
+
+
+## Changelog v3.3
+
+**Focus :** plus sophistiqué (premium KD) **et** plus simple à manipuler.
+
+- Identité **Cycle & Astro · v3.3** (badge, meta, splash ligne discrète)
+- Hub : 4 CTA piliers plus grands ; Cycle menstruel reste hero #1
+- Raccourcis chips **Calculateur** + **Lecture** en 1 tap
+- Bottom nav clarifiée (Aujourd’hui · Cycle · Journal · Plus) + or glow actif
+- Lecture : formulaire Nom / Date / Lieu + gros **Générer** ; toggle Krizoua évident
+- Calculateur : 3 champs + gros **Calculer** ; résultats sticky visibles
+- Retours cohérents ← Aujourd’hui / ← Market
+- Feedback tactile léger (ripple CSS + toasts)
+- Cards glass/nuit, typo Cinzel/Inter renforcée, micro-transitions 150–250 ms
+- Ne casse pas : `#/calculator`, `#/reading` (Krizoua verbatim + Gemini), 4 piliers, disclaimer, bottom nav
 
 ## Screenshots
 

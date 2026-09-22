@@ -1,7 +1,7 @@
 /**
- * Cycle & Astro — maquettes HF P0
+ * Cycle & Astro · v3.3
  * Navigation hash légère + données démo (pas de backend)
- * King Daveblessing · Abidjan · FR
+ * King Daveblessing · Abidjan · FR · polish premium / manipulation simple
  */
 (function () {
   'use strict';
@@ -115,10 +115,29 @@
   }
 
   function toast(msg) {
+    if (!toastEl) return;
     toastEl.textContent = msg;
     toastEl.classList.add('show');
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  function rippleAt(el, evt) {
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const wave = document.createElement('span');
+    wave.className = 'ripple-wave';
+    wave.style.width = wave.style.height = size + 'px';
+    const x = (evt && evt.clientX != null ? evt.clientX : rect.left + rect.width / 2) - rect.left - size / 2;
+    const y = (evt && evt.clientY != null ? evt.clientY : rect.top + rect.height / 2) - rect.top - size / 2;
+    wave.style.left = x + 'px';
+    wave.style.top = y + 'px';
+    const style = getComputedStyle(el);
+    if (style.position === 'static') el.style.position = 'relative';
+    if (style.overflow === 'visible') el.style.overflow = 'hidden';
+    el.appendChild(wave);
+    setTimeout(() => wave.remove(), 480);
   }
 
   /* —— Calendars —— */
@@ -1026,6 +1045,22 @@
     });
   }
 
+  function withReadingLoading(done) {
+    const loading = document.getElementById('readingLoading');
+    const formCard = document.getElementById('readingFormCard');
+    const btn = document.getElementById('btnGenerateReading');
+    if (loading) loading.hidden = false;
+    if (formCard) formCard.style.opacity = '0.55';
+    if (btn) btn.disabled = true;
+    setTimeout(() => {
+      try { done(); } finally {
+        if (loading) loading.hidden = true;
+        if (formCard) formCard.style.opacity = '';
+        if (btn) btn.disabled = false;
+      }
+    }, 280);
+  }
+
   function generateFromForm() {
     const name = (document.getElementById('readName') || {}).value || '';
     const birth = (document.getElementById('readBirth') || {}).value || '';
@@ -1040,9 +1075,11 @@
       birth === k.birth &&
       (name.trim() === k.name || name.toLowerCase().includes('krizoua'))
     ) {
-      setPersonaActive('krizoua');
-      renderKrizouaVerbatim();
-      toast('Exemple KD · Krizoua ✦');
+      withReadingLoading(() => {
+        setPersonaActive('krizoua');
+        renderKrizouaVerbatim();
+        toast('Exemple KD · Krizoua ✦');
+      });
       return;
     }
     const data = buildReading(name.trim(), birth, place.trim(), null, null);
@@ -1050,9 +1087,11 @@
       toast('Date invalide');
       return;
     }
-    setPersonaActive('aicha');
-    renderReading(data);
-    toast('Lecture générée ✦');
+    withReadingLoading(() => {
+      setPersonaActive('aicha');
+      renderReading(data);
+      toast('Lecture générée ✦');
+    });
   }
 
   function bindReading() {
@@ -1311,6 +1350,8 @@
         return;
       }
       renderCalcResults(res);
+      const results = document.getElementById('calcResults');
+      if (results) results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       toast('Estimation mise à jour ✦');
     });
   }
@@ -1318,6 +1359,9 @@
   /* —— Interactions —— */
   function bindClicks() {
     document.body.addEventListener('click', (e) => {
+      const rippleEl = e.target.closest('[data-ripple], .btn-primary, .nav-item, .hub-chip, .pillar-cta');
+      if (rippleEl) rippleAt(rippleEl, e);
+
       const goEl = e.target.closest('[data-go]');
       if (goEl && goEl.dataset.go) {
         e.preventDefault();

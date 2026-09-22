@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cycle & Astro — Maquettes P0 · King Daveblessing</title>
-  <meta name="description" content="Maquettes haute-fidélité mobile-first Cycle & Astro — 4 piliers, nuit cosmique KD." />
+  <title>Cycle & Astro · v3.3 · King Daveblessing</title>
+  <meta name="description" content="Cycle & Astro · v3.3 — maquettes premium KD, 4 piliers, nuit cosmique, manipulation simplifiée." />
+  <meta name="version" content="3.3" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <p class="page-label">Cycle & Astro · Maquettes HF P0</p>
-  <p class="page-hint">Shell 390×844 · navigation hash · données démo FR · charte noir/or KD. Clique un écran ou navigue dans le téléphone.</p>
+  <p class="page-label">Cycle & Astro · v3.3</p>
+  <p class="page-hint">Shell 390×844 · v3.3 polish premium · navigation hash · démo FR · charte noir/or KD.</p>
   <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
 
   <div class="phone" role="application" aria-label="Cycle & Astro">
@@ -27,6 +28,7 @@
             <div class="halo" aria-hidden="true"></div>
             <p class="brand-kd">★ KING DAVEBLESSING ★</p>
             <h1 class="brand-name">Cycle &amp; Astro</h1>
+            <p class="version-line">v3.3 · premium KD</p>
             <p class="pillars-line">calendrier menstruel · lune · astro · chemin de vie</p>
             <div class="divider" style="width:60%;margin:12px auto;"></div>
             <p class="tagline">Chaque jour, un miroir doux : ton cycle, la Lune, les astres, et ton chemin — réunis, sans jargon médical.</p>
@@ -37,7 +39,7 @@
               <div class="wp"><div class="g">8</div><div class="t">Chemin</div><div class="d">Boussole personnelle</div></div>
             </div>
             <div class="cta-wrap">
-              <button class="btn btn-primary" data-go="onboarding">Commencer</button>
+              <button class="btn btn-primary btn-lg" data-go="onboarding" data-ripple>Commencer</button>
               <button class="btn btn-ghost" data-go="today">Voir la démo (skip)</button>
             </div>
           </div>
@@ -78,7 +80,7 @@
             <p class="date">Mardi 22 septembre 2026</p>
           </div>
 
-          <div class="card cycle-hero" data-go="cycle" role="button" tabindex="0">
+          <div class="card glass-card cycle-hero" data-go="cycle" role="button" tabindex="0" data-ripple>
             <div class="cycle-hero-top">
               <h3 class="h-serif h3 cycle-hero-title">Cycle menstruel</h3>
               <span class="phase-badge">Phase lutéale</span>
@@ -108,30 +110,31 @@
             </div>
             <p class="footnote">Estimation basée sur tes saisies — pas un avis médical.</p>
           </div>
-          <p class="calc-hub-link">
-            <button type="button" class="btn-link" data-go="calculator">Calculateur de menstruation →</button>
-          </p>
+          <div class="hub-chips" aria-label="Raccourcis">
+            <button type="button" class="hub-chip" data-go="calculator" data-ripple>◉ Calculateur</button>
+            <button type="button" class="hub-chip" data-go="reading" data-ripple>✦ Lecture</button>
+          </div>
 
-          <div class="grid-2">
-            <button class="pillar-card" data-go="cycle" type="button">
+          <div class="grid-2 pillars-grid">
+            <button class="pillar-card pillar-cta" data-go="cycle" type="button" data-ripple>
               <span class="label">Cycle menstruel</span>
               <span class="glyph">◉</span>
               <span class="value">Jour 22</span>
               <span class="sub">Ralentir et ressentir</span>
             </button>
-            <button class="pillar-card" data-go="moon" type="button">
+            <button class="pillar-card pillar-cta" data-go="moon" type="button" data-ripple>
               <span class="label">Lune</span>
               <span class="glyph">☾</span>
               <span class="value">Gibbeuse</span>
               <span class="sub">Écoute ce qui se termine</span>
             </button>
-            <button class="pillar-card" data-go="astro" type="button">
+            <button class="pillar-card pillar-cta" data-go="astro" type="button" data-ripple>
               <span class="label">Astro</span>
               <span class="glyph">✦</span>
               <span class="value">Vierge</span>
               <span class="sub">Message du jour</span>
             </button>
-            <button class="pillar-card" data-go="path" type="button">
+            <button class="pillar-card pillar-cta" data-go="path" type="button" data-ripple>
               <span class="label">Chemin</span>
               <span class="glyph">8</span>
               <span class="value">Maîtrise</span>
@@ -139,7 +142,7 @@
             </button>
           </div>
 
-          <button class="btn btn-primary" data-go="journal" type="button">+ Check-in rapide</button>
+          <button class="btn btn-primary" data-go="journal" type="button" data-ripple>+ Check-in rapide</button>
           <div class="card tapable section-gap" data-go="astro" style="margin-top:12px;cursor:pointer;" role="button" tabindex="0">
             <h3 class="h-serif h3">Insight doux</h3>
             <p class="body">Ta phase lutéale croise une lune décroissante — un moment propice pour ralentir, sans obligation. Une piste, pas une cause.</p>
@@ -523,35 +526,40 @@
         <!-- 11. Lecture détaillée Chemin / Astro -->
         <section class="view" id="view-reading" data-screen="reading" data-label="Lecture détaillée" data-nav="today">
           <div class="app-header">
-            <button class="back" data-go="path" type="button">← Chemin</button>
-            <span class="title">Lecture détaillée</span>
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Lecture</span>
             <div class="side right"></div>
           </div>
 
           <h2 class="h-serif h1" style="margin-bottom:4px;">Lecture détaillée</h2>
           <p class="body-muted" style="margin-bottom:12px;">Analyse approfondie · style guide KD — chemin · vibration du jour · signe &amp; décan. Une boussole, pas un destin.</p>
 
-          <div class="persona-toggle" role="tablist" aria-label="Persona démo">
-            <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha">Profil démo · Aïcha</button>
-            <button type="button" class="persona-btn" id="btnPersonaKrizoua" data-persona="krizoua">Exemple KD · Krizoua</button>
+          <div class="persona-toggle krizoua-toggle" role="tablist" aria-label="Mode lecture">
+            <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha" data-ripple>Générateur · Aïcha</button>
+            <button type="button" class="persona-btn persona-krizoua" id="btnPersonaKrizoua" data-persona="krizoua" data-ripple>✦ Krizoua verbatim</button>
           </div>
 
-          <div class="card" id="readingFormCard">
-            <form id="readingForm" novalidate>
+          <div class="card glass-card" id="readingFormCard">
+            <form id="readingForm" class="simple-form" novalidate>
               <label class="field">
-                <span class="field-label">Prénom / nom (optionnel)</span>
+                <span class="field-label">Nom</span>
                 <input type="text" id="readName" name="name" placeholder="Ex. Aïcha" autocomplete="name" />
               </label>
               <label class="field">
-                <span class="field-label">Date de naissance</span>
+                <span class="field-label">Date</span>
                 <input type="date" id="readBirth" name="birth" required />
               </label>
               <label class="field">
-                <span class="field-label">Lieu (optionnel)</span>
+                <span class="field-label">Lieu</span>
                 <input type="text" id="readPlace" name="place" placeholder="Ex. Abidjan" />
               </label>
-              <button class="btn btn-primary btn-generate-reading" type="submit" id="btnGenerateReading">✦ Générer une lecture détaillée</button>
+              <button class="btn btn-primary btn-lg btn-generate-reading" type="submit" id="btnGenerateReading" data-ripple>✦ Générer</button>
             </form>
+            <p class="tiny form-hint" id="readingEmptyHint">3 champs · un tap · lecture douce (pas un destin).</p>
+          </div>
+          <div class="loading-state" id="readingLoading" hidden>
+            <div class="loading-orb" aria-hidden="true"></div>
+            <p class="body-muted">Génération de ta lecture…</p>
           </div>
 
           <div id="readingOutput" hidden>
@@ -639,7 +647,7 @@
         <!-- 10. Calculateur de menstruation -->
         <section class="view" id="view-calculator" data-screen="calculator" data-label="Calculateur de menstruation" data-nav="profile">
           <div class="app-header">
-            <button class="back" data-go="cycle" type="button">← Cycle</button>
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
             <span class="title">Calculateur</span>
             <div class="side right"></div>
           </div>
@@ -647,8 +655,8 @@
           <h2 class="h-serif h1" style="margin-bottom:6px;">Calculateur de menstruation</h2>
           <p class="body-muted" style="margin-bottom:14px;">Estime tes prochaines règles à partir de tes saisies — en douceur, sans jargon médical.</p>
 
-          <div class="card" id="calcFormCard">
-            <form id="calcForm" novalidate>
+          <div class="card glass-card" id="calcFormCard">
+            <form id="calcForm" class="simple-form" novalidate>
               <label class="field">
                 <span class="field-label">Début des dernières règles</span>
                 <input type="date" id="calcLastStart" name="lastStart" required />
@@ -658,14 +666,14 @@
                 <input type="number" id="calcPeriodLen" name="periodLen" min="2" max="10" value="5" inputmode="numeric" required />
               </label>
               <label class="field">
-                <span class="field-label">Longueur moyenne du cycle (jours)</span>
+                <span class="field-label">Longueur du cycle (jours)</span>
                 <input type="number" id="calcCycleLen" name="cycleLen" min="21" max="45" value="28" inputmode="numeric" required />
               </label>
-              <button class="btn btn-primary" type="submit" id="btnCalc">Calculer</button>
+              <button class="btn btn-primary btn-lg" type="submit" id="btnCalc" data-ripple>Calculer</button>
             </form>
           </div>
 
-          <div class="card calc-results" id="calcResults" hidden>
+          <div class="card glass-card calc-results calc-results-sticky" id="calcResults" hidden>
             <div class="calc-summary">
               <div class="calc-ring-mini" aria-hidden="true">
                 <svg viewBox="0 0 80 80" width="72" height="72">
@@ -712,10 +720,10 @@
       </div>
 
       <nav class="bottom-nav" id="bottomNav" aria-label="Navigation principale">
-        <button class="nav-item active" data-go="today" type="button"><span class="ico">✦</span>Aujourd’hui</button>
-        <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel"><span class="ico">◉</span>Cycle</button>
-        <button class="nav-item" data-go="journal" type="button"><span class="ico">✎</span>Journal</button>
-        <button class="nav-item" data-go="profile" type="button"><span class="ico">◎</span>Plus</button>
+        <button class="nav-item active" data-go="today" type="button" data-ripple><span class="ico">✦</span><span class="nav-label">Aujourd’hui</span></button>
+        <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel" data-ripple><span class="ico">◉</span><span class="nav-label">Cycle</span></button>
+        <button class="nav-item" data-go="journal" type="button" data-ripple><span class="ico">✎</span><span class="nav-label">Journal</span></button>
+        <button class="nav-item" data-go="profile" type="button" data-ripple><span class="ico">◎</span><span class="nav-label">Plus</span></button>
       </nav>
 
       <div class="toast" id="toast" role="status"></div>
