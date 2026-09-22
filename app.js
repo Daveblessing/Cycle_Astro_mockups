@@ -473,6 +473,10 @@
     3: '3e décan — fin du signe, souvent plus affirmé·e, capable de trancher après avoir écouté.',
   };
 
+
+  /** Texte Dave TEL QUEL — Exemple KD Krizoua (Sinfra). Ne pas reformuler. */
+  const KRIZOUA_VERBATIM_TEXT = "Voici l'analyse numérologique et astrologique complète pour Krizoua Yako Jean, né le 17 octobre 1983 à Sinfra (Côte d'Ivoire).\n\n🔑 1. Le Chemin de Vie : Le Nombre 3 (Le Communicateur / Le Créateur)\n\n(Calcul : 17 + 10 + 1983 → (1+7) + (1+0) + (1+9+8+3) = 8 + 1 + 21 → 8 + 1 + 3 = 12 → 1 + 2 = 3)\n\n(Méthode alternative : 17 + 10 + 1983 = 2010 → 2 + 0 + 1 + 0 = 3)\n\nLe Chemin de Vie 3 est celui du Verbe, de la Communication, de la Créativité et du Rayonnement social.\n\n * Mission d'Âme : Jean est venu pour exprimer sa pensée, impacter par la parole ou l'écrit, créer des ponts entre les gens et apporter de l'enthousiasme. C'est un canal naturel de transmission.\n * Forces : Éloquence, créativité, charme relationnel, optimisme, capacité à simplifier les idées complexes et à inspirer son entourage.\n * Défis : Éviter l'éparpillement ou la dispersion de son énergie dans trop de projets à la fois ; il doit apprendre à canaliser son flux créatif vers des objectifs précis.\n\n🎭 2. La Vibration du Jour de Naissance : Le 17 (Vibration 8 / Saturne & Étoile)\n\nNé un 17, il porte une sous-vibration de puissance matérielle et spirituelle :\n\n * Le 17 (1+7 = 8) : Dans la tradition, le 17 est la carte de l'Étoile (la protection divine et la bonne étoile) associée au chiffre 8 (le pouvoir, l'ambition, la maîtrise financière et la justice).\n * Impact : Le 1 apporte la décision, le 7 apporte la sagesse/l'esprit, et le 8 concrétise le tout dans la matière. Cela donne à Jean un sens des affaires aiguisé et une forte résilience financière.\n\n♎ 3. Ancrage Astrologique : Balance ♎ (3ème Décan - Gouverné par Mercure & Vénus)\n\n * Signe Solaire : Balance ♎ (Né le 17 octobre) : En tant que Balance du 3ème décan, l'influence de Mercure renforce considérablement son agilité intellectuelle, son sens de la stratégie et son aisance dans le commerce des idées.\n * Alliance Balance (Air) & Chemin de Vie 3 (Verbe/Expression) : C'est la signature d'un stratège de la communication. Il possède un sens inné de la diplomatie, de la négociation et du partenariat. Il sait comment présenter n'importe quel projet pour le rendre attractif et convaincant.\n\n🎯 Domaines de Compétences de Krizoua Yako Jean\n\n * Relations Publiques, Négociation & Commerce\n * Conseil, Coaching & Enseignement / Animation\n * Stratégie d'Entreprise & Management Relationnel\n\n📊 Synthèse : Chemin 3 · Jour 17 (8) · Balance ♎";
+
   const PERSONAS = {
     aicha: {
       name: 'Aïcha',
@@ -483,7 +487,7 @@
     krizoua: {
       name: 'Krizoua Yako Jean',
       birth: '1983-10-17',
-      place: 'Sinfra (CI)',
+      place: 'Sinfra (Côte d\'Ivoire)',
       gifts: ['Relations publiques (RP)', 'Négociation', 'Coaching', 'Stratégie'],
       // Extra invites for KD example (merge with path)
       extraInvites: [
@@ -552,10 +556,28 @@
     };
   }
 
+  function setReadingMode(mode) {
+    const v = document.getElementById('readVerbatimWrap');
+    const s = document.getElementById('readStructuredWrap');
+    if (v) v.hidden = mode !== 'verbatim';
+    if (s) s.hidden = mode !== 'structured';
+  }
+
+  function renderKrizouaVerbatim() {
+    const out = document.getElementById('readingOutput');
+    const body = document.getElementById('readVerbatimBody');
+    if (!out || !body) return;
+    out.hidden = false;
+    setReadingMode('verbatim');
+    body.textContent = KRIZOUA_VERBATIM_TEXT;
+    out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function renderReading(data) {
     const out = document.getElementById('readingOutput');
     if (!out || !data) return;
     out.hidden = false;
+    setReadingMode('structured');
 
     const set = (id, text) => {
       const el = document.getElementById(id);
@@ -621,22 +643,23 @@
       toast('Indique une date de naissance');
       return;
     }
-    // Detect krizoua hardcode gifts if matches
-    let gifts = null;
-    let extra = null;
     const k = PERSONAS.krizoua;
+    // Exemple KD : texte Dave verbatim — pas de reconstruction
     if (
       birth === k.birth &&
       (name.trim() === k.name || name.toLowerCase().includes('krizoua'))
     ) {
-      gifts = k.gifts;
-      extra = k.extraInvites;
+      setPersonaActive('krizoua');
+      renderKrizouaVerbatim();
+      toast('Exemple KD · Krizoua ✦');
+      return;
     }
-    const data = buildReading(name.trim(), birth, place.trim(), gifts, extra);
+    const data = buildReading(name.trim(), birth, place.trim(), null, null);
     if (!data) {
       toast('Date invalide');
       return;
     }
+    setPersonaActive('aicha');
     renderReading(data);
     toast('Lecture générée ✦');
   }
@@ -665,15 +688,7 @@
       btnK.addEventListener('click', () => {
         setPersonaActive('krizoua');
         fillReadingForm('krizoua');
-        const p = PERSONAS.krizoua;
-        const data = buildReading(
-          p.name,
-          p.birth,
-          p.place,
-          p.gifts,
-          p.extraInvites
-        );
-        renderReading(data);
+        renderKrizouaVerbatim();
       });
     }
 
@@ -1082,6 +1097,8 @@
       sunSignDecan: sunSignDecan,
       buildReading: buildReading,
       PERSONAS: PERSONAS,
+      renderKrizouaVerbatim: renderKrizouaVerbatim,
+      KRIZOUA_VERBATIM_TEXT: KRIZOUA_VERBATIM_TEXT,
     };
   }
 

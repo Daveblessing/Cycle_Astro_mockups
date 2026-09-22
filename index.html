@@ -556,61 +556,73 @@
 
           <div id="readingOutput" hidden>
 
-            <!-- 1. En-tête identité -->
-            <div class="card reading-id" id="readBlockId">
-              <p class="tiny" style="letter-spacing:0.16em;color:var(--gold);margin-bottom:6px;">✦ IDENTITÉ ✦</p>
-              <p class="read-name" id="outName">—</p>
-              <p class="read-meta" id="outBirthPlace">—</p>
+            <!-- Mode verbatim KD (Krizoua) -->
+            <div id="readVerbatimWrap" hidden>
+              <div class="card reading-verbatim">
+                <p class="tiny" style="letter-spacing:0.14em;color:var(--gold);margin-bottom:10px;">✦ EXEMPLE KD · TEXTE SOURCE ✦</p>
+                <div class="verbatim-body" id="readVerbatimBody"></div>
+              </div>
+              <p class="footnote" id="readVerbatimDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
             </div>
 
-            <!-- 2. Synthèse chiffres -->
-            <div class="card">
-              <h3 class="h-serif h3">Synthèse chiffres</h3>
-              <ul class="synth-grid" id="outSynth">
-                <li><span class="k">Chemin de vie</span><strong id="outLifePath">—</strong></li>
-                <li><span class="k">Jour · vibration</span><strong id="outDayVibe">—</strong></li>
-                <li><span class="k">Signe · décan</span><strong id="outSignDecan">—</strong></li>
-              </ul>
-            </div>
+            <!-- Mode générateur structuré (autres dates / Aïcha) -->
+            <div id="readStructuredWrap">
+              <!-- 1. En-tête identité -->
+              <div class="card reading-id" id="readBlockId">
+                <p class="tiny" style="letter-spacing:0.16em;color:var(--gold);margin-bottom:6px;">✦ IDENTITÉ ✦</p>
+                <p class="read-name" id="outName">—</p>
+                <p class="read-meta" id="outBirthPlace">—</p>
+              </div>
 
-            <!-- 3. Chemin de vie -->
-            <div class="path-hero" style="padding-top:8px;">
-              <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ CHEMIN DE VIE ✦</p>
-              <div class="num" id="outPathNum">—</div>
-              <div class="title" id="outPathTitle">—</div>
-            </div>
-            <div class="card">
-              <div class="body reading-body" id="outPathBody"></div>
-            </div>
+              <!-- 2. Synthèse chiffres -->
+              <div class="card">
+                <h3 class="h-serif h3">Synthèse chiffres</h3>
+                <ul class="synth-grid" id="outSynth">
+                  <li><span class="k">Chemin de vie</span><strong id="outLifePath">—</strong></li>
+                  <li><span class="k">Jour · vibration</span><strong id="outDayVibe">—</strong></li>
+                  <li><span class="k">Signe · décan</span><strong id="outSignDecan">—</strong></li>
+                </ul>
+              </div>
 
-            <!-- 4. Vibration jour -->
-            <div class="card">
-              <h3 class="h-serif h3">Vibration du jour de naissance</h3>
-              <p class="vibe-badge"><span id="outVibeNum">—</span></p>
-              <p class="body" id="outVibeText">—</p>
-            </div>
+              <!-- 3. Chemin de vie -->
+              <div class="path-hero" style="padding-top:8px;">
+                <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ CHEMIN DE VIE ✦</p>
+                <div class="num" id="outPathNum">—</div>
+                <div class="title" id="outPathTitle">—</div>
+              </div>
+              <div class="card">
+                <div class="body reading-body" id="outPathBody"></div>
+              </div>
 
-            <!-- 5. Signe & décan -->
-            <div class="card">
-              <h3 class="h-serif h3">Signe &amp; décan</h3>
-              <p class="sign-line" id="outSignLine">—</p>
-              <p class="body" id="outSignTraits">—</p>
-            </div>
+              <!-- 4. Vibration jour -->
+              <div class="card">
+                <h3 class="h-serif h3">Vibration du jour de naissance</h3>
+                <p class="vibe-badge"><span id="outVibeNum">—</span></p>
+                <p class="body" id="outVibeText">—</p>
+              </div>
 
-            <!-- 6. Dons & compétences -->
-            <div class="card">
-              <h3 class="h-serif h3">Dons &amp; compétences</h3>
-              <ul class="gift-list" id="outGifts"></ul>
-            </div>
+              <!-- 5. Signe & décan -->
+              <div class="card">
+                <h3 class="h-serif h3">Signe &amp; décan</h3>
+                <p class="sign-line" id="outSignLine">—</p>
+                <p class="body" id="outSignTraits">—</p>
+              </div>
 
-            <!-- 7. Axes / invitations -->
-            <div class="card">
-              <h3 class="h-serif h3">Axes / invitations</h3>
-              <ul class="invite-list" id="outInvites"></ul>
-            </div>
+              <!-- 6. Dons & compétences -->
+              <div class="card">
+                <h3 class="h-serif h3">Dons &amp; compétences</h3>
+                <ul class="gift-list" id="outGifts"></ul>
+              </div>
 
-            <!-- 8. Disclaimer -->
-            <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical. Pour toute question de santé, consulte un·e professionnel·le.</p>
+              <!-- 7. Axes / invitations -->
+              <div class="card">
+                <h3 class="h-serif h3">Axes / invitations</h3>
+                <ul class="invite-list" id="outInvites"></ul>
+              </div>
+
+              <!-- 8. Disclaimer -->
+              <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical. Pour toute question de santé, consulte un·e professionnel·le.</p>
+            </div>
           </div>
         </section>
 

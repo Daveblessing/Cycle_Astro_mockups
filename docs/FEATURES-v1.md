@@ -94,9 +94,10 @@
 - [x] Template doc `docs/TEMPLATE-LECTURE-CHEMIN-v0.md` (structure 8 blocs + exemple Krizoua + règles calcul)
 - [x] Écran maquette `#/reading` — Lecture complète (identité, synthèse, chemin, vibration jour, signe/décan, dons, axes, disclaimer)
 - [x] CTA depuis `#/path` (« Voir la lecture complète ») + lien depuis Astro / Profil
-- [x] Toggle persona **Aïcha** vs **Exemple KD : Krizoua** + générateur JS (date → chemin, dayVibe, signe/décan)
-- [x] Ton boussole / anti-fatalisme + disclaimer bien-être (pas médical, pas destin figé)
-- [ ] **AC :** Krizoua 17/10/1983 → chemin **3**, jour **17→8**, Balance **3e décan**, dons RP/négo/coaching/stratégie
+- [x] Toggle persona **Aïcha** vs **Exemple KD : Krizoua** + générateur JS (autres dates)
+- [x] Exemple Krizoua = **texte Dave verbatim** (Sinfra) dans UI `#/reading` + `TEMPLATE-LECTURE-CHEMIN-v0.md`
+- [x] Ton boussole / anti-fatalisme + disclaimer bien-être sous la lecture
+- [x] **AC :** Krizoua affiche le texte long mot pour mot (chemin 3 · jour 17/8 · Balance 3e décan · compétences RP/négo/coaching…)
 - [ ] **AC :** calculateur menstruation `#/calculator` inchangé / non régressé
 
 ## P1 — Should-have v1

@@ -1493,3 +1493,51 @@ body {
 }
 
 .reading-body .body:last-child { margin-bottom: 0 !important; }
+
+
+.reading-verbatim .verbatim-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--gold-soft);
+  white-space: pre-wrap;
+}
+.verbatim-body .vb-p { margin: 0 0 10px; }
+.verbatim-body .vb-h {
+  font-family: var(--font-serif);
+  color: var(--gold-2);
+  font-size: 14px;
+  margin: 16px 0 8px;
+  letter-spacing: 0.02em;
+}
+.verbatim-body .vb-h:first-child { margin-top: 0; }
+.verbatim-body .vb-calc {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 8px;
+  font-style: italic;
+}
+.verbatim-body .vb-ul {
+  list-style: none;
+  margin: 6px 0 12px;
+  padding: 0;
+}
+.verbatim-body .vb-ul li {
+  padding: 6px 0 6px 14px;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.verbatim-body .vb-ul li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+.verbatim-body .vb-synth {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(201,162,39,0.35);
+  color: var(--gold);
+  font-family: var(--font-serif);
+  text-align: center;
+}
