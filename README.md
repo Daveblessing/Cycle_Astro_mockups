@@ -4,7 +4,7 @@
 **Viewport cible :** 390 × 844 (shell téléphone dans la page)  
 **Langue UI :** Français · ton bienveillant, non médical  
 **Version :** v3.3 · polish premium + manipulation simplifiée  
-**Date :** 22 septembre 2026
+**Date :** 23 septembre 2026
 
 ## Ouvrir
 
@@ -98,6 +98,8 @@ Bible · wireframes · features P0 · PLAN-P0 · **TEMPLATE-LECTURE-CHEMIN-v0** 
 
 ## Changelog v3.3+
 
+- **Nouvelle personne / Remise à zéro** — hub · Profil · Lecture ; vide formulaire, résultats, `ca_profile_v1`, `ca_calc_v1` ; récents gardés ; → `#/reading`.
+- **Mois forcé septembre 2026** — hub, calendriers, check-ins, défaut calculateur (23 sept. = mercredi, jour 23).
 - **Profil complet multi-personnes** — toute personne entre ses données → profil soigné ; `ca_profile_v1` + récents (max 5) ; chance (chiffres/couleurs/parfums) ; genre elle/il/iel ; pas de faux ascendant.
 
 ## Changelog v3.3

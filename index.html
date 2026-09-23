@@ -76,8 +76,8 @@
             <div class="side right"><button class="back" data-go="profile" type="button">Profil</button></div>
           </div>
           <div class="greeting">
-            <p class="hello">Bonjour, Aïcha ✦</p>
-            <p class="date">Mardi 22 septembre 2026</p>
+            <p class="hello" id="hubHello">Bonjour, Aïcha ✦</p>
+            <p class="date" id="hubDate">Mercredi 23 septembre 2026</p>
           </div>
 
           <div class="card glass-card cycle-hero" data-go="cycle" role="button" tabindex="0" data-ripple>
@@ -93,17 +93,17 @@
                     stroke-dasharray="54 248" stroke-dashoffset="0"
                     transform="rotate(-90 60 60)" />
                   <circle class="ring-progress" cx="60" cy="60" r="48"
-                    stroke-dasharray="238.76 301.59" stroke-dashoffset="0"
+                    stroke-dasharray="247.74 301.59" stroke-dashoffset="0"
                     transform="rotate(-90 60 60)" />
                 </svg>
                 <div class="cycle-ring-center">
-                  <span class="day-num">22</span>
+                  <span class="day-num">23</span>
                   <span class="day-den">/ 28</span>
                   <span class="day-label">Jour</span>
                 </div>
               </div>
               <div class="cycle-hero-meta">
-                <p class="cycle-next">Prochaines règles · vers le <strong>2 oct.</strong> <span class="est">(estimation)</span></p>
+                <p class="cycle-next">Prochaines règles · vers le <strong>29 septembre</strong> <span class="est">(estimation)</span></p>
                 <p class="cycle-invite italic">« Ralentir et ressentir »</p>
                 <button class="btn btn-primary btn-sm cycle-cta" data-go="cycle" type="button">Voir le calendrier</button>
               </div>
@@ -113,13 +113,14 @@
           <div class="hub-chips" aria-label="Raccourcis">
             <button type="button" class="hub-chip" data-go="calculator" data-ripple>◉ Calculateur</button>
             <button type="button" class="hub-chip" data-go="reading" data-ripple>✦ Profil complet</button>
+            <button type="button" class="hub-chip hub-chip-reset" id="btnResetPersonHub" data-ripple>↺ Nouvelle personne</button>
           </div>
 
           <div class="grid-2 pillars-grid">
             <button class="pillar-card pillar-cta" data-go="cycle" type="button" data-ripple>
               <span class="label">Cycle menstruel</span>
               <span class="glyph">◉</span>
-              <span class="value">Jour 22</span>
+              <span class="value">Jour 23</span>
               <span class="sub">Ralentir et ressentir</span>
             </button>
             <button class="pillar-card pillar-cta" data-go="moon" type="button" data-ripple>
@@ -159,7 +160,7 @@
           </div>
 
           <div class="card cycle-today-card">
-            <p class="cycle-today-line">Aujourd’hui · <strong>Jour 22</strong> · Phase <strong>lutéale</strong></p>
+            <p class="cycle-today-line">Aujourd’hui · <strong>Jour 23</strong> · Phase <strong>lutéale</strong></p>
             <p class="italic" style="margin-top:4px;">« Ralentir et ressentir »</p>
           </div>
 
@@ -183,7 +184,7 @@
               </svg>
               <div class="phases-center">
                 <span class="phases-center-phase">Lutéale</span>
-                <span class="phases-center-day">Jour 22 / 28</span>
+                <span class="phases-center-day">Jour 23 / 28</span>
               </div>
             </div>
             <ul class="phases-legend">
@@ -197,7 +198,7 @@
 
           <div class="card">
             <h3 class="h-serif h3">Prochaines règles</h3>
-            <p class="body">Estimation → vers le <strong style="color:var(--gold);">2 octobre 2026</strong></p>
+            <p class="body">Estimation → vers le <strong style="color:var(--gold);">29 septembre 2026</strong></p>
             <p class="tiny" style="margin-top:6px;">Longueur cycle moyenne : 28 j · règles : 5 j (modifiables)</p>
           </div>
 
@@ -229,7 +230,7 @@
           <div class="moon-hero">
             <div class="moon-visual" aria-hidden="true" title="Gibbeuse décroissante"></div>
             <p class="h-serif h1">Gibbeuse décroissante</p>
-            <p class="italic" style="margin-top:6px;">22 septembre 2026 · illumination ~62 %</p>
+            <p class="italic" style="margin-top:6px;">23 septembre 2026 · illumination ~62 %</p>
           </div>
 
           <div class="card">
@@ -243,22 +244,22 @@
               <div class="card" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">○</div>
                 <div class="h-serif" style="font-size:10px;">Nouvelle</div>
-                <div class="tiny">12 sept.</div>
+                <div class="tiny">12 septembre</div>
               </div>
               <div class="card selected" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">◐</div>
                 <div class="h-serif" style="font-size:10px;">1<sup>er</sup> quartier</div>
-                <div class="tiny">14 sept.</div>
+                <div class="tiny">14 septembre</div>
               </div>
               <div class="card" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;">●</div>
                 <div class="h-serif" style="font-size:10px;">Pleine</div>
-                <div class="tiny">26 sept.</div>
+                <div class="tiny">26 septembre</div>
               </div>
               <div class="card" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">◑</div>
                 <div class="h-serif" style="font-size:10px;">Dernier q.</div>
-                <div class="tiny">4 oct.</div>
+                <div class="tiny">fin septembre</div>
               </div>
             </div>
           </div>
@@ -284,13 +285,13 @@
           <div class="card">
             <div class="card-row" style="margin-bottom:12px;">
               <div>
-                <p class="h-serif" style="font-size:14px;letter-spacing:0.1em;">Mardi 22 septembre</p>
-                <p class="italic">Vierge — Terre — Mutable · Mercure</p>
+                <p class="h-serif" style="font-size:14px;letter-spacing:0.1em;">Mercredi 23 septembre 2026</p>
+                <p class="italic">Balance — Air — Cardinal · Vénus</p>
               </div>
               <div class="natal-badge sun" aria-hidden="true">♍</div>
             </div>
             <h3 class="h-serif h3">Message du jour</h3>
-            <p class="body">Analyse, précision et attention aux détails seront tes atouts. L’énergie du jour invite à la patience — une piste, pas une sentence.</p>
+            <p class="body">Harmonie, écoute et juste mesure seront tes atouts. L’énergie du 23 septembre invite à l’équilibre — une piste, pas une sentence.</p>
           </div>
 
           <div class="card">
@@ -304,7 +305,7 @@
           <div class="card">
             <h3 class="h-serif h3">Positions (aperçu)</h3>
             <div class="planetary-list">
-              <span class="k">Soleil</span><span class="v">en Vierge</span>
+              <span class="k">Soleil</span><span class="v">en Balance</span>
               <span class="k">Lune</span><span class="v">en Gémeaux</span>
               <span class="k">Mercure</span><span class="v">en Vierge</span>
               <span class="k">Vénus</span><span class="v">en Scorpion</span>
@@ -404,7 +405,7 @@
           </div>
 
           <div id="checkinForm">
-            <p class="body-muted" style="margin-bottom:8px;">Aujourd’hui · 22 sept.</p>
+            <p class="body-muted" style="margin-bottom:8px;">Aujourd’hui · 23 septembre 2026</p>
             <h3 class="h-serif h3">Comment tu te sens ?</h3>
             <div class="chips" id="moodChips">
               <button type="button" class="chip" data-mood="sereine">Sereine</button>
@@ -447,22 +448,22 @@
             <h3 class="h-serif h3">Historique récent</h3>
             <div class="card" style="padding:4px 12px;">
               <div class="history-item">
-                <span class="d">22 sep</span>
+                <span class="d">23 septembre</span>
                 <span class="c">Énergique · fatigue, sensibilité</span>
                 <span class="e">3/5</span>
               </div>
               <div class="history-item">
-                <span class="d">21 sep</span>
+                <span class="d">21 septembre</span>
                 <span class="c">Sereine</span>
                 <span class="e">4/5</span>
               </div>
               <div class="history-item">
-                <span class="d">20 sep</span>
+                <span class="d">20 septembre</span>
                 <span class="c">Sensible · besoin de calme</span>
                 <span class="e">2/5</span>
               </div>
               <div class="history-item">
-                <span class="d">18 sep</span>
+                <span class="d">18 septembre</span>
                 <span class="c">Motivée · énergie haute</span>
                 <span class="e">5/5</span>
               </div>
@@ -479,11 +480,13 @@
             <div class="side right"></div>
           </div>
 
-          <div class="profile-hero">
-            <div class="avatar">A</div>
-            <p class="name">Aïcha</p>
-            <p class="tags">Soleil Vierge · Chemin 8 · Abidjan</p>
+          <div class="profile-hero" id="profileHero">
+            <div class="avatar" id="profileAvatar">A</div>
+            <p class="name" id="profileName">Aïcha</p>
+            <p class="tags" id="profileTags">Soleil Vierge · Chemin 8 · Abidjan</p>
           </div>
+
+          <button type="button" class="btn btn-ghost btn-reset-person" id="btnResetPersonProfile" data-ripple style="margin-bottom:12px;">↺ Nouvelle personne / Remise à zéro</button>
 
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
@@ -513,7 +516,7 @@
               <p style="margin-top:8px;">Infos cycle, Lune, astro et chemin de vie = bien-être personnel uniquement. Pas de diagnostic, pas de conseil clinique, pas de contraception / conception.</p>
               <p style="margin-top:8px;">Pour ta santé : un·e professionnel·le.</p>
             </div>
-            <p class="tiny" style="margin-top:10px;">Accepté le 17 sept. 2026 · démo locale</p>
+            <p class="tiny" style="margin-top:10px;">Accepté le 17 septembre 2026 · démo locale</p>
             <button class="btn btn-ghost btn-sm" type="button" id="btnHideDisclaimer" style="margin-top:10px;width:auto;">Fermer</button>
           </div>
 
@@ -528,11 +531,12 @@
           <div class="app-header">
             <button class="back" data-go="today" type="button">← Aujourd’hui</button>
             <span class="title">Profil</span>
-            <div class="side right"></div>
+            <div class="side right"><button class="back" type="button" id="btnResetPersonReadingHdr" title="Remise à zéro">↺ Reset</button></div>
           </div>
 
           <h2 class="h-serif h1" style="margin-bottom:4px;">Profil complet</h2>
           <p class="body-muted" style="margin-bottom:12px;">Toute personne · chemin · astro · chiffres &amp; couleurs de chance · boussole douce, pas un destin.</p>
+          <button type="button" class="btn btn-ghost btn-reset-person" id="btnResetPersonReading" data-ripple style="margin-bottom:12px;">↺ Nouvelle personne / Remise à zéro</button>
 
           <div class="persona-toggle krizoua-toggle" role="tablist" aria-label="Mode lecture">
             <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha" data-ripple>Démo · Aïcha</button>

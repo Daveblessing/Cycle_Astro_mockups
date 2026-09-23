@@ -1886,3 +1886,20 @@ body {
   box-shadow: 0 0 16px rgba(201,162,39,0.12);
   outline: none;
 }
+
+/* Remise à zéro / Nouvelle personne */
+.btn-reset-person {
+  width: 100%;
+  border-color: rgba(201, 162, 39, 0.45);
+  color: var(--gold-soft);
+  letter-spacing: 0.04em;
+}
+.btn-reset-person:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+.hub-chip-reset {
+  border-color: rgba(201, 162, 39, 0.4);
+  color: var(--gold-soft);
+}

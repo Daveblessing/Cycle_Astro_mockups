@@ -6,6 +6,9 @@
 (function () {
   'use strict';
 
+  /** Mois de référence démo forcé : septembre 2026 (même si Date() réelle dérive). */
+  const DEMO_REF_MONTH = { year: 2026, month: 8, label: 'Septembre 2026' }; // month 0-index
+
   const DEMO = {
     displayName: 'Aïcha',
     birthDate: '1998-09-17',
@@ -21,18 +24,18 @@
     cycle: {
       phase: 'lutéale',
       phaseLabel: 'Ralentir et ressentir',
-      dayInCycle: 22,
+      dayInCycle: 23,
       avgCycle: 28,
       avgPeriod: 5,
       lastPeriodStart: '2026-09-01',
       lastPeriodEnd: '2026-09-05',
-      nextPeriodEst: '2026-10-02',
+      nextPeriodEst: '2026-09-29',
     },
     moon: {
       phase: 'Gibbeuse décroissante',
       illumination: 62,
     },
-    today: '2026-09-22',
+    today: '2026-09-23',
   };
 
   const SCREENS = [
@@ -158,7 +161,7 @@
     const offset = 1;
     const daysInMonth = 30;
     const periodDays = new Set([1, 2, 3, 4, 5]);
-    const today = 22;
+    const today = 23;
 
     for (let i = 0; i < offset; i++) {
       const blank = document.createElement('div');
@@ -191,13 +194,13 @@
 
     const offset = 1;
     const daysInMonth = 30;
-    const today = 22;
-    // Simple phase markers for demo
+    const today = 23;
+    // Simple phase markers for demo (septembre 2026)
     const phases = {
       12: 'new',
       14: 'half',
       18: 'gib',
-      22: 'gib',
+      23: 'gib',
       26: 'full',
     };
 
@@ -1855,6 +1858,125 @@
     });
   }
 
+
+  /* —— Remise à zéro / Nouvelle personne —— */
+  function clearReadingFormEmpty() {
+    const ids = ['readFirstName', 'readLastName', 'readBirth', 'readBirthTime', 'readPlace', 'readName'];
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const gender = document.getElementById('readGender');
+    if (gender) gender.value = 'unspecified';
+  }
+
+  function hideReadingOutput() {
+    const out = document.getElementById('readingOutput');
+    if (out) out.hidden = true;
+    const loading = document.getElementById('readingLoading');
+    if (loading) loading.hidden = true;
+    const formCard = document.getElementById('readingFormCard');
+    if (formCard) formCard.style.opacity = '';
+    const v = document.getElementById('readVerbatimWrap');
+    if (v) v.hidden = true;
+    const s = document.getElementById('readStructuredWrap');
+    if (s) s.hidden = false;
+    setPersonaActive('aicha');
+  }
+
+  function clearCheckinDemo() {
+    const mood = document.getElementById('moodChips');
+    if (mood) mood.querySelectorAll('.chip').forEach((c) => c.classList.remove('selected'));
+    document.querySelectorAll('#symptomList .symptom-item').forEach((item) => {
+      item.classList.remove('selected');
+      const input = item.querySelector('input');
+      if (input) input.checked = false;
+    });
+    const energy = document.getElementById('energySlider');
+    if (energy) {
+      energy.querySelectorAll('button').forEach((b) => b.classList.remove('selected'));
+    }
+    const energyLabel = document.getElementById('energyLabel');
+    if (energyLabel) energyLabel.textContent = '— / 5';
+    const note = document.getElementById('noteField');
+    if (note) note.value = '';
+    const hist = document.getElementById('historyPanel');
+    const form = document.getElementById('checkinForm');
+    if (hist) hist.hidden = true;
+    if (form) form.hidden = false;
+  }
+
+  function clearCalcForNewPerson() {
+    try {
+      localStorage.removeItem(CALC_KEY);
+    } catch (_) { /* ignore */ }
+    const last = document.getElementById('calcLastStart');
+    const period = document.getElementById('calcPeriodLen');
+    const cycle = document.getElementById('calcCycleLen');
+    // Défaut cohérent septembre 2026 (prêt à recalculer, écran résultats vidé)
+    if (last) last.value = DEMO.cycle.lastPeriodStart;
+    if (period) period.value = String(DEMO.cycle.avgPeriod);
+    if (cycle) cycle.value = String(DEMO.cycle.avgCycle);
+    const results = document.getElementById('calcResults');
+    if (results) results.hidden = true;
+  }
+
+  function resetCurrentPerson(opts) {
+    opts = opts || {};
+    const skipConfirm = !!opts.skipConfirm;
+    if (!skipConfirm) {
+      const ok = window.confirm(
+        'Nouvelle personne / Remise à zéro ?\n\nLe formulaire, les résultats et le profil courant seront vidés. Les profils récents restent disponibles.'
+      );
+      if (!ok) return false;
+    }
+    try {
+      localStorage.removeItem(PROFILE_KEY);
+      localStorage.removeItem(CALC_KEY);
+    } catch (_) { /* ignore */ }
+
+    clearReadingFormEmpty();
+    hideReadingOutput();
+    clearCheckinDemo();
+    clearCalcForNewPerson();
+    renderRecentProfiles();
+
+    const hello = document.getElementById('hubHello');
+    if (hello) hello.textContent = 'Bonjour ✦';
+    const hubDate = document.getElementById('hubDate');
+    if (hubDate) hubDate.textContent = 'Mercredi 23 septembre 2026';
+    const avatar = document.getElementById('profileAvatar');
+    if (avatar) avatar.textContent = '?';
+    const pname = document.getElementById('profileName');
+    if (pname) pname.textContent = 'Nouvelle personne';
+    const ptags = document.getElementById('profileTags');
+    if (ptags) ptags.textContent = 'Profil prêt à saisir · septembre 2026';
+
+    toast('Remise à zéro · prêt pour une nouvelle personne');
+    go('reading');
+    const first = document.getElementById('readFirstName');
+    if (first) setTimeout(() => first.focus(), 120);
+    return true;
+  }
+
+  function bindResetPerson() {
+    const ids = [
+      'btnResetPersonHub',
+      'btnResetPersonProfile',
+      'btnResetPersonReading',
+      'btnResetPersonReadingHdr',
+    ];
+    ids.forEach((id) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        resetCurrentPerson();
+      });
+    });
+  }
+
   /* —— Interactions —— */
   function bindClicks() {
     document.body.addEventListener('click', (e) => {
@@ -2015,6 +2137,7 @@
     bindClicks();
     bindCalculator();
     bindReading();
+    bindResetPerson();
     tickClock();
     setInterval(tickClock, 30000);
 
@@ -2025,6 +2148,7 @@
 
     // Expose demo for console inspection
     window.CycleAstroDemo = DEMO;
+    window.CycleAstroReset = resetCurrentPerson;
     window.CycleAstroReading = {
       lifePathFromDate: lifePathFromDate,
       dayVibeFromDate: dayVibeFromDate,
