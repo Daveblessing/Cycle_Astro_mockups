@@ -3083,3 +3083,17 @@ html, body {
 #view-today .pillar-card .value { font-size: 22px; font-weight: 600; }
 #view-today .pillar-card .sub { font-style: italic; font-size: 12px; }
 #view-today .pillar-card .glyph { color: #C5A059; }
+
+/* Textes entourés : encre lisible, rien d'autre. */
+#view-astro .energy-row .name,
+#view-astro .energy-row .pct,
+#view-astro .natal-row .meta .k,
+#view-astro .natal-row .meta .v,
+#view-astro .natal-row .meta .v .tiny,
+#view-reading .kind-line + .body-muted,
+#view-reading #btnResetPersonReading {
+  color: #1A1A1A !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
