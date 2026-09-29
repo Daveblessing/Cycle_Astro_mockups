@@ -15,6 +15,10 @@
 
   <div class="phone" role="application" aria-label="Cycle & Astro">
     <div class="stars" aria-hidden="true"></div>
+    <div class="stardust" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
     <div class="status-bar">
       <span id="clock">12:59</span>
       <span class="icons">▮▮▮ · 100%</span>
@@ -29,18 +33,18 @@
             <p class="brand-kd">★ KING DAVEBLESSING ★</p>
             <h1 class="brand-name">Cycle &amp; Astro</h1>
             <p class="version-line">v3.3 · premium KD</p>
-            <p class="pillars-line">calendrier menstruel · lune · astro · chemin de vie</p>
+            <p class="pillars-line">cycle · lune · astro · chemin de vie</p>
             <div class="divider" style="width:60%;margin:12px auto;"></div>
-            <p class="tagline">Chaque jour, un miroir doux : ton cycle, la Lune, les astres, et ton chemin — réunis, sans jargon médical.</p>
+            <p class="tagline">Tu es en sécurité ici. Ton rythme, la Lune, les astres, ton chemin.</p>
             <div class="welcome-pillars" aria-label="Les quatre piliers">
-              <div class="wp"><div class="g">◉</div><div class="t">Cycle menstruel</div><div class="d">Ton corps, en douceur</div></div>
+              <div class="wp"><div class="g">◉</div><div class="t">Mes règles</div><div class="d">Ton rythme, en douceur</div></div>
               <div class="wp"><div class="g">☾</div><div class="t">Lune</div><div class="d">Rythmes du ciel</div></div>
               <div class="wp"><div class="g">✦</div><div class="t">Astro</div><div class="d">Message du jour</div></div>
               <div class="wp"><div class="g">8</div><div class="t">Chemin</div><div class="d">Boussole personnelle</div></div>
             </div>
             <div class="cta-wrap">
               <button class="btn btn-primary btn-lg" data-go="onboarding" data-ripple>Commencer</button>
-              <button class="btn btn-ghost" data-go="today">Voir la démo (skip)</button>
+              <button class="link-silver" type="button" data-go="today">Voir la démo</button>
             </div>
           </div>
         </section>
@@ -76,91 +80,46 @@
             <div class="side right"><button class="back" data-go="profile" type="button">Profil</button></div>
           </div>
           <div class="greeting">
-            <p class="hello" id="hubHello">Bonjour, Aïcha ✦</p>
+            <p class="hello" id="hubHello">Bonjour, Aïcha</p>
             <p class="date" id="hubDate">Mercredi 23 septembre 2026</p>
+            <p class="safe-line">Tu es en sécurité ici.</p>
           </div>
 
-          <div class="card glass-card cycle-hero" data-go="cycle" role="button" tabindex="0" data-ripple>
-            <div class="cycle-hero-top">
-              <h3 class="h-serif h3 cycle-hero-title">Cycle menstruel</h3>
-              <span class="phase-badge">Phase lutéale</span>
+          <div class="day-message">
+            <div class="hero-breath" aria-hidden="true"></div>
+            <div class="protect-ring">
+              <span class="crescent" aria-hidden="true">☾</span>
+              <p class="day-message-text" id="hubMessage">Jour 23. Prochaine date le 29 septembre 2026.</p>
             </div>
-            <div class="cycle-hero-body">
-              <div class="cycle-ring-wrap" aria-hidden="true">
-                <svg class="cycle-ring" viewBox="0 0 120 120" width="108" height="108">
-                  <circle class="ring-track" cx="60" cy="60" r="48" />
-                  <circle class="ring-period" cx="60" cy="60" r="48"
-                    stroke-dasharray="54 248" stroke-dashoffset="0"
-                    transform="rotate(-90 60 60)" />
-                  <circle class="ring-progress" cx="60" cy="60" r="48"
-                    stroke-dasharray="247.74 301.59" stroke-dashoffset="0"
-                    transform="rotate(-90 60 60)" />
-                </svg>
-                <div class="cycle-ring-center">
-                  <span class="day-num">23</span>
-                  <span class="day-den">/ 28</span>
-                  <span class="day-label">Jour</span>
-                </div>
-              </div>
-              <div class="cycle-hero-meta">
-                <p class="cycle-next">Prochaines règles · vers le <strong>29 septembre</strong> <span class="est">(estimation)</span></p>
-                <p class="cycle-invite italic">« Ralentir et ressentir »</p>
-                <button class="btn btn-primary btn-sm cycle-cta" data-go="cycle" type="button">Voir le calendrier</button>
-              </div>
-            </div>
-            <p class="footnote">Estimation basée sur tes saisies — pas un avis médical.</p>
-          </div>
-          <div class="hub-chips" aria-label="Raccourcis">
-            <button type="button" class="hub-chip" data-go="calculator" data-ripple>◉ Calculateur</button>
-            <button type="button" class="hub-chip" data-go="reading" data-ripple>✦ Profil complet</button>
-            <button type="button" class="hub-chip hub-chip-reset" id="btnResetPersonHub" data-ripple>↺ Nouvelle personne</button>
           </div>
 
-          <div class="grid-2 pillars-grid">
-            <button class="pillar-card pillar-cta" data-go="cycle" type="button" data-ripple>
-              <span class="label">Cycle menstruel</span>
-              <span class="glyph">◉</span>
-              <span class="value">Jour 23</span>
-              <span class="sub">Ralentir et ressentir</span>
-            </button>
-            <button class="pillar-card pillar-cta" data-go="moon" type="button" data-ripple>
-              <span class="label">Lune</span>
-              <span class="glyph">☾</span>
-              <span class="value">Gibbeuse</span>
-              <span class="sub">Écoute ce qui se termine</span>
-            </button>
-            <button class="pillar-card pillar-cta" data-go="astro" type="button" data-ripple>
-              <span class="label">Astro</span>
-              <span class="glyph">✦</span>
-              <span class="value">Vierge</span>
-              <span class="sub">Message du jour</span>
-            </button>
-            <button class="pillar-card pillar-cta" data-go="path" type="button" data-ripple>
-              <span class="label">Chemin</span>
-              <span class="glyph">8</span>
-              <span class="value">Maîtrise</span>
-              <span class="sub">Axes à explorer</span>
-            </button>
-          </div>
+          <button class="btn btn-primary btn-lg" data-go="cycle" type="button">Mes règles</button>
+          <p class="under-btn">Tu es tenue</p>
 
-          <button class="btn btn-primary" data-go="journal" type="button" data-ripple>+ Check-in rapide</button>
-          <div class="card tapable section-gap" data-go="astro" style="margin-top:12px;cursor:pointer;" role="button" tabindex="0">
-            <h3 class="h-serif h3">Insight doux</h3>
-            <p class="body">Ta phase lutéale croise une lune décroissante — un moment propice pour ralentir, sans obligation. Une piste, pas une cause.</p>
-            <p class="tiny" style="margin-top:8px;">Suggestif · non médical</p>
-          </div>
+          <nav class="hub-secondary" aria-label="Autres portes">
+            <button type="button" class="link-silver" data-go="calculator">Calculer</button>
+            <button type="button" class="link-silver" data-go="profile">Mon profil</button>
+          </nav>
+          <nav class="hub-more" aria-label="Suite, plus petit">
+            <button type="button" class="link-silver link-silver-quiet" data-go="moon">Lune</button>
+            <button type="button" class="link-silver link-silver-quiet" data-go="astro">Astro</button>
+            <button type="button" class="link-silver link-silver-quiet" data-go="path">Chemin</button>
+            <button type="button" class="link-silver link-silver-quiet" data-go="journal">Journal</button>
+            <button type="button" class="link-silver link-silver-quiet" data-go="reading">Profil complet</button>
+            <button type="button" class="link-silver link-silver-quiet" id="btnResetPersonHub">Nouvelle personne</button>
+          </nav>
         </section>
 
         <!-- 4. Cycle -->
-        <section class="view" id="view-cycle" data-screen="cycle" data-label="Cycle menstruel" data-nav="cycle">
+        <section class="view" id="view-cycle" data-screen="cycle" data-label="Mes règles" data-nav="cycle">
           <div class="app-header">
             <button class="back" data-go="today" type="button">← Aujourd’hui</button>
-            <span class="title">Cycle menstruel</span>
+            <span class="title">Mes règles</span>
             <div class="side right"></div>
           </div>
 
           <div class="card cycle-today-card">
-            <p class="cycle-today-line">Aujourd’hui · <strong>Jour 23</strong> · Phase <strong>lutéale</strong></p>
+            <p class="cycle-today-line" id="cycleTodayLine">Aujourd’hui · Jour 23 · Après le milieu</p>
             <p class="italic" style="margin-top:4px;">« Ralentir et ressentir »</p>
           </div>
 
@@ -198,8 +157,8 @@
 
           <div class="card">
             <h3 class="h-serif h3">Prochaines règles</h3>
-            <p class="body">Estimation → vers le <strong style="color:var(--gold);">29 septembre 2026</strong></p>
-            <p class="tiny" style="margin-top:6px;">Longueur cycle moyenne : 28 j · règles : 5 j (modifiables)</p>
+            <p class="body" id="cycleNextLine">Prochaine date · 29 septembre 2026</p>
+            <p class="formula-line">Prochaine date = dernières règles + longueur du cycle</p>
           </div>
 
           <div class="card">
@@ -215,8 +174,9 @@
             </div>
           </div>
 
-          <button class="btn btn-primary" type="button" data-go="calculator">Calculateur</button>
-          <button class="btn btn-ghost" type="button" id="btnEditPeriod">+ Ajouter / corriger une période</button>
+          <button class="btn btn-primary btn-lg" type="button" data-go="calculator">Voir ma date</button>
+          <p class="under-btn">Douce nuit</p>
+          <button class="link-silver" type="button" id="btnEditPeriod">Corriger une période</button>
         </section>
 
         <!-- 5. Lune -->
@@ -390,7 +350,7 @@
             </ul>
           </div>
 
-          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Générer mon profil complet</button>
+          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Lire mon profil</button>
           <p class="tiny" style="text-align:center;margin-top:8px;">Chemin · jour · signe &amp; décan · dons · axes</p>
 
           <p class="footnote">Ce n’est pas un destin figé. Juste une boussole à explorer — tu restes libre.</p>
@@ -416,7 +376,7 @@
               <button type="button" class="chip" data-mood="calme">Besoin de calme</button>
             </div>
 
-            <h3 class="h-serif h3">Symptômes soft</h3>
+            <h3 class="h-serif h3">Ce que tu ressens</h3>
             <div class="symptom-list" id="symptomList">
               <label class="symptom-item"><input type="checkbox" /> Crampes légères</label>
               <label class="symptom-item selected"><input type="checkbox" checked /> Fatigue</label>
@@ -577,7 +537,7 @@
               </label>
               <!-- legacy hidden name for Krizoua detect / compat -->
               <input type="hidden" id="readName" name="name" value="" />
-              <button class="btn btn-primary btn-lg btn-generate-reading" type="submit" id="btnGenerateReading" data-ripple>✦ Générer mon profil complet</button>
+              <button class="btn btn-primary btn-lg btn-generate-reading" type="submit" id="btnGenerateReading" data-ripple>Lire mon profil</button>
             </form>
             <p class="tiny form-hint" id="readingEmptyHint">Prénom + date · le reste affine la lecture (heure → note ascendant).</p>
             <div id="recentProfiles" class="recent-profiles" hidden>
@@ -715,60 +675,47 @@
         <section class="view" id="view-calculator" data-screen="calculator" data-label="Calculateur de menstruation" data-nav="profile">
           <div class="app-header">
             <button class="back" data-go="today" type="button">← Aujourd’hui</button>
-            <span class="title">Calculateur</span>
+            <span class="title">Ta date</span>
             <div class="side right"></div>
           </div>
 
-          <h2 class="h-serif h1" style="margin-bottom:6px;">Calculateur de menstruation</h2>
-          <p class="body-muted" style="margin-bottom:14px;">Estime tes prochaines règles à partir de tes saisies — en douceur, sans jargon médical.</p>
+          <p class="body" style="margin-bottom:14px;">Deux infos. Puis ta date, en grand.</p>
 
           <div class="card glass-card" id="calcFormCard">
             <form id="calcForm" class="simple-form" novalidate>
               <label class="field">
-                <span class="field-label">Début des dernières règles</span>
-                <input type="date" id="calcLastStart" name="lastStart" required />
+                <span class="field-label">Date des dernières règles</span>
+                <input type="date" id="calcLastStart" name="lastStart" value="2026-09-01" required />
               </label>
               <label class="field">
-                <span class="field-label">Durée des règles (jours)</span>
-                <input type="number" id="calcPeriodLen" name="periodLen" min="2" max="10" value="5" inputmode="numeric" required />
+                <span class="field-label">Longueur du cycle</span>
+                <input type="number" id="calcCycleLen" name="cycleLen" min="21" max="35" value="28" inputmode="numeric" required />
               </label>
-              <label class="field">
-                <span class="field-label">Longueur du cycle (jours)</span>
-                <input type="number" id="calcCycleLen" name="cycleLen" min="21" max="45" value="28" inputmode="numeric" required />
-              </label>
-              <button class="btn btn-primary btn-lg" type="submit" id="btnCalc" data-ripple>Calculer</button>
+              <details class="calc-more">
+                <summary>Durée des règles</summary>
+                <label class="field">
+                  <span class="field-label">Jours de règles</span>
+                  <input type="number" id="calcPeriodLen" name="periodLen" min="2" max="8" value="5" inputmode="numeric" />
+                </label>
+              </details>
+              <button class="btn btn-primary btn-lg" type="submit" id="btnCalc">Voir ma date</button>
+              <p class="under-btn">Douce nuit</p>
             </form>
           </div>
 
-          <div class="card glass-card calc-results calc-results-sticky" id="calcResults" hidden>
-            <div class="calc-summary">
-              <div class="calc-ring-mini" aria-hidden="true">
-                <svg viewBox="0 0 80 80" width="72" height="72">
-                  <circle class="ring-track" cx="40" cy="40" r="30" />
-                  <circle class="ring-progress" id="calcRingProgress" cx="40" cy="40" r="30"
-                    stroke-dasharray="0 188.5" stroke-dashoffset="0"
-                    transform="rotate(-90 40 40)" />
-                </svg>
-                <div class="calc-ring-center">
-                  <span class="day-num" id="calcDayNum">—</span>
-                  <span class="day-label">Jour</span>
-                </div>
-              </div>
-              <div class="calc-summary-meta">
-                <p class="calc-phase" id="calcPhaseLabel">Phase estimée</p>
-                <p class="tiny" id="calcDayLine">Jour du cycle</p>
-              </div>
-            </div>
-            <ul class="calc-kv" id="calcKv">
-              <li><span>Prochaines règles</span><strong id="calcNextStart">—</strong></li>
-              <li><span>Fin estimée</span><strong id="calcNextEnd">—</strong></li>
-            </ul>
-            <h3 class="h-serif h3" style="margin-top:12px;">3 prochaines périodes</h3>
+          <div class="card glass-card calc-results" id="calcResults" hidden>
+            <p class="calc-kicker">Prochaine date</p>
+            <p class="calc-big-date" id="calcNextStart">—</p>
+            <p class="formula-line" id="calcFormula">Prochaine date = dernières règles + longueur du cycle</p>
+            <p class="calc-phase" id="calcPhaseLabel">—</p>
+            <p class="body" id="calcDayLine">Jour du cycle</p>
+            <p class="body" id="calcDayNum" hidden>—</p>
+            <p class="body">Fin douce · <span id="calcNextEnd">—</span></p>
             <ul class="calc-upcoming" id="calcUpcoming"></ul>
-            <p class="footnote" style="margin-top:12px;">Estimations à titre informatif / bien-être. Pas un avis médical.</p>
+            <p class="footnote">Bien-être seulement. Pas un avis médical.</p>
           </div>
 
-          <p class="footnote" id="calcDisclaimerAlways">Estimations à titre informatif / bien-être. Pas un avis médical.</p>
+          <p class="footnote" id="calcDisclaimerAlways">Bien-être seulement. Pas un avis médical.</p>
         </section>
 
         <!-- Market stub -->

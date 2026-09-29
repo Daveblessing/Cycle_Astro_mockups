@@ -128,6 +128,8 @@
   }
 
   function rippleAt(el, evt) {
+    /* Designer : rien ne bouge sous le doigt. Pas d'onde au tap. */
+    return;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
@@ -160,8 +162,21 @@
     // Sept 2026 starts Tuesday → offset 1 (Mon=0)
     const offset = 1;
     const daysInMonth = 30;
-    const periodDays = new Set([1, 2, 3, 4, 5]);
     const today = 23;
+    // Jours de règles via le moteur (D0, P, C), pas une liste magique.
+    const periodDays = new Set();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = '2026-09-' + String(d).padStart(2, '0');
+      const snap = computeCalc(
+        DEMO.cycle.lastPeriodStart,
+        DEMO.cycle.avgPeriod,
+        DEMO.cycle.avgCycle,
+        parseYMD(iso)
+      );
+      if (snap && snap.dayInCycle >= 1 && snap.dayInCycle <= snap.periodLen) {
+        periodDays.add(d);
+      }
+    }
 
     for (let i = 0; i < offset; i++) {
       const blank = document.createElement('div');
@@ -1665,20 +1680,28 @@
     return Math.round((b.getTime() - a.getTime()) / ms);
   }
 
+  /**
+   * Phase bien-être, à partir du jour affiché 1..C (pas un diagnostic).
+   * Interne : règles sur 1..P, puis folliculaire, milieu autour de C−14 (±1), puis lutéale.
+   * À l'écran : « Règles », « Avant le milieu », « Milieu de cycle », « Après le milieu ».
+   * Le milieu n'est jamais libellé fertile.
+   */
   function softPhase(dayInCycle, periodLen, cycleLen) {
-    const mid = Math.max(periodLen + 2, Math.round(cycleLen / 2));
-    const ovuStart = Math.max(periodLen + 1, mid - 1);
-    const ovuEnd = Math.min(cycleLen, mid + 1);
-    if (dayInCycle >= 1 && dayInCycle <= periodLen) {
-      return { key: 'menstruelle', label: 'Menstruelle' };
+    const P = periodLen;
+    const C = cycleLen;
+    const center = C - 14; // autour de C−14
+    const winStart = center - 1; // fenêtre ±1
+    const winEnd = center + 1;
+    if (dayInCycle >= 1 && dayInCycle <= P) {
+      return { key: 'menstruelle', label: 'Règles' };
     }
-    if (dayInCycle > periodLen && dayInCycle < ovuStart) {
-      return { key: 'folliculaire', label: 'Folliculaire' };
+    if (dayInCycle >= winStart && dayInCycle <= winEnd) {
+      return { key: 'ovulatoire', label: 'Milieu de cycle' };
     }
-    if (dayInCycle >= ovuStart && dayInCycle <= ovuEnd) {
-      return { key: 'ovulatoire', label: 'Ovulatoire' };
+    if (dayInCycle > P && dayInCycle < winStart) {
+      return { key: 'folliculaire', label: 'Avant le milieu' };
     }
-    return { key: 'luteale', label: 'Lutéale' };
+    return { key: 'luteale', label: 'Après le milieu' };
   }
 
   function loadCalcInputs() {
@@ -1699,63 +1722,82 @@
     } catch (_) { /* ignore */ }
   }
 
+  /**
+   * Moteur algébrique (commentaires FR). Aucune estimation magique.
+   * C = cycleLength, jours, défaut 28, borné 21–35.
+   * P = periodLength, défaut 5, borné 2–8.
+   * D0 = lastStart (date des dernières règles).
+   * Aujourd'hui produit forcé : mercredi 23 septembre 2026 (DEMO.today),
+   * même si le calendrier réel a avancé. Jamais new Date() pour ce calcul.
+   *
+   * delta = (today − D0) en jours (peut être négatif).
+   * k = floor(delta / C)
+   * dayInCycle0 = delta mod C ; si négatif, on ajoute C → [0, C−1].
+   * Jour affiché (1..C) = dayInCycle0 + 1
+   *   (D0 est le jour 1. Ex. D0 = 1er sept. 2026, today = 23 sept. → jour 23.)
+   * nextStart = D0 + C × (k + 1)
+   *   (C = 28 et D0 = 2026-09-01 → k = floor(22/28) = 0 → 29 septembre 2026.)
+   * Prochaine date = dernières règles + longueur du cycle (répétée k+1 fois).
+   */
+  function clampCycle(n) {
+    const v = Number(n);
+    if (!v || Number.isNaN(v)) return 28;
+    return Math.min(35, Math.max(21, Math.round(v)));
+  }
+
+  function clampPeriod(n) {
+    const v = Number(n);
+    if (!v || Number.isNaN(v)) return 5;
+    return Math.min(8, Math.max(2, Math.round(v)));
+  }
+
+  function productToday() {
+    const d = parseYMD(DEMO.today);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
   function computeCalc(lastStart, periodLen, cycleLen, today) {
-    const start = parseYMD(lastStart);
+    const start = parseYMD(lastStart); // D0
     if (!start) return null;
-    const p = Math.min(10, Math.max(2, Number(periodLen) || 5));
-    const c = Math.min(45, Math.max(21, Number(cycleLen) || 28));
-    const todayD = today || parseYMD(DEMO.today) || new Date();
+    const P = clampPeriod(periodLen);
+    const C = clampCycle(cycleLen);
+    const todayD = today ? new Date(today.getFullYear(), today.getMonth(), today.getDate()) : productToday();
     todayD.setHours(0, 0, 0, 0);
 
-    // Advance last start to most recent cycle start on or before today when possible
-    let cycleStart = start;
-    if (start.getTime() <= todayD.getTime()) {
-      const elapsed = daysBetween(start, todayD);
-      const cyclesPassed = Math.floor(elapsed / c);
-      cycleStart = addDays(start, cyclesPassed * c);
-    }
+    const delta = daysBetween(start, todayD); // (today − D0) en jours
+    const k = Math.floor(delta / C);
+    // mod algébrique : si négatif, ajouter C
+    let dayInCycle0 = delta % C;
+    if (dayInCycle0 < 0) dayInCycle0 += C;
+    const dayInCycle = dayInCycle0 + 1; // 1..C
+    const phase = softPhase(dayInCycle, P, C);
 
-    const nextPeriod = addDays(cycleStart, c);
-    // If cycleStart is in the future (user entered future date), next = that start
-    const nextStart =
-      cycleStart.getTime() > todayD.getTime() ? cycleStart : nextPeriod;
-    // Prefer: nextPeriod = lastStart + cycleLength from the original lastStart chain
-    // Spec: nextPeriod = lastStart + cycleLength — show that first occurrence after lastStart
-    // Also show current day if lastStart in past
-    const firstNext = addDays(start, c);
-    // For "prochaines règles": if firstNext still in past, keep adding cycles
-    let upcomingStart = firstNext;
-    while (upcomingStart.getTime() <= todayD.getTime()) {
-      upcomingStart = addDays(upcomingStart, c);
-    }
-    const upcomingEnd = addDays(upcomingStart, p - 1);
-
-    let dayInCycle = null;
-    let phase = null;
-    if (start.getTime() <= todayD.getTime()) {
-      const elapsed = daysBetween(start, todayD);
-      dayInCycle = (elapsed % c) + 1;
-      phase = softPhase(dayInCycle, p, c);
-    }
+    // nextStart = D0 + C * (k+1)
+    const nextStart = addDays(start, C * (k + 1));
+    const nextEnd = addDays(nextStart, P - 1);
 
     const periods = [];
-    let cursor = upcomingStart;
+    let cursor = nextStart;
     for (let i = 0; i < 3; i++) {
       periods.push({
-        start: new Date(cursor),
-        end: addDays(cursor, p - 1),
+        start: new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate()),
+        end: addDays(cursor, P - 1),
       });
-      cursor = addDays(cursor, c);
+      cursor = addDays(cursor, C);
     }
 
     return {
-      periodLen: p,
-      cycleLen: c,
-      nextStart: upcomingStart,
-      nextEnd: upcomingEnd,
-      dayInCycle,
-      phase,
-      periods,
+      periodLen: P,
+      cycleLen: C,
+      delta: delta,
+      k: k,
+      dayInCycle0: dayInCycle0,
+      nextStart: nextStart,
+      nextEnd: nextEnd,
+      dayInCycle: dayInCycle,
+      phase: phase,
+      periods: periods,
     };
   }
 
@@ -1777,14 +1819,18 @@
     if (nextStart) nextStart.textContent = formatFR(res.nextStart);
     if (nextEnd) nextEnd.textContent = formatFR(res.nextEnd);
 
+    const formula = document.getElementById('calcFormula');
+    if (formula) {
+      formula.hidden = false;
+      formula.textContent = 'Prochaine date = dernières règles + longueur du cycle';
+    }
     if (res.dayInCycle != null) {
       if (dayNum) dayNum.textContent = String(res.dayInCycle);
       if (dayLine) {
-        dayLine.textContent =
-          'Jour ' + res.dayInCycle + ' / ' + res.cycleLen + ' (estimation)';
+        dayLine.textContent = 'Jour ' + res.dayInCycle + ' sur ' + res.cycleLen;
       }
       if (phaseLabel) {
-        phaseLabel.textContent = 'Phase ' + res.phase.label.toLowerCase();
+        phaseLabel.textContent = res.phase.label;
       }
       if (ring) {
         const circ = 2 * Math.PI * 30;
@@ -1799,7 +1845,7 @@
       if (dayLine) {
         dayLine.textContent = 'Date de début dans le futur — jour non calculé';
       }
-      if (phaseLabel) phaseLabel.textContent = 'Phase estimée';
+      if (phaseLabel) phaseLabel.textContent = '—';
       if (ring) ring.setAttribute('stroke-dasharray', '0 188.5');
     }
 
@@ -1854,7 +1900,7 @@
       renderCalcResults(res);
       const results = document.getElementById('calcResults');
       if (results) results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      toast('Estimation mise à jour ✦');
+      toast('Ta date est prête');
     });
   }
 
@@ -1957,6 +2003,30 @@
     const first = document.getElementById('readFirstName');
     if (first) setTimeout(() => first.focus(), 120);
     return true;
+  }
+
+
+  function renderProductSurfaces() {
+    const res = computeCalc(
+      DEMO.cycle.lastPeriodStart,
+      DEMO.cycle.avgPeriod,
+      DEMO.cycle.avgCycle
+    );
+    if (!res) return;
+    const msg = document.getElementById('hubMessage');
+    if (msg) {
+      msg.textContent =
+        'Jour ' + res.dayInCycle + '. Prochaine date le ' + formatFR(res.nextStart) + '.';
+    }
+    const cycleLine = document.getElementById('cycleTodayLine');
+    if (cycleLine) {
+      cycleLine.textContent =
+        'Aujourd’hui · Jour ' + res.dayInCycle + ' · ' + res.phase.label;
+    }
+    const cycleNext = document.getElementById('cycleNextLine');
+    if (cycleNext) {
+      cycleNext.textContent = 'Prochaine date · ' + formatFR(res.nextStart);
+    }
   }
 
   function bindResetPerson() {
@@ -2105,7 +2175,7 @@
       splash: '1 · Splash',
       onboarding: '2 · Disclaimer',
       today: '3 · Aujourd’hui',
-      cycle: '4 · Cycle menstruel',
+      cycle: '4 · Mes règles',
       moon: '5 · Lune',
       astro: '6 · Astro',
       path: '7 · Chemin',
@@ -2138,6 +2208,7 @@
     bindCalculator();
     bindReading();
     bindResetPerson();
+    renderProductSurfaces();
     tickClock();
     setInterval(tickClock, 30000);
 
@@ -2148,6 +2219,7 @@
 
     // Expose demo for console inspection
     window.CycleAstroDemo = DEMO;
+    window.CycleAstroCalc = computeCalc;
     window.CycleAstroReset = resetCurrentPerson;
     window.CycleAstroReading = {
       lifePathFromDate: lifePathFromDate,
