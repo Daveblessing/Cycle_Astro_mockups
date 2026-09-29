@@ -2728,3 +2728,61 @@ html, body {
 .door-astro .door-label { color: #1A1A1A; }
 .phone.ambiance-astro .h-serif { color: #1A1A1A; }
 .phone.ambiance-astro .ambiance-title { color: #C5A059; }
+
+/* Lecture, chemin, astro : texte net. Pas de jaune pâle, pas d’opacité. */
+.phone.ambiance-astro #readingOutput,
+.phone.ambiance-astro #readingOutput *,
+.phone.ambiance-astro #view-path .body,
+.phone.ambiance-astro #view-path .invite-list li,
+.phone.ambiance-astro #view-path .footnote,
+.phone.ambiance-astro #view-astro .body,
+.phone.ambiance-astro #view-astro .italic,
+.phone.ambiance-astro #view-astro .tiny,
+.phone.ambiance-astro .read-bullets li,
+.phone.ambiance-astro .reading-body .body,
+.phone.ambiance-astro .reading-id .read-meta,
+.phone.ambiance-astro .verbatim-body,
+.phone.ambiance-astro .verbatim-body .vb-p,
+.phone.ambiance-astro .verbatim-body .vb-ul li,
+.phone.ambiance-astro .verbatim-body .vb-calc,
+.phone.ambiance-astro .calc-reminder {
+  color: #1A1A1A;
+  opacity: 1;
+  text-shadow: none;
+  filter: none;
+}
+.phone.ambiance-astro #readingOutput .read-subh,
+.phone.ambiance-astro #readingOutput h3,
+.phone.ambiance-astro #readingOutput .h3,
+.phone.ambiance-astro #readingOutput .h-serif,
+.phone.ambiance-astro #readingOutput .h-serif.h3,
+.phone.ambiance-astro #readingOutput .read-name,
+.phone.ambiance-astro #readingOutput .gold-em,
+.phone.ambiance-astro #readingOutput .vb-h,
+.phone.ambiance-astro #readingOutput .vb-synth,
+.phone.ambiance-astro #readingOutput .k,
+.phone.ambiance-astro #view-path h3,
+.phone.ambiance-astro #view-path .h3,
+.phone.ambiance-astro #view-path .path-hero .title,
+.phone.ambiance-astro #view-path .path-hero .num,
+.phone.ambiance-astro #view-astro h3,
+.phone.ambiance-astro #view-astro .h3,
+.phone.ambiance-astro #view-astro .ambiance-title {
+  color: #5C4A28;
+  opacity: 1;
+  text-shadow: none;
+  filter: none;
+}
+.phone.ambiance-astro #readingOutput [style*="color"],
+.phone.ambiance-astro #view-path [style*="color"] {
+  color: #5C4A28 !important;
+  opacity: 1 !important;
+}
+.phone.ambiance-astro #readingOutput *::before,
+.phone.ambiance-astro .read-bullets li::before,
+.phone.ambiance-astro .invite-list li::before,
+.phone.ambiance-astro .verbatim-body .vb-ul li::before {
+  color: #5C4A28;
+  opacity: 1;
+  text-shadow: none;
+}
