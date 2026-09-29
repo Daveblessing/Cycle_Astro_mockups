@@ -2989,3 +2989,97 @@ html, body {
   box-shadow: 0 10px 26px rgba(90, 70, 40, 0.08);
   color: #1A1A1A;
 }
+
+/* Hub Aujourd’hui restauré — ivoire, carte claire, cartes noires, texte lisible. */
+#view-today .greeting { padding: 2px 2px 10px; }
+#view-today .greeting .date {
+  color: #1A1A1A !important;
+  font-size: 18px;
+  font-weight: 500;
+  opacity: 1;
+}
+#view-today .cycle-hero {
+  background: #FBF7F0;
+  border: 1px solid #E4D2A8;
+  border-radius: 22px;
+  box-shadow: 0 8px 22px rgba(90, 70, 40, 0.06);
+  padding: 14px 16px 16px;
+  color: #1A1A1A;
+}
+#view-today .cycle-hero-top {
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+#view-today .phase-badge {
+  color: #C5A059;
+  border: 1px solid #E2C98A;
+  background: transparent;
+  font-size: 12px;
+}
+#view-today .cycle-hero-body {
+  display: grid;
+  grid-template-columns: 108px 1fr auto;
+  align-items: center;
+  gap: 6px 10px;
+}
+#view-today .hub-month,
+#view-today .hub-nextnum {
+  margin: 0;
+  color: #C5A059;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+#view-today .hub-month { font-size: 18px; }
+#view-today .hub-nextnum { font-size: 22px; padding-right: 6px; }
+#view-today .cycle-ring-center .day-num {
+  color: #C5A059;
+  font-family: Cinzel, 'Times New Roman', serif;
+  font-size: 28px;
+}
+#view-today .cycle-ring .ring-track { stroke: rgba(197, 160, 89, 0.28); stroke-width: 7; }
+#view-today .cycle-ring .ring-progress { stroke: #C5A059; stroke-width: 7; filter: none; }
+#view-today .cycle-cta {
+  width: 68%;
+  margin: 12px 0 0 auto;
+  min-height: 48px;
+  background: #C5A059;
+  color: #1A1A1A;
+  border-radius: 999px;
+  box-shadow: none;
+}
+#view-today .hub-nextline {
+  margin: 10px 0 0;
+  color: #1A1A1A !important;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 1;
+}
+#view-today .hub-chips { margin-top: 14px; }
+#view-today .hub-chip {
+  background: transparent;
+  color: #1A1A1A;
+  border: 1px solid #E2C98A;
+  box-shadow: none;
+  font-size: 13px;
+  min-height: 52px;
+}
+#view-today .pillar-card,
+#view-today .pillar-card.pillar-cta {
+  background: #141414;
+  border: 1px solid rgba(197, 160, 89, 0.38);
+  border-radius: 18px;
+  box-shadow: none;
+  color: #FFFFFF;
+}
+#view-today .pillar-card .label,
+#view-today .pillar-card .value,
+#view-today .pillar-card .sub {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+#view-today .pillar-card .value { font-size: 22px; font-weight: 600; }
+#view-today .pillar-card .sub { font-style: italic; font-size: 12px; }
+#view-today .pillar-card .glyph { color: #C5A059; }

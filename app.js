@@ -77,10 +77,10 @@
   const clockEl = document.getElementById('clock');
 
   function parseHash() {
-    const raw = (location.hash || '#/splash').replace(/^#\/?/, '');
-    let screen = raw.split('/')[0] || 'splash';
+    const raw = (location.hash || '#/today').replace(/^#\/?/, '');
+    let screen = raw.split('/')[0] || 'today';
     if (SCREEN_ALIASES[screen]) screen = SCREEN_ALIASES[screen];
-    return SCREENS.includes(screen) || screen === 'market' ? screen : 'splash';
+    return SCREENS.includes(screen) || screen === 'market' ? screen : 'today';
   }
 
   function go(screen, push) {
@@ -2055,8 +2055,9 @@
     if (!res) return;
     const msg = document.getElementById('hubMessage');
     if (msg) {
+      const d = res.nextStart;
       msg.textContent =
-        'Jour ' + res.dayInCycle + '. Prochaine date le ' + formatFR(res.nextStart) + '.';
+        'Prochaines règles · vers le ' + d.getDate() + ' ' + FR_MONTHS[d.getMonth()];
     }
     const today = productToday();
     const start = parseYMD(DEMO.cycle.lastPeriodStart);
