@@ -2513,3 +2513,161 @@ html, body, .phone { background: #0a0a0a; color: #f7f0d8; }
 .phone.ambiance-cycle .btn-primary.btn-lg {
   color: #F9F6F0;
 }
+
+/* Ivoire partout. Rose seulement sur le cycle (bouton + jours de règles). */
+html, body {
+  background: #F7F3E8;
+  color: #1A1A1A;
+}
+.phone,
+.phone.ambiance-night,
+.phone.ambiance-gate,
+.phone.ambiance-astro,
+.phone.ambiance-cycle {
+  background: #F9F6F0;
+  color: #1A1A1A;
+  border-color: #E6D7C3;
+  box-shadow: 0 25px 70px rgba(90, 70, 40, 0.16);
+}
+.phone .stars,
+.phone .stardust,
+.phone.ambiance-astro .stars,
+.phone.ambiance-astro .stardust {
+  display: none;
+}
+.phone .status-bar,
+.phone.ambiance-astro .status-bar,
+.phone.ambiance-cycle .status-bar,
+.phone .view,
+.phone .body,
+.phone .body-muted,
+.phone .safe-line,
+.phone .day-message-text,
+.phone .formula-line,
+.phone .footnote,
+.phone .disclaimer-short,
+.phone .disclaimer-box,
+.phone .disclaimer-box p,
+.phone .greeting .hello,
+.phone .greeting .date,
+.phone .ambiance-today,
+.phone .ambiance-next,
+.phone .ambiance-d0,
+.phone .tiny,
+.phone .italic,
+.phone .h3,
+.phone .h-serif.h3,
+.phone .back,
+.phone .link-silver,
+.phone .nav-item,
+.phone .nav-item.active,
+.phone .cal-day,
+.phone .cal-day.muted,
+.phone .cal-day.period,
+.phone .cal-dow,
+.phone .cal-head .month,
+.phone .cal-legend,
+.phone .field-label,
+.phone .under-btn,
+.phone .gate-lead,
+.phone.ambiance-astro .body,
+.phone.ambiance-astro .ambiance-today,
+.phone.ambiance-astro .disclaimer-short,
+.phone.ambiance-astro .h3,
+.phone.ambiance-astro .h-serif.h3,
+.phone.ambiance-astro .tiny,
+.phone.ambiance-astro .italic,
+.phone.ambiance-night .body,
+.phone.ambiance-night .greeting .hello,
+.phone.ambiance-night .greeting .date,
+.phone.ambiance-gate .gate-lead {
+  color: #1A1A1A;
+}
+.phone .ambiance-title,
+.phone .app-header .title,
+.phone .gate-title,
+.phone.ambiance-astro .ambiance-title,
+.phone.ambiance-astro .app-header .title,
+.phone.ambiance-astro .back,
+.phone.ambiance-astro .link-silver,
+.phone .emblem,
+.phone.ambiance-astro .emblem,
+.phone.ambiance-cycle .emblem {
+  color: #C5A059;
+}
+.phone .gold-rule,
+.phone.ambiance-astro .gold-rule,
+.phone.ambiance-cycle .gold-rule {
+  background: #C5A059;
+}
+.phone .card,
+.phone .card.glass-card,
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card,
+.phone.ambiance-cycle .card,
+.phone.ambiance-cycle .card.glass-card {
+  background: #F7F3E8;
+  border-color: rgba(197, 160, 89, 0.4);
+  color: #1A1A1A;
+  box-shadow: none;
+}
+.phone .bottom-nav {
+  background: #F7F3E8;
+  border-top-color: rgba(197, 160, 89, 0.35);
+}
+.phone .field input[type="date"],
+.phone .field input[type="number"],
+.phone .field input[type="text"],
+.phone.ambiance-cycle .field input[type="date"],
+.phone.ambiance-cycle .field input[type="number"],
+.phone.ambiance-cycle .field input[type="text"] {
+  background: #F9F6F0;
+  color: #1A1A1A;
+  border-color: rgba(197, 160, 89, 0.55);
+  color-scheme: light;
+}
+.door-cycle {
+  background: #F9F6F0;
+  color: #1A1A1A;
+  border: 1px solid #E7A3B5;
+  box-shadow: none;
+}
+.door-cycle .door-kicker { color: #D98BA3; }
+.door-cycle .door-label { color: #1A1A1A; }
+.door-astro {
+  background: #F7F3E8;
+  color: #1A1A1A;
+  border: 1px solid #C5A059;
+  box-shadow: none;
+}
+.door-astro .door-kicker { color: #C5A059; }
+.door-astro .door-label { color: #1A1A1A; }
+.phone .btn-primary,
+.phone .btn.btn-primary,
+.phone .btn-primary.btn-lg,
+.phone.ambiance-astro .btn-primary,
+.phone.ambiance-astro .btn.btn-primary,
+.phone.ambiance-astro .btn-primary.btn-lg,
+.phone.ambiance-night .btn-primary,
+.phone.ambiance-gate .btn-primary {
+  background: #C5A059;
+  color: #1A1A1A;
+  border: none;
+  box-shadow: none;
+}
+.phone.ambiance-cycle .btn-primary,
+.phone.ambiance-cycle .btn.btn-primary,
+.phone.ambiance-cycle .btn-primary.btn-lg,
+.phone.ambiance-cycle .btn-primary:hover,
+.phone.ambiance-cycle .btn-primary:focus,
+.phone.ambiance-cycle .btn-primary:active {
+  background: #D98BA3;
+  color: #1A1A1A;
+  border: none;
+}
+.phone.ambiance-cycle .cal-day.period {
+  background: #E7A3B5;
+  color: #1A1A1A;
+}
+.phone.ambiance-cycle .cal-day.period::after { background: #D98BA3; }
+.phone.ambiance-cycle .dot-period { background: #D98BA3; }
