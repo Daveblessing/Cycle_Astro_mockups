@@ -3097,3 +3097,20 @@ html, body {
   text-shadow: none !important;
   filter: none !important;
 }
+
+/* Check-in : textes entourés en encre, rien d'autre. */
+#view-journal #checkinForm > .body-muted,
+#view-journal #checkinForm > h3:first-of-type,
+#view-journal #checkinForm h3:has(#energyLabel),
+#view-journal #energyLabel,
+#view-journal #moodChips .chip,
+#view-journal #moodChips .chip.selected,
+#view-journal #moodChips .chip:hover,
+#view-journal #energySlider button,
+#view-journal #energySlider button.selected,
+#view-journal #energySlider button:hover {
+  color: #1A1A1A !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
