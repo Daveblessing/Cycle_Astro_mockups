@@ -2420,3 +2420,96 @@ html, body, .phone { background: #0a0a0a; color: #f7f0d8; }
   }
   .emblem-svg { transform: none; }
 }
+
+/* Lisibilité — couleur de texte seulement (fonds, boutons, structure inchangés) */
+.phone:not(.ambiance-cycle) .body,
+.phone:not(.ambiance-cycle) .body-muted,
+.phone:not(.ambiance-cycle) .safe-line,
+.phone:not(.ambiance-cycle) .day-message-text,
+.phone:not(.ambiance-cycle) .formula-line,
+.phone:not(.ambiance-cycle) .footnote,
+.phone:not(.ambiance-cycle) .tagline,
+.phone:not(.ambiance-cycle) .disclaimer-box,
+.phone:not(.ambiance-cycle) .disclaimer-box p,
+.phone:not(.ambiance-cycle) .greeting .hello,
+.phone:not(.ambiance-cycle) .greeting .date,
+.phone:not(.ambiance-cycle) .cycle-today-line,
+.phone:not(.ambiance-cycle) .cycle-next,
+.phone:not(.ambiance-cycle) .cycle-next .est,
+.phone:not(.ambiance-cycle) .calc-phase,
+.phone:not(.ambiance-cycle) .tiny,
+.phone:not(.ambiance-cycle) .italic,
+.phone:not(.ambiance-cycle) .pillar-card .value,
+.phone:not(.ambiance-cycle) .pillar-card .sub,
+.phone:not(.ambiance-cycle) .cycle-ring-center .day-den,
+.phone:not(.ambiance-cycle) .cycle-ring-center .day-label,
+.phone:not(.ambiance-cycle) .h3,
+.phone:not(.ambiance-cycle) .h-serif.h3,
+.phone:not(.ambiance-cycle) .nav-item,
+.phone:not(.ambiance-cycle) .link-silver,
+.phone:not(.ambiance-cycle) .phases-legend,
+.phone:not(.ambiance-cycle) .cal-legend {
+  color: #F4F1EA;
+}
+.phone:not(.ambiance-cycle) .nav-item.active { color: #F4F1EA; }
+.phone:not(.ambiance-cycle) .app-header .title,
+.phone:not(.ambiance-cycle) .h1.h-serif,
+.phone.ambiance-astro .ambiance-title,
+.phone.ambiance-astro .back,
+.phone.ambiance-astro .link-silver,
+.phone.ambiance-astro .gold-rule {
+  color: #E2C16A;
+}
+.phone.ambiance-astro .ambiance-today,
+.phone.ambiance-astro .disclaimer-short,
+.phone.ambiance-astro .body,
+.phone.ambiance-astro .tiny,
+.phone.ambiance-astro .italic,
+.phone.ambiance-astro .h3,
+.phone.ambiance-astro .h-serif.h3 {
+  color: #F4F1EA;
+}
+.phone.ambiance-astro .btn-primary,
+.phone.ambiance-astro .btn.btn-primary,
+.phone.ambiance-astro .btn-primary.btn-lg {
+  color: #4A2E6B;
+}
+
+.phone.ambiance-cycle .cal-head .month,
+.phone.ambiance-cycle .month,
+.phone.ambiance-cycle .cal-dow,
+.phone.ambiance-cycle .cal-legend,
+.phone.ambiance-cycle .cal-day,
+.phone.ambiance-cycle .cal-day.muted,
+.phone.ambiance-cycle .cal-day.period,
+.phone.ambiance-cycle .footnote,
+.phone.ambiance-cycle .tiny,
+.phone.ambiance-cycle .h3,
+.phone.ambiance-cycle .h-serif,
+.phone.ambiance-cycle .h-serif.h3,
+.phone.ambiance-cycle .body,
+.phone.ambiance-cycle .italic,
+.phone.ambiance-cycle .cycle-today-line,
+.phone.ambiance-cycle .cycle-today-line strong,
+.phone.ambiance-cycle .cycle-next,
+.phone.ambiance-cycle .cycle-next strong,
+.phone.ambiance-cycle .disclaimer-short,
+.phone.ambiance-cycle .formula-line,
+.phone.ambiance-cycle .ambiance-today,
+.phone.ambiance-cycle .ambiance-next,
+.phone.ambiance-cycle .ambiance-d0,
+.phone.ambiance-cycle .field-label,
+.phone.ambiance-cycle .date-words,
+.phone.ambiance-cycle .phases-center-phase,
+.phone.ambiance-cycle .phases-center-day,
+.phone.ambiance-cycle .phases-legend,
+.phone.ambiance-cycle .phases-legend li {
+  color: #1A1A1A;
+}
+.phone.ambiance-cycle .cal-day.muted { opacity: 1; color: #3d3832; }
+.phone.ambiance-cycle .cal-nav { color: #1A1A1A; }
+.phone.ambiance-cycle .btn-primary,
+.phone.ambiance-cycle .btn.btn-primary,
+.phone.ambiance-cycle .btn-primary.btn-lg {
+  color: #F9F6F0;
+}
