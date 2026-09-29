@@ -2671,3 +2671,60 @@ html, body {
 }
 .phone.ambiance-cycle .cal-day.period::after { background: #D98BA3; }
 .phone.ambiance-cycle .dot-period { background: #D98BA3; }
+
+/* Touche prune, espace Astro seulement. Fond ivoire conservé. */
+.phone.ambiance-astro {
+  background: #F9F6F0;
+  color: #1A1A1A;
+}
+.phone.ambiance-astro .emblem {
+  position: relative;
+}
+.phone.ambiance-astro .emblem::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: 196px;
+  height: 196px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(92, 58, 120, 0.34) 0%, rgba(74, 46, 107, 0.12) 48%, transparent 72%);
+  pointer-events: none;
+  z-index: 0;
+}
+.phone.ambiance-astro .emblem-svg {
+  position: relative;
+  z-index: 1;
+}
+.phone.ambiance-astro .ambiance-title,
+.phone.ambiance-astro .app-header .title {
+  color: #C5A059;
+}
+.phone.ambiance-astro .gold-rule { background: #C5A059; }
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card {
+  background: linear-gradient(180deg, rgba(92, 58, 120, 0.1), #F7F3E8 42%);
+  border-color: #5C3A78;
+  color: #1A1A1A;
+}
+.phone.ambiance-astro .btn-primary,
+.phone.ambiance-astro .btn.btn-primary,
+.phone.ambiance-astro .btn-primary.btn-lg,
+.phone.ambiance-astro .btn-primary:hover,
+.phone.ambiance-astro .btn-primary:focus,
+.phone.ambiance-astro .btn-primary:active {
+  background: #C5A059;
+  color: #1A1A1A;
+  border: none;
+}
+.door-astro {
+  background: #F7F3E8;
+  color: #1A1A1A;
+  border: 1px solid #5C3A78;
+  box-shadow: inset 0 0 0 1px rgba(74, 46, 107, 0.15);
+}
+.door-astro .door-kicker { color: #4A2E6B; }
+.door-astro .door-label { color: #1A1A1A; }
+.phone.ambiance-astro .h-serif { color: #1A1A1A; }
+.phone.ambiance-astro .ambiance-title { color: #C5A059; }
