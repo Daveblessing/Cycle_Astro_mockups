@@ -2263,12 +2263,13 @@ html, body, .phone { background: #0a0a0a; color: #f7f0d8; }
 }
 .door-cycle .door-kicker { color: #C5A059; }
 .door-astro {
-  background: #0D0B14;
-  color: #D4AF37;
-  border: 1px solid #4A2E80;
-  box-shadow: inset 0 0 36px rgba(74, 46, 128, 0.45);
+  background: linear-gradient(180deg, #4A2E6B 0%, #5C3A78 46%, #C9A0B0 100%);
+  color: #E2C16A;
+  border: 1px solid rgba(226, 193, 106, 0.75);
+  box-shadow: inset 0 0 28px rgba(232, 196, 196, 0.28);
 }
-.door-astro .door-label { color: #F4E8C8; }
+.door-astro .door-kicker { color: #E2C16A; }
+.door-astro .door-label { color: #F8EFE8; }
 .gate-reset { margin-top: 16px; }
 
 .phone.ambiance-cycle {
@@ -2349,52 +2350,65 @@ html, body, .phone { background: #0a0a0a; color: #f7f0d8; }
 .phone.ambiance-cycle .link-silver:hover { color: #0F4C3A; }
 
 .phone.ambiance-astro {
-  background: #0D0B14;
-  color: #F4E8C8;
-  border-color: #4A2E80;
+  background: linear-gradient(180deg, #4A2E6B 0%, #5C3A78 36%, #C9A0B0 74%, #E8C4C4 100%);
+  color: #F8EFE8;
+  border-color: #C9A0B0;
   box-shadow:
-    0 0 0 1px #1a1428,
-    0 25px 80px rgba(0, 0, 0, 0.75),
-    inset 0 0 80px rgba(74, 46, 128, 0.18);
+    0 0 0 1px #5C3A78,
+    0 25px 80px rgba(74, 46, 107, 0.35);
 }
 .phone.ambiance-astro .stars {
   background:
-    radial-gradient(1px 1px at 12% 18%, rgba(244, 232, 200, 0.7), transparent),
-    radial-gradient(1.5px 1.5px at 78% 22%, rgba(212, 175, 55, 0.8), transparent),
-    radial-gradient(1px 1px at 30% 40%, rgba(244, 232, 200, 0.45), transparent),
-    radial-gradient(1px 1px at 88% 60%, rgba(212, 175, 55, 0.55), transparent),
-    radial-gradient(1px 1px at 18% 72%, rgba(244, 232, 200, 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 62% 80%, rgba(212, 175, 55, 0.45), transparent),
-    radial-gradient(ellipse 70% 45% at 50% -8%, rgba(74, 46, 128, 0.55), transparent),
-    radial-gradient(ellipse 50% 40% at 90% 100%, rgba(74, 46, 128, 0.35), transparent);
+    radial-gradient(1px 1px at 12% 14%, rgba(255, 248, 230, 0.95), transparent),
+    radial-gradient(1px 1px at 22% 28%, rgba(226, 193, 106, 0.85), transparent),
+    radial-gradient(1.2px 1.2px at 70% 12%, rgba(255, 248, 230, 0.8), transparent),
+    radial-gradient(1px 1px at 84% 24%, rgba(226, 193, 106, 0.75), transparent),
+    radial-gradient(1px 1px at 40% 18%, rgba(255, 248, 230, 0.7), transparent),
+    radial-gradient(1px 1px at 58% 32%, rgba(255, 248, 230, 0.55), transparent),
+    radial-gradient(1px 1px at 90% 48%, rgba(226, 193, 106, 0.6), transparent),
+    radial-gradient(1px 1px at 16% 62%, rgba(255, 248, 230, 0.55), transparent),
+    radial-gradient(1px 1px at 76% 70%, rgba(255, 248, 230, 0.5), transparent),
+    radial-gradient(ellipse 48% 22% at 16% 18%, rgba(232, 196, 196, 0.55), transparent 70%),
+    radial-gradient(ellipse 42% 26% at 86% 62%, rgba(232, 196, 196, 0.5), transparent 72%),
+    radial-gradient(ellipse 80% 28% at 50% 100%, rgba(201, 160, 176, 0.55), transparent 70%);
 }
-.phone.ambiance-astro .status-bar { color: #D4AF37; }
+.phone.ambiance-astro .status-bar { color: #E2C16A; }
 .phone.ambiance-astro .ambiance-title,
 .phone.ambiance-astro .app-header .title {
-  color: #D4AF37;
+  color: #E2C16A;
   font-family: Cinzel, 'Times New Roman', serif;
 }
-.phone.ambiance-astro .gold-rule { background: #D4AF37; }
-.phone.ambiance-astro .emblem { color: #D4AF37; }
+.phone.ambiance-astro .gold-rule { background: #E2C16A; }
+.phone.ambiance-astro .emblem { color: #E2C16A; }
 .phone.ambiance-astro .ambiance-today,
-.phone.ambiance-astro .disclaimer-short { color: #F4E8C8; }
+.phone.ambiance-astro .disclaimer-short,
+.phone.ambiance-astro .body,
+.phone.ambiance-astro .h-serif,
+.phone.ambiance-astro .h3 { color: #F8EFE8; }
 .phone.ambiance-astro .btn-primary,
 .phone.ambiance-astro .btn.btn-primary,
 .phone.ambiance-astro .btn-primary.btn-lg {
-  background: transparent;
-  color: #F6E7C1;
-  border: 1px solid #D4AF37;
-  box-shadow: inset 0 0 18px rgba(74, 46, 128, 0.35);
+  background: #D4AF37;
+  color: #4A2E6B;
+  border: none;
+  box-shadow: none;
 }
 .phone.ambiance-astro .btn-primary:hover,
 .phone.ambiance-astro .btn-primary:focus,
 .phone.ambiance-astro .btn-primary:active {
-  background: transparent;
-  color: #F6E7C1;
-  border-color: #D4AF37;
+  background: #D4AF37;
+  color: #4A2E6B;
+  border: none;
 }
 .phone.ambiance-astro .back,
-.phone.ambiance-astro .link-silver { color: #D4AF37; }
+.phone.ambiance-astro .link-silver { color: #E2C16A; }
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card {
+  background: linear-gradient(165deg, rgba(92, 58, 120, 0.42), rgba(232, 196, 196, 0.28));
+  border-color: rgba(226, 193, 106, 0.4);
+  color: #F8EFE8;
+  box-shadow: none;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .emblem-svg,
