@@ -2897,3 +2897,95 @@ html, body {
   background: #C5A059;
   color: #1A1A1A;
 }
+
+
+/* Profil — écriture noire étoilée (#/profile). Pas de jaune pâle. */
+#view-profile .app-header .title,
+#view-profile .app-header .back,
+#view-profile .profile-hero .name,
+#view-profile .profile-hero .tags,
+#view-profile .profile-hero .avatar,
+#view-profile .menu-list button,
+#view-profile .menu-list a,
+#view-profile .h-serif,
+#view-profile .h3,
+#view-profile .h-serif.h3,
+#view-profile .tiny,
+#view-profile .btn-ghost,
+#view-profile .btn-reset-person,
+#view-profile .disclaimer-box,
+#view-profile .disclaimer-box p,
+#view-profile .disclaimer-box strong {
+  color: #1A1A1A !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+#view-profile .app-header .title {
+  font-family: Cinzel, 'Times New Roman', serif;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+#view-profile .app-header .title::before,
+#view-profile .app-header .title::after {
+  content: "✦";
+  color: #C5A059;
+  font-size: 0.55em;
+  margin: 0 0.4em;
+  vertical-align: 0.15em;
+  opacity: 0.95;
+  text-shadow: none;
+}
+#view-profile .h3.section-gap,
+#view-profile h3.h-serif {
+  font-family: Cinzel, 'Times New Roman', serif;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: #1A1A1A !important;
+}
+#view-profile .h3.section-gap::before,
+#view-profile #disclaimerReread h3::before {
+  content: "✦ ";
+  color: #C5A059;
+  font-size: 0.85em;
+  letter-spacing: 0;
+}
+#view-profile .profile-hero .name {
+  font-size: 20px;
+  font-weight: 600;
+}
+#view-profile .profile-hero .tags {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+#view-profile .profile-hero .avatar {
+  border: 1px solid #C5A059;
+  background: rgba(197, 160, 89, 0.12);
+  box-shadow: 0 0 0 1px rgba(197, 160, 89, 0.2);
+  color: #1A1A1A !important;
+}
+#view-profile .menu-list li {
+  border-bottom: 1px solid rgba(197, 160, 89, 0.35);
+}
+#view-profile .menu-list li:last-child {
+  border-bottom: none;
+}
+#view-profile .menu-list button:hover,
+#view-profile .menu-list a:hover {
+  color: #1A1A1A !important;
+}
+#view-profile .menu-list .chev {
+  color: #C5A059 !important;
+  opacity: 1;
+}
+#view-profile .btn-ghost,
+#view-profile .btn-reset-person {
+  border-color: rgba(197, 160, 89, 0.55);
+}
+#view-profile .card {
+  background: #F7F3E8;
+  border: 1px solid #C5A059;
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(90, 70, 40, 0.08);
+  color: #1A1A1A;
+}
