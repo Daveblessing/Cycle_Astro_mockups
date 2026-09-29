@@ -2786,3 +2786,114 @@ html, body {
   opacity: 1;
   text-shadow: none;
 }
+
+/* Style plus habillé — cadres, titres, lecture. Pas de motion en plus. */
+.ambiance-title {
+  font-family: Cinzel, 'Times New Roman', serif;
+  font-size: 40px;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  color: #5C4A28;
+  margin: 2px 0 2px;
+}
+.ambiance-sub,
+.kind-line {
+  text-align: center;
+  color: #1A1A1A;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  margin: 0 0 8px;
+  opacity: 1;
+}
+.gold-rule {
+  width: 96px;
+  height: 1px;
+  margin: 8px auto 12px;
+  background: #C5A059;
+  position: relative;
+}
+.gold-rule::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: #C5A059;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.emblem-svg {
+  width: 188px;
+  height: 214px;
+}
+.phone .card,
+.phone .card.glass-card,
+.phone.ambiance-cycle .card,
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card,
+.phone.ambiance-cycle .card.glass-card {
+  background: #F7F3E8;
+  border: 1px solid #C5A059;
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(90, 70, 40, 0.08);
+  color: #1A1A1A;
+  padding: 16px 16px 14px;
+}
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card {
+  background: linear-gradient(180deg, rgba(92, 58, 120, 0.1), #F7F3E8 46%);
+  border-color: #5C3A78;
+  box-shadow: 0 10px 26px rgba(74, 46, 107, 0.08), inset 0 0 0 1px rgba(197, 160, 89, 0.45);
+}
+.phone.ambiance-astro #readingOutput .card {
+  margin-bottom: 16px;
+}
+.phone.ambiance-astro #readingOutput h3,
+.phone.ambiance-astro #readingOutput .h3,
+.phone.ambiance-astro #readingOutput .h-serif.h3,
+.phone.ambiance-astro #readingOutput .read-subh,
+.phone #view-reading .h1.h-serif {
+  font-family: Cinzel, 'Times New Roman', serif;
+  color: #5C4A28 !important;
+  letter-spacing: 0.08em;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 1;
+  text-shadow: none;
+}
+.phone.ambiance-astro #readingOutput .read-bullets li,
+.phone.ambiance-astro #readingOutput .body,
+.phone.ambiance-astro #readingOutput .verbatim-body,
+.phone.ambiance-astro #readingOutput .kind-line,
+.phone .ambiance-sub,
+.phone .kind-line {
+  color: #1A1A1A;
+  opacity: 1;
+}
+.phone.ambiance-astro #readingOutput .read-bullets li {
+  padding: 11px 0 11px 22px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.45);
+  line-height: 1.55;
+}
+.phone.ambiance-astro #readingOutput .read-bullets li:last-child {
+  border-bottom: none;
+}
+.door {
+  border-radius: 22px;
+  box-shadow: 0 8px 20px rgba(90, 70, 40, 0.08);
+}
+.phone.ambiance-cycle .btn-primary,
+.phone.ambiance-cycle .btn.btn-primary,
+.phone.ambiance-cycle .btn-primary.btn-lg {
+  background: #D98BA3;
+  color: #1A1A1A;
+  border-radius: 999px;
+}
+.phone.ambiance-cycle .cal-day.period { background: #E7A3B5; color: #1A1A1A; }
+.phone.ambiance-astro .btn-primary,
+.phone.ambiance-astro .btn.btn-primary,
+.phone.ambiance-astro .btn-primary.btn-lg {
+  background: #C5A059;
+  color: #1A1A1A;
+}
