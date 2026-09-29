@@ -3098,19 +3098,18 @@ html, body {
   filter: none !important;
 }
 
-/* Check-in : textes entourés en encre, rien d'autre. */
-#view-journal #checkinForm > .body-muted,
-#view-journal #checkinForm > h3:first-of-type,
-#view-journal #checkinForm h3:has(#energyLabel),
-#view-journal #energyLabel,
-#view-journal #moodChips .chip,
-#view-journal #moodChips .chip.selected,
-#view-journal #moodChips .chip:hover,
-#view-journal #energySlider button,
-#view-journal #energySlider button.selected,
-#view-journal #energySlider button:hover {
+/* Check-in : seulement les libellés pâles, encre forcée.
+   La règle .phone:not(.ambiance-cycle) .h3/.body-muted/.tiny (#F4F1EA)
+   et .chip (#f7f0d8) restent plus spécifiques sans ce bloc. */
+.phone:not(.ambiance-cycle) #view-journal #checkinForm > p.body-muted,
+.phone:not(.ambiance-cycle) #view-journal #checkinForm > h3.h-serif.h3:first-of-type,
+.phone:not(.ambiance-cycle) #view-journal #moodChips button.chip,
+.phone:not(.ambiance-cycle) #view-journal #moodChips button.chip.selected,
+.phone:not(.ambiance-cycle) #view-journal #moodChips button.chip:hover,
+.phone:not(.ambiance-cycle) #view-journal #checkinForm h3.h-serif.h3:has(#energyLabel),
+.phone:not(.ambiance-cycle) #view-journal #energyLabel,
+.phone:not(.ambiance-cycle) #view-journal #energySlider button,
+.phone:not(.ambiance-cycle) #view-journal #energySlider button.selected {
   color: #1A1A1A !important;
   opacity: 1 !important;
-  text-shadow: none !important;
-  filter: none !important;
 }
