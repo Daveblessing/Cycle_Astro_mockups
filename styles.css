@@ -2157,3 +2157,252 @@ html, body, .phone { background: #0a0a0a; color: #f7f0d8; }
   }
   .hero-breath { transform: scale(1); }
 }
+
+/* —— Deux ambiances séparées · Cycle clair / Astro sombre —— */
+.logo-mark {
+  display: block;
+  width: 56px;
+  height: 72px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+.ambiance-head {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.ambiance-head .back { justify-self: start; }
+.ambiance-head-spacer { width: 1px; }
+.ambiance-title {
+  font-family: Cinzel, 'Times New Roman', serif;
+  font-weight: 500;
+  font-size: 36px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin: 2px 0 8px;
+}
+.gold-rule {
+  width: 72%;
+  height: 1px;
+  margin: 0 auto 8px;
+  background: #C5A059;
+}
+.emblem {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 8px;
+  color: #C5A059;
+}
+.emblem-svg {
+  width: 168px;
+  height: 190px;
+  animation: emblemFloat 7s ease-in-out infinite;
+}
+@keyframes emblemFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.ambiance-today,
+.ambiance-next,
+.ambiance-d0,
+.disclaimer-short {
+  text-align: center;
+  margin: 4px 0;
+}
+.ambiance-next { font-size: 18px; }
+.date-words {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.gate {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 4px 20px;
+}
+.gate .logo-mark { width: 64px; height: 84px; margin-bottom: 6px; }
+.gate-title {
+  font-family: Cinzel, 'Times New Roman', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #f7f0d8;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+.gate-lead { color: #c8d0dc; margin-bottom: 16px; font-size: 16px; }
+.gate-doors { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+.door {
+  width: 100%;
+  min-height: 132px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: Cinzel, 'Times New Roman', serif;
+}
+.door-kicker {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.door-label { font-size: 28px; line-height: 1.1; }
+.door-cycle {
+  background: #F9F6F0;
+  color: #1A1A1A;
+  border: 1px solid #C5A059;
+}
+.door-cycle .door-kicker { color: #C5A059; }
+.door-astro {
+  background: #0D0B14;
+  color: #D4AF37;
+  border: 1px solid #4A2E80;
+  box-shadow: inset 0 0 36px rgba(74, 46, 128, 0.45);
+}
+.door-astro .door-label { color: #F4E8C8; }
+.gate-reset { margin-top: 16px; }
+
+.phone.ambiance-cycle {
+  background: #F9F6F0;
+  color: #1A1A1A;
+  border-color: #e4d7c4;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+}
+.phone.ambiance-cycle .stars,
+.phone.ambiance-cycle .stardust { display: none; }
+.phone.ambiance-cycle .status-bar,
+.phone.ambiance-cycle .view,
+.phone.ambiance-cycle .body,
+.phone.ambiance-cycle .formula-line,
+.phone.ambiance-cycle .footnote,
+.phone.ambiance-cycle .ambiance-today,
+.phone.ambiance-cycle .ambiance-next,
+.phone.ambiance-cycle .ambiance-d0,
+.phone.ambiance-cycle .disclaimer-short,
+.phone.ambiance-cycle .back,
+.phone.ambiance-cycle .link-silver,
+.phone.ambiance-cycle .app-header .title,
+.phone.ambiance-cycle .field-label,
+.phone.ambiance-cycle .calc-kicker,
+.phone.ambiance-cycle .calc-big-date,
+.phone.ambiance-cycle .calc-phase,
+.phone.ambiance-cycle .date-words,
+.phone.ambiance-cycle .cal-legend,
+.phone.ambiance-cycle .under-btn {
+  color: #1A1A1A;
+}
+.phone.ambiance-cycle .ambiance-title {
+  color: #1A1A1A;
+  font-family: Cinzel, 'Times New Roman', serif;
+}
+.phone.ambiance-cycle .gold-rule { background: #C5A059; }
+.phone.ambiance-cycle .emblem { color: #C5A059; }
+.phone.ambiance-cycle .btn-primary,
+.phone.ambiance-cycle .btn.btn-primary,
+.phone.ambiance-cycle .btn-primary.btn-lg {
+  background: #0F4C3A;
+  color: #F9F6F0;
+  border: none;
+}
+.phone.ambiance-cycle .btn-primary:hover,
+.phone.ambiance-cycle .btn-primary:focus,
+.phone.ambiance-cycle .btn-primary:active {
+  background: #0F4C3A;
+  color: #F9F6F0;
+}
+.phone.ambiance-cycle .card,
+.phone.ambiance-cycle .card.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(197, 160, 89, 0.45);
+  box-shadow: none;
+  color: #1A1A1A;
+}
+.phone.ambiance-cycle .field input[type="date"],
+.phone.ambiance-cycle .field input[type="number"],
+.phone.ambiance-cycle .field input[type="text"] {
+  background: #fff;
+  color: #1A1A1A;
+  border-color: rgba(197, 160, 89, 0.65);
+  color-scheme: light;
+}
+.phone.ambiance-cycle .cal-day {
+  color: #1A1A1A;
+  background: rgba(197, 160, 89, 0.08);
+}
+.phone.ambiance-cycle .cal-day.period {
+  background: rgba(15, 76, 58, 0.16);
+  color: #1A1A1A;
+}
+.phone.ambiance-cycle .cal-day.period::after { background: #0F4C3A; }
+.phone.ambiance-cycle .cal-dow,
+.phone.ambiance-cycle .cal-head .month,
+.phone.ambiance-cycle .cal-nav { color: #C5A059; }
+.phone.ambiance-cycle .link-silver:hover { color: #0F4C3A; }
+
+.phone.ambiance-astro {
+  background: #0D0B14;
+  color: #F4E8C8;
+  border-color: #4A2E80;
+  box-shadow:
+    0 0 0 1px #1a1428,
+    0 25px 80px rgba(0, 0, 0, 0.75),
+    inset 0 0 80px rgba(74, 46, 128, 0.18);
+}
+.phone.ambiance-astro .stars {
+  background:
+    radial-gradient(1px 1px at 12% 18%, rgba(244, 232, 200, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 78% 22%, rgba(212, 175, 55, 0.8), transparent),
+    radial-gradient(1px 1px at 30% 40%, rgba(244, 232, 200, 0.45), transparent),
+    radial-gradient(1px 1px at 88% 60%, rgba(212, 175, 55, 0.55), transparent),
+    radial-gradient(1px 1px at 18% 72%, rgba(244, 232, 200, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 62% 80%, rgba(212, 175, 55, 0.45), transparent),
+    radial-gradient(ellipse 70% 45% at 50% -8%, rgba(74, 46, 128, 0.55), transparent),
+    radial-gradient(ellipse 50% 40% at 90% 100%, rgba(74, 46, 128, 0.35), transparent);
+}
+.phone.ambiance-astro .status-bar { color: #D4AF37; }
+.phone.ambiance-astro .ambiance-title,
+.phone.ambiance-astro .app-header .title {
+  color: #D4AF37;
+  font-family: Cinzel, 'Times New Roman', serif;
+}
+.phone.ambiance-astro .gold-rule { background: #D4AF37; }
+.phone.ambiance-astro .emblem { color: #D4AF37; }
+.phone.ambiance-astro .ambiance-today,
+.phone.ambiance-astro .disclaimer-short { color: #F4E8C8; }
+.phone.ambiance-astro .btn-primary,
+.phone.ambiance-astro .btn.btn-primary,
+.phone.ambiance-astro .btn-primary.btn-lg {
+  background: transparent;
+  color: #F6E7C1;
+  border: 1px solid #D4AF37;
+  box-shadow: inset 0 0 18px rgba(74, 46, 128, 0.35);
+}
+.phone.ambiance-astro .btn-primary:hover,
+.phone.ambiance-astro .btn-primary:focus,
+.phone.ambiance-astro .btn-primary:active {
+  background: transparent;
+  color: #F6E7C1;
+  border-color: #D4AF37;
+}
+.phone.ambiance-astro .back,
+.phone.ambiance-astro .link-silver { color: #D4AF37; }
+
+@media (prefers-reduced-motion: reduce) {
+  .emblem-svg,
+  .door,
+  .gate,
+  .phone.ambiance-astro .stardust i,
+  .phone.ambiance-astro .stars {
+    animation: none !important;
+  }
+  .emblem-svg { transform: none; }
+}

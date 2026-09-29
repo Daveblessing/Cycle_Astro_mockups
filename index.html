@@ -10,10 +10,10 @@
 </head>
 <body>
   <p class="page-label">Cycle & Astro · v3.3</p>
-  <p class="page-hint">Shell 390×844 · v3.3 polish premium · navigation hash · démo FR · charte noir/or KD.</p>
+  <p class="page-hint">Deux ambiances séparées · Mes règles (clair) · Mon ciel (sombre) · démo FR.</p>
   <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
 
-  <div class="phone" role="application" aria-label="Cycle & Astro">
+  <div class="phone ambiance-night" role="application" aria-label="Cycle & Astro">
     <div class="stars" aria-hidden="true"></div>
     <div class="stardust" aria-hidden="true">
       <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -26,26 +26,23 @@
     <div class="app">
       <div class="views" id="views">
 
-        <!-- 1. Splash / Welcome -->
-        <section class="view no-nav" id="view-splash" data-screen="splash" data-label="Splash / Welcome">
-          <div class="splash">
-            <div class="halo" aria-hidden="true"></div>
-            <p class="brand-kd">★ KING DAVEBLESSING ★</p>
-            <h1 class="brand-name">Cycle &amp; Astro</h1>
-            <p class="version-line">v3.3 · premium KD</p>
-            <p class="pillars-line">cycle · lune · astro · chemin de vie</p>
-            <div class="divider" style="width:60%;margin:12px auto;"></div>
-            <p class="tagline">Tu es en sécurité ici. Ton rythme, la Lune, les astres, ton chemin.</p>
-            <div class="welcome-pillars" aria-label="Les quatre piliers">
-              <div class="wp"><div class="g">◉</div><div class="t">Mes règles</div><div class="d">Ton rythme, en douceur</div></div>
-              <div class="wp"><div class="g">☾</div><div class="t">Lune</div><div class="d">Rythmes du ciel</div></div>
-              <div class="wp"><div class="g">✦</div><div class="t">Astro</div><div class="d">Message du jour</div></div>
-              <div class="wp"><div class="g">8</div><div class="t">Chemin</div><div class="d">Boussole personnelle</div></div>
+        <!-- 1. Accueil — deux entrées -->
+        <section class="view no-nav" id="view-splash" data-screen="splash" data-label="Accueil">
+          <div class="gate">
+            <img class="logo-mark" src="assets/logo-3-5.png" alt="Emblème King Daveblessing" />
+            <h1 class="gate-title">Cycle &amp; Astro</h1>
+            <p class="gate-lead">Mercredi 23 septembre 2026</p>
+            <div class="gate-doors">
+              <button class="door door-cycle" type="button" data-go="cycle">
+                <span class="door-kicker">Cycle</span>
+                <span class="door-label">Mes règles</span>
+              </button>
+              <button class="door door-astro" type="button" data-go="astro">
+                <span class="door-kicker">Astro</span>
+                <span class="door-label">Mon ciel</span>
+              </button>
             </div>
-            <div class="cta-wrap">
-              <button class="btn btn-primary btn-lg" data-go="onboarding" data-ripple>Commencer</button>
-              <button class="link-silver" type="button" data-go="today">Voir la démo</button>
-            </div>
+            <button type="button" class="link-silver gate-reset" id="btnResetPersonHome">Nouvelle personne</button>
           </div>
         </section>
 
@@ -67,7 +64,7 @@
             <input type="checkbox" id="disclaimerCheck" />
             <span>J’ai lu et j’accepte ce disclaimer. Je comprends que cette app est un outil de bien-être, pas un avis médical.</span>
           </label>
-          <button class="btn btn-primary" id="btnAcceptDisclaimer" disabled data-go="today">Continuer</button>
+          <button class="btn btn-primary" id="btnAcceptDisclaimer" disabled data-go="splash">Continuer</button>
           <button class="btn btn-ghost" data-go="splash">Quitter</button>
           <p class="tiny" style="text-align:center;margin-top:16px;">Tu pourras relire ce texte dans Profil → Santé &amp; disclaimer.</p>
         </section>
@@ -110,72 +107,40 @@
           </nav>
         </section>
 
-        <!-- 4. Cycle -->
-        <section class="view" id="view-cycle" data-screen="cycle" data-label="Mes règles" data-nav="cycle">
-          <div class="app-header">
-            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
-            <span class="title">Mes règles</span>
-            <div class="side right"></div>
+        <!-- 4. Cycle — palette claire -->
+        <section class="view no-nav" id="view-cycle" data-screen="cycle" data-label="Mes règles" data-nav="cycle">
+          <div class="ambiance-head">
+            <button class="back" data-go="splash" type="button">← Accueil</button>
+            <img class="logo-mark" src="assets/logo-3-5.png" alt="" />
+            <span class="ambiance-head-spacer" aria-hidden="true"></span>
           </div>
-
-          <div class="card cycle-today-card">
-            <p class="cycle-today-line" id="cycleTodayLine">Aujourd’hui · Jour 23 · Après le milieu</p>
-            <p class="italic" style="margin-top:4px;">« Ralentir et ressentir »</p>
+          <h1 class="ambiance-title">Cycle</h1>
+          <div class="gold-rule" aria-hidden="true"></div>
+          <div class="emblem" aria-hidden="true">
+            <svg class="emblem-svg" viewBox="0 0 220 250">
+              <path fill="currentColor" d="M168 36c-9 2-16 12-16 24s7 22 16 24c-14 1-28-9-28-24s14-25 28-24z"/>
+              <circle cx="110" cy="142" r="78" fill="none" stroke="currentColor" stroke-width="1.15"/>
+              <polygon points="110.0,74.0 150.0,197.0 45.3,121.0 174.7,121.0 70.0,197.0" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"/>
+            </svg>
           </div>
-
-          <div class="card phases-ring-card">
-            <h3 class="h-serif h3">Les 4 phases</h3>
-            <div class="phases-ring" role="list" aria-label="Phases du cycle menstruel">
-              <svg class="phases-svg" viewBox="0 0 200 200" width="168" height="168" aria-hidden="true">
-                <circle class="phases-track" cx="100" cy="100" r="72" />
-                <circle class="phase-arc phase-menstruelle" cx="100" cy="100" r="72"
-                  stroke-dasharray="80.78 371.61" stroke-dashoffset="0.00"
-                  transform="rotate(-90 100 100)" />
-                <circle class="phase-arc phase-folliculaire" cx="100" cy="100" r="72"
-                  stroke-dasharray="129.25 323.14" stroke-dashoffset="-80.78"
-                  transform="rotate(-90 100 100)" />
-                <circle class="phase-arc phase-ovulatoire" cx="100" cy="100" r="72"
-                  stroke-dasharray="48.47 403.92" stroke-dashoffset="-210.04"
-                  transform="rotate(-90 100 100)" />
-                <circle class="phase-arc phase-luteale is-current" cx="100" cy="100" r="72"
-                  stroke-dasharray="193.88 258.51" stroke-dashoffset="-258.51"
-                  transform="rotate(-90 100 100)" />
-              </svg>
-              <div class="phases-center">
-                <span class="phases-center-phase">Lutéale</span>
-                <span class="phases-center-day">Jour 23 / 28</span>
-              </div>
-            </div>
-            <ul class="phases-legend">
-              <li><i class="ph-dot menstruelle"></i> Menstruelle</li>
-              <li><i class="ph-dot folliculaire"></i> Folliculaire</li>
-              <li><i class="ph-dot ovulatoire"></i> Ovulatoire</li>
-              <li class="is-current"><i class="ph-dot luteale"></i> Lutéale</li>
-            </ul>
-            <p class="footnote">Estimation basée sur tes saisies — pas un avis médical. Jamais un diagnostic.</p>
-          </div>
-
-          <div class="card">
-            <h3 class="h-serif h3">Prochaines règles</h3>
-            <p class="body" id="cycleNextLine">Prochaine date · 29 septembre 2026</p>
-            <p class="formula-line">Prochaine date = dernières règles + longueur du cycle</p>
-          </div>
-
-          <div class="card">
+          <p class="ambiance-today" id="cycleTodayLine">Aujourd’hui · mercredi 23 septembre 2026</p>
+          <p class="ambiance-next" id="cycleNextLine">Prochaine date · 29 septembre 2026</p>
+          <p class="ambiance-d0" id="cycleD0Line">Dernières règles · 1er septembre 2026 · cycle de 28 jours</p>
+          <p class="formula-line">Prochaine date = dernières règles + longueur du cycle</p>
+          <button class="btn btn-primary btn-lg" type="button" data-go="calculator">Voir ma date</button>
+          <p class="disclaimer-short">Bien-être, pas un avis médical.</p>
+          <div class="card cal-quiet">
             <div class="cal-head">
               <button class="cal-nav" type="button" aria-label="Mois précédent">‹</button>
               <span class="month">Septembre 2026</span>
               <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
             </div>
-            <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle menstruel"></div>
+            <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle"></div>
             <div class="cal-legend">
               <span><i class="dot dot-period"></i> Jours de règles</span>
               <span><i class="dot dot-today"></i> Aujourd’hui</span>
             </div>
           </div>
-
-          <button class="btn btn-primary btn-lg" type="button" data-go="calculator">Voir ma date</button>
-          <p class="under-btn">Douce nuit</p>
           <button class="link-silver" type="button" id="btnEditPeriod">Corriger une période</button>
         </section>
 
@@ -235,12 +200,29 @@
         </section>
 
         <!-- 6. Astro -->
-        <section class="view" id="view-astro" data-screen="astro" data-label="Astro" data-nav="today">
-          <div class="app-header">
-            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
-            <span class="title">Astro du jour</span>
-            <div class="side right"></div>
+        <section class="view no-nav" id="view-astro" data-screen="astro" data-label="Astro" data-nav="today">
+          <div class="ambiance-head">
+            <button class="back" data-go="splash" type="button">← Accueil</button>
+            <img class="logo-mark" src="assets/logo-3-5.png" alt="" />
+            <span class="ambiance-head-spacer" aria-hidden="true"></span>
           </div>
+          <h1 class="ambiance-title">Astro</h1>
+          <div class="gold-rule" aria-hidden="true"></div>
+          <div class="emblem emblem-astro" aria-hidden="true">
+            <svg class="emblem-svg" viewBox="0 0 220 250">
+              <circle cx="36" cy="28" r="1.2" fill="currentColor"/>
+              <circle cx="188" cy="40" r="1.4" fill="currentColor"/>
+              <circle cx="170" cy="18" r="1" fill="currentColor"/>
+              <circle cx="24" cy="70" r="1.1" fill="currentColor"/>
+              <circle cx="196" cy="96" r="1.2" fill="currentColor"/>
+              <circle cx="110" cy="146" r="84" fill="none" stroke="currentColor" stroke-width="1.15"/>
+              <circle cx="110" cy="146" r="74" fill="none" stroke="currentColor" stroke-width="1.15"/>
+              <polygon points="110.0,84.0 146.4,196.2 51.0,126.8 169.0,126.8 73.6,196.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="ambiance-today">Mercredi 23 septembre 2026</p>
+          <button class="btn btn-primary btn-lg" type="button" data-go="reading">Lire le ciel</button>
+          <p class="disclaimer-short">Lecture symbolique. Pas un avis médical.</p>
 
           <div class="card">
             <div class="card-row" style="margin-bottom:12px;">
@@ -317,7 +299,7 @@
               <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
             </div>
             <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
-            <button class="btn btn-ghost btn-sm" type="button" data-go="reading" style="margin-top:12px;width:auto;">Profil complet chemin / soleil →</button>
+            <button class="link-silver" type="button" data-go="reading">Profil complet</button>
           </div>
         </section>
 
@@ -674,7 +656,7 @@
         <!-- 10. Calculateur de menstruation -->
         <section class="view" id="view-calculator" data-screen="calculator" data-label="Calculateur de menstruation" data-nav="profile">
           <div class="app-header">
-            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <button class="back" data-go="cycle" type="button">← Cycle</button>
             <span class="title">Ta date</span>
             <div class="side right"></div>
           </div>
@@ -686,6 +668,7 @@
               <label class="field">
                 <span class="field-label">Date des dernières règles</span>
                 <input type="date" id="calcLastStart" name="lastStart" value="2026-09-01" required />
+                <span class="date-words" id="calcLastStartWords">1er septembre 2026</span>
               </label>
               <label class="field">
                 <span class="field-label">Longueur du cycle</span>
@@ -734,7 +717,7 @@
       </div>
 
       <nav class="bottom-nav" id="bottomNav" aria-label="Navigation principale">
-        <button class="nav-item active" data-go="today" type="button" data-ripple><span class="ico">✦</span><span class="nav-label">Aujourd’hui</span></button>
+        <button class="nav-item" data-go="splash" type="button" data-ripple><span class="ico">✦</span><span class="nav-label">Accueil</span></button>
         <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel" data-ripple><span class="ico">◉</span><span class="nav-label">Cycle</span></button>
         <button class="nav-item" data-go="journal" type="button" data-ripple><span class="ico">✎</span><span class="nav-label">Journal</span></button>
         <button class="nav-item" data-go="profile" type="button" data-ripple><span class="ico">◎</span><span class="nav-label">Plus</span></button>

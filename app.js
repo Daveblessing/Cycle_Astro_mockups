@@ -117,6 +117,26 @@
     picker.querySelectorAll('button').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.go === screen);
     });
+
+    applyAmbiance(screen);
+  }
+
+  const AMBIANCE = {
+    splash: 'gate',
+    cycle: 'cycle',
+    calculator: 'cycle',
+    astro: 'astro',
+    reading: 'astro',
+    moon: 'astro',
+    path: 'astro',
+  };
+
+  function applyAmbiance(screen) {
+    const phone = document.querySelector('.phone');
+    if (!phone) return;
+    const mode = AMBIANCE[screen] || 'night';
+    phone.classList.remove('ambiance-gate', 'ambiance-cycle', 'ambiance-astro', 'ambiance-night');
+    phone.classList.add('ambiance-' + mode);
   }
 
   function toast(msg) {
@@ -1675,6 +1695,23 @@
     return d.getDate() + ' ' + FR_MONTHS[d.getMonth()] + ' ' + d.getFullYear();
   }
 
+  function formatFRSpoken(d) {
+    const n = d.getDate() === 1 ? '1er' : String(d.getDate());
+    return n + ' ' + FR_MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function weekdayFR(d) {
+    return ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'][d.getDay()];
+  }
+
+  function syncCalcWords() {
+    const lastEl = document.getElementById('calcLastStart');
+    const words = document.getElementById('calcLastStartWords');
+    if (!words) return;
+    const d = lastEl && parseYMD(lastEl.value);
+    words.textContent = d ? formatFRSpoken(d) : '';
+  }
+
   function daysBetween(a, b) {
     const ms = 24 * 60 * 60 * 1000;
     return Math.round((b.getTime() - a.getTime()) / ms);
@@ -1876,6 +1913,8 @@
     if (lastEl && saved.lastStart) lastEl.value = saved.lastStart;
     if (perEl && saved.periodLen) perEl.value = saved.periodLen;
     if (cycEl && saved.cycleLen) cycEl.value = saved.cycleLen;
+    syncCalcWords();
+    if (lastEl) lastEl.addEventListener('change', syncCalcWords);
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1963,6 +2002,7 @@
     if (last) last.value = DEMO.cycle.lastPeriodStart;
     if (period) period.value = String(DEMO.cycle.avgPeriod);
     if (cycle) cycle.value = String(DEMO.cycle.avgCycle);
+    syncCalcWords();
     const results = document.getElementById('calcResults');
     if (results) results.hidden = true;
   }
@@ -2018,19 +2058,27 @@
       msg.textContent =
         'Jour ' + res.dayInCycle + '. Prochaine date le ' + formatFR(res.nextStart) + '.';
     }
+    const today = productToday();
+    const start = parseYMD(DEMO.cycle.lastPeriodStart);
     const cycleLine = document.getElementById('cycleTodayLine');
     if (cycleLine) {
       cycleLine.textContent =
-        'Aujourd’hui · Jour ' + res.dayInCycle + ' · ' + res.phase.label;
+        'Aujourd’hui · ' + weekdayFR(today) + ' ' + formatFR(today);
     }
     const cycleNext = document.getElementById('cycleNextLine');
     if (cycleNext) {
       cycleNext.textContent = 'Prochaine date · ' + formatFR(res.nextStart);
     }
+    const d0 = document.getElementById('cycleD0Line');
+    if (d0 && start) {
+      d0.textContent =
+        'Dernières règles · ' + formatFRSpoken(start) + ' · cycle de ' + res.cycleLen + ' jours';
+    }
   }
 
   function bindResetPerson() {
     const ids = [
+      'btnResetPersonHome',
       'btnResetPersonHub',
       'btnResetPersonProfile',
       'btnResetPersonReading',
@@ -2172,7 +2220,7 @@
 
   function buildPicker() {
     const labels = {
-      splash: '1 · Splash',
+      splash: '1 · Accueil',
       onboarding: '2 · Disclaimer',
       today: '3 · Aujourd’hui',
       cycle: '4 · Mes règles',
