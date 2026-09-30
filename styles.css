@@ -2539,6 +2539,16 @@ html, body {
 .phone.ambiance-astro .status-bar,
 .phone.ambiance-cycle .status-bar,
 .phone .view,
+
+.phone .kind-line {
+  font-family: Inter, system-ui, sans-serif;
+  color: #1A1A1A !important;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 15px;
+}
+
 .phone .body,
 .phone .body-muted,
 .phone .safe-line,
@@ -3112,4 +3122,492 @@ html, body {
 .phone:not(.ambiance-cycle) #view-journal #energySlider button.selected {
   color: #1A1A1A !important;
   opacity: 1 !important;
+}
+
+
+/* —— Sophistique · une famille, plus d’air, filets d’or. Encre #1A1A1A conservée. —— */
+html, body {
+  background:
+    radial-gradient(ellipse 90% 42% at 50% -8%, rgba(197, 160, 89, 0.16), transparent 62%),
+    #F3EEE4;
+  color: #1A1A1A;
+}
+
+.page-label {
+  color: #5C4A28;
+  letter-spacing: 0.24em;
+  font-weight: 600;
+  opacity: 1;
+}
+.page-hint {
+  color: #1A1A1A;
+  letter-spacing: 0.01em;
+}
+
+.phone,
+.phone.ambiance-night,
+.phone.ambiance-gate,
+.phone.ambiance-astro,
+.phone.ambiance-cycle {
+  background:
+    radial-gradient(ellipse 80% 28% at 50% 0%, rgba(197, 160, 89, 0.09), transparent 58%),
+    #F9F6F0;
+  border: 1px solid #C5A059;
+  box-shadow:
+    0 0 0 1px rgba(255, 250, 242, 0.95),
+    0 0 0 6px rgba(197, 160, 89, 0.16),
+    0 28px 64px rgba(90, 70, 40, 0.15);
+}
+
+/* Poussière d’étoiles très légère, derrière le texte. */
+.phone .stars,
+.phone.ambiance-astro .stars,
+.phone.ambiance-cycle .stars,
+.phone.ambiance-night .stars {
+  display: none !important;
+}
+.phone .stardust,
+.phone.ambiance-astro .stardust,
+.phone.ambiance-cycle .stardust,
+.phone.ambiance-night .stardust,
+.phone.ambiance-gate .stardust {
+  display: block;
+  opacity: 0.42;
+  z-index: 0;
+  pointer-events: none;
+}
+.phone .stardust i {
+  background: #C5A059;
+  width: 1.5px;
+  height: 1.5px;
+  opacity: 0.22;
+}
+.phone .app,
+.phone .views {
+  z-index: 1;
+}
+.phone .view {
+  z-index: 1;
+}
+.phone .view {
+  padding: 12px 20px 96px;
+}
+.phone .view.no-nav {
+  padding-bottom: 32px;
+}
+
+.phone .ambiance-title,
+.phone .gate-title,
+.phone .app-header .title,
+.phone .h1,
+.phone .h1.h-serif,
+.phone #view-reading .h1.h-serif,
+.phone.ambiance-astro .ambiance-title,
+.phone.ambiance-astro .app-header .title,
+.phone.ambiance-cycle .ambiance-title {
+  font-family: Cinzel, "Times New Roman", serif;
+  color: #5C4A28 !important;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-shadow: none;
+}
+.phone .ambiance-title {
+  font-size: 34px;
+  margin: 6px 0 4px;
+}
+.phone .gate-title {
+  font-size: 30px;
+  margin: 8px 0 6px;
+}
+.phone .h1,
+.phone .h1.h-serif {
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.phone .h3,
+.phone .h-serif.h3,
+.phone .field-label,
+.phone .door-kicker,
+.phone .cal-dow,
+.phone .cal-head .month,
+#view-profile .h3.section-gap,
+#view-profile h3.h-serif,
+#view-profile .app-header .title,
+.phone:not(.ambiance-cycle) #view-journal #checkinForm > h3.h-serif.h3:first-of-type,
+.phone:not(.ambiance-cycle) #view-journal #checkinForm h3.h-serif.h3:has(#energyLabel) {
+  font-family: Cinzel, "Times New Roman", serif;
+  color: #5C4A28 !important;
+  letter-spacing: 0.11em;
+  font-weight: 600;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+
+.phone .kind-line {
+  font-family: Inter, system-ui, sans-serif;
+  color: #1A1A1A !important;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 15px;
+}
+
+.phone .body,
+.phone .body-muted,
+.phone .formula-line,
+.phone .footnote,
+.phone .disclaimer-short,
+.phone .disclaimer-box,
+.phone .disclaimer-box p,
+.phone .disclaimer-box strong,
+.phone .ambiance-today,
+.phone .ambiance-next,
+.phone .ambiance-d0,
+.phone .ambiance-sub,
+.phone .gate-lead,
+.phone .tiny,
+.phone .italic,
+.phone .menu-list button,
+.phone .menu-list a,
+#view-profile .profile-hero .name,
+#view-profile .profile-hero .tags,
+#view-profile .tiny,
+#view-profile .disclaimer-box,
+#view-profile .disclaimer-box p,
+#view-profile .disclaimer-box strong,
+#view-profile .menu-list button,
+#view-profile .menu-list a,
+#view-today .greeting .date,
+#view-today .hub-nextline,
+.phone:not(.ambiance-cycle) #view-journal #checkinForm > p.body-muted,
+.phone:not(.ambiance-cycle) #view-journal #energyLabel {
+  color: #1A1A1A !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+.phone .body,
+.phone .body-muted {
+  line-height: 1.62;
+  font-weight: 400;
+}
+
+.phone .gold-rule,
+.phone.ambiance-astro .gold-rule,
+.phone.ambiance-cycle .gold-rule {
+  width: 108px;
+  height: 1px;
+  margin: 10px auto 14px;
+  background: #C5A059;
+}
+.phone .gold-rule::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 4px;
+  height: 1px;
+  background: rgba(197, 160, 89, 0.45);
+}
+
+.phone .card,
+.phone .card.glass-card,
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card,
+.phone.ambiance-cycle .card,
+.phone.ambiance-cycle .card.glass-card,
+#view-profile .card {
+  background: #FBF7F0;
+  border: 1px solid rgba(197, 160, 89, 0.72);
+  border-radius: 18px;
+  padding: 18px 18px 16px;
+  margin-bottom: 16px;
+  color: #1A1A1A;
+  box-shadow:
+    inset 0 0 0 1px rgba(197, 160, 89, 0.22),
+    0 8px 20px rgba(90, 70, 40, 0.06);
+}
+.phone.ambiance-astro .card,
+.phone.ambiance-astro .card.glass-card {
+  background: linear-gradient(180deg, rgba(92, 58, 120, 0.08), #FBF7F0 48%);
+  border-color: rgba(92, 58, 120, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(197, 160, 89, 0.38),
+    0 8px 20px rgba(74, 46, 107, 0.06);
+}
+.phone.ambiance-cycle .card,
+.phone.ambiance-cycle .card.glass-card {
+  border-color: rgba(197, 160, 89, 0.7);
+  box-shadow:
+    inset 0 0 0 1px rgba(231, 163, 181, 0.55),
+    0 8px 20px rgba(90, 70, 40, 0.06);
+}
+
+.door {
+  border-radius: 22px;
+  min-height: 124px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 250, 242, 0.7),
+    0 10px 22px rgba(90, 70, 40, 0.07);
+}
+.door-cycle {
+  background: #FBF7F0;
+  border: 1px solid #E7A3B5;
+  box-shadow:
+    inset 0 0 0 1px rgba(231, 163, 181, 0.45),
+    0 10px 22px rgba(196, 107, 134, 0.08);
+}
+.door-astro {
+  background: #FBF7F0;
+  border: 1px solid #5C3A78;
+  box-shadow:
+    inset 0 0 0 1px rgba(197, 160, 89, 0.4),
+    0 10px 22px rgba(74, 46, 107, 0.08);
+}
+.door-cycle .door-kicker { color: #A85A72 !important; }
+.door-astro .door-kicker { color: #4A2E6B !important; }
+.door-label { color: #1A1A1A; letter-spacing: 0.03em; }
+
+.phone .btn-primary,
+.phone .btn.btn-primary,
+.phone .btn-primary.btn-lg,
+.phone.ambiance-astro .btn-primary,
+.phone.ambiance-astro .btn.btn-primary,
+.phone.ambiance-astro .btn-primary.btn-lg,
+.phone.ambiance-night .btn-primary,
+.phone.ambiance-gate .btn-primary,
+#view-today .cycle-cta {
+  background: #C5A059;
+  color: #1A1A1A;
+  border: 1px solid #8F7024;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 230, 0.55),
+    inset 0 0 0 1px rgba(255, 248, 230, 0.2),
+    0 6px 16px rgba(143, 112, 36, 0.16);
+}
+.phone.ambiance-cycle .btn-primary,
+.phone.ambiance-cycle .btn.btn-primary,
+.phone.ambiance-cycle .btn-primary.btn-lg,
+.phone.ambiance-cycle .btn-primary:hover,
+.phone.ambiance-cycle .btn-primary:focus,
+.phone.ambiance-cycle .btn-primary:active {
+  background: #D98BA3;
+  color: #1A1A1A;
+  border: 1px solid #B86A84;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 250, 0.55),
+    0 6px 16px rgba(184, 106, 132, 0.16);
+}
+.phone .btn-ghost,
+#view-profile .btn-ghost,
+#view-profile .btn-reset-person {
+  color: #1A1A1A !important;
+  border: 1px solid rgba(197, 160, 89, 0.75);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.18);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+.phone .link-silver,
+.phone .link-silver:hover {
+  color: #1A1A1A !important;
+  border: none;
+  box-shadow: none;
+  background: none;
+  text-decoration: underline;
+  text-decoration-color: #C5A059;
+  text-underline-offset: 4px;
+}
+.phone .btn-ghost:hover {
+  color: #1A1A1A !important;
+  border-color: #C5A059;
+}
+
+.phone .chip,
+.phone:not(.ambiance-cycle) #view-journal #moodChips button.chip,
+.phone:not(.ambiance-cycle) #view-journal #moodChips button.chip:hover {
+  background: transparent;
+  color: #1A1A1A !important;
+  border: 1px solid #C5A059;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.2);
+  padding: 9px 14px;
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.phone .chip.selected,
+.phone:not(.ambiance-cycle) #view-journal #moodChips button.chip.selected {
+  background: #1A1A1A !important;
+  color: #FFFFFF !important;
+  border-color: #C5A059 !important;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.55) !important;
+  opacity: 1 !important;
+}
+
+.phone .energy-slider button,
+.phone:not(.ambiance-cycle) #view-journal #energySlider button {
+  border: 1px solid rgba(197, 160, 89, 0.7);
+  background: #FBF7F0;
+  color: #1A1A1A !important;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.16);
+  font-weight: 600;
+}
+.phone .energy-slider button.selected,
+.phone:not(.ambiance-cycle) #view-journal #energySlider button.selected {
+  background: #C5A059 !important;
+  color: #1A1A1A !important;
+  border-color: #8F7024 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 230, 0.5),
+    0 4px 10px rgba(143, 112, 36, 0.16) !important;
+  opacity: 1 !important;
+}
+
+.phone .symptom-item {
+  color: #1A1A1A;
+  background: #FBF7F0;
+  border: 1px solid rgba(197, 160, 89, 0.45);
+  border-radius: 12px;
+  padding: 11px 12px;
+}
+.phone .symptom-item.selected {
+  color: #1A1A1A;
+  background: #F3E6C4;
+  border-color: #C5A059;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.35);
+}
+
+.phone .textarea,
+.phone.ambiance-cycle .textarea {
+  background: #FBF7F0;
+  color: #1A1A1A;
+  border: 1px solid rgba(197, 160, 89, 0.7);
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.18);
+}
+.phone .textarea::placeholder { color: #5C4A28; opacity: 0.7; }
+
+.phone .persona-btn {
+  color: #1A1A1A;
+  border: 1px solid rgba(197, 160, 89, 0.65);
+  background: transparent;
+}
+.phone .persona-btn.active,
+.phone .krizoua-toggle .persona-btn.active {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-color: #C5A059;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.45);
+}
+
+.phone .bottom-nav {
+  background: rgba(249, 246, 240, 0.96);
+  border-top: 1px solid rgba(197, 160, 89, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 250, 242, 0.8);
+}
+.phone .nav-item,
+.phone .nav-item.active {
+  color: #1A1A1A !important;
+  letter-spacing: 0.04em;
+}
+.phone .nav-item.active { color: #5C4A28 !important; font-weight: 600; }
+
+.phone .field input[type="date"],
+.phone .field input[type="number"],
+.phone .field input[type="text"] {
+  background: #FBF7F0;
+  color: #1A1A1A;
+  border: 1px solid rgba(197, 160, 89, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.16);
+  border-radius: 12px;
+}
+
+/* Hub : même structure, filet double et un peu d’air. */
+#view-today .greeting { padding: 4px 2px 12px; }
+#view-today .greeting .date {
+  font-family: Cinzel, "Times New Roman", serif;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  color: #1A1A1A !important;
+}
+#view-today .cycle-hero {
+  background: #FBF7F0;
+  border: 1px solid #C5A059;
+  border-radius: 22px;
+  padding: 16px 18px 18px;
+  color: #1A1A1A;
+  box-shadow:
+    inset 0 0 0 1px rgba(197, 160, 89, 0.28),
+    0 10px 24px rgba(90, 70, 40, 0.07);
+}
+#view-today .phase-badge {
+  color: #5C4A28;
+  border: 1px solid #C5A059;
+  background: transparent;
+  font-family: Cinzel, "Times New Roman", serif;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  padding: 5px 10px;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.25);
+}
+#view-today .cycle-ring-center .day-num,
+#view-today .hub-month,
+#view-today .hub-nextnum {
+  color: #C5A059;
+}
+#view-today .cycle-cta {
+  width: 70%;
+  margin: 14px 0 0 auto;
+}
+#view-today .hub-chips {
+  margin-top: 16px;
+  gap: 8px;
+}
+#view-today .hub-chip {
+  background: transparent;
+  color: #1A1A1A;
+  border: 1px solid #C5A059;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.2);
+  min-height: 48px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+#view-today .pillars-grid { gap: 12px; margin-top: 4px; }
+#view-today .pillar-card,
+#view-today .pillar-card.pillar-cta {
+  background: #141414;
+  border: 1px solid rgba(197, 160, 89, 0.55);
+  border-radius: 18px;
+  padding: 18px 14px 16px;
+  color: #FFFFFF;
+  box-shadow:
+    inset 0 0 0 1px rgba(197, 160, 89, 0.22),
+    0 8px 18px rgba(20, 16, 8, 0.14);
+}
+#view-today .pillar-card .label,
+#view-today .pillar-card .value,
+#view-today .pillar-card .sub {
+  color: #FFFFFF !important;
+}
+#view-today .pillar-card .label {
+  font-family: Cinzel, "Times New Roman", serif;
+  letter-spacing: 0.12em;
+  color: #FFFFFF !important;
+}
+#view-today .pillar-card .glyph { color: #C5A059; }
+
+.phone .cal-nav {
+  border: 1px solid rgba(197, 160, 89, 0.7);
+  color: #5C4A28;
+  box-shadow: inset 0 0 0 1px rgba(197, 160, 89, 0.2);
+}
+.phone.ambiance-cycle .cal-day.period { color: #1A1A1A; }
+.phone .cal-day.today {
+  box-shadow: inset 0 0 0 1px #C5A059;
 }
