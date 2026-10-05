@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cycle & Astro · v3.3 · King Daveblessing</title>
-  <meta name="description" content="Cycle & Astro · v3.3 — maquettes premium KD, 4 piliers, nuit cosmique, manipulation simplifiée." />
+  <title>Cycle & Astro · v3.4 · King Daveblessing</title>
+  <meta name="description" content="Cycle & Astro · v3.4 — maquettes premium KD, 4 piliers, nuit cosmique, manipulation simplifiée." />
   <meta name="version" content="3.3" />
-  <link rel="stylesheet" href="styles.css?v=sophistique" />
+  <link rel="stylesheet" href="styles.css?v=forfaits" />
 </head>
 <body>
-  <p class="page-label">Cycle & Astro · v3.3</p>
+  <p class="page-label">Cycle & Astro · v3.4</p>
   <p class="page-hint">Deux ambiances séparées · Mes règles (clair) · Mon ciel (sombre) · démo FR.</p>
   <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
 
@@ -728,6 +728,51 @@
           </div>
 
           <p class="footnote" id="calcDisclaimerAlways">Bien-être seulement. Pas un avis médical.</p>
+        </section>
+
+
+        <!-- Forfaits / verrouillage -->
+        <section class="view no-nav" id="view-plans" data-screen="plans" data-label="Forfaits">
+          <div class="plans-lock">
+            <button class="back plans-back" data-go="splash" type="button">← Accueil</button>
+            <div class="plans-lock-icon" aria-hidden="true">🔒</div>
+            <p class="plans-badge" id="plansBadge">Astrologie</p>
+            <h2 class="h-serif h1 plans-title" id="plansTitle">Contenu verrouillé</h2>
+            <p class="body-muted plans-lead" id="plansLead">Cet espace demande un forfait actif. Choisis ci-dessous — le paiement arrivera bientôt.</p>
+            <p class="plans-status" id="plansStatus">Aucun forfait actif</p>
+
+            <div class="plans-list" role="list">
+              <article class="plans-card" data-plan-id="astro" role="listitem">
+                <div class="plans-card-top">
+                  <p class="plans-card-kicker">Astrologie</p>
+                  <p class="plans-card-price">10 000 F <span>/ mois</span></p>
+                </div>
+                <p class="plans-card-desc">Déverrouille Astro, le profil complet et la mission de vie.</p>
+                <button type="button" class="btn btn-primary plans-choose" data-plan-choose="astro">Choisir</button>
+              </article>
+
+              <article class="plans-card" data-plan-id="cycle" role="listitem">
+                <div class="plans-card-top">
+                  <p class="plans-card-kicker">Cycle menstruel</p>
+                  <p class="plans-card-price">10 000 F <span>/ mois</span></p>
+                </div>
+                <p class="plans-card-desc">Déverrouille le cycle, le calculateur et le journal du jour.</p>
+                <button type="button" class="btn btn-primary plans-choose" data-plan-choose="cycle">Choisir</button>
+              </article>
+
+              <article class="plans-card plans-card-featured" data-plan-id="les_deux" role="listitem">
+                <div class="plans-card-top">
+                  <p class="plans-card-kicker">Astro + Cycle</p>
+                  <p class="plans-card-price">15 000 F <span>/ mois</span></p>
+                </div>
+                <p class="plans-card-desc">Les deux espaces, dans la même application.</p>
+                <button type="button" class="btn btn-primary plans-choose" data-plan-choose="les_deux">Choisir</button>
+              </article>
+            </div>
+
+            <p class="footnote plans-foot">Paiement bientôt disponible. Aucun forfait n’est activé depuis cet écran.</p>
+            <button type="button" class="btn btn-ghost" data-go="today">Voir le hub</button>
+          </div>
         </section>
 
         <!-- Market stub -->

@@ -1,5 +1,5 @@
 /**
- * Cycle & Astro · v3.3
+ * Cycle & Astro · v3.4
  * Navigation hash légère + profil complet multi-personnes (pas de backend)
  * King Daveblessing · Abidjan · FR · polish premium / manipulation simple
  */
@@ -38,6 +38,92 @@
     today: '2026-09-23',
   };
 
+  /* —— Forfaits (paiement branché plus tard par le Market) ——
+   * localStorage key: ca_plan_v1
+   * values: aucun | astro | cycle | les_deux
+   * window.CycleAstroPlan.set est réservé au pont paiement / Market — ne pas l’appeler depuis l’UI.
+   */
+  const PLAN_KEY = 'ca_plan_v1';
+  const PLAN_VALUES = ['aucun', 'astro', 'cycle', 'les_deux'];
+  const PLAN_NONE = 'aucun';
+  let lockIntent = 'astro'; // 'astro' | 'cycle' — domaine demandé quand verrouillé
+
+  const ASTRO_SCREENS = ['astro', 'path', 'reading'];
+  const CYCLE_SCREENS = ['cycle', 'calculator', 'journal'];
+
+  function getPlan() {
+    try {
+      const v = localStorage.getItem(PLAN_KEY);
+      if (PLAN_VALUES.includes(v)) return v;
+    } catch (_) { /* ignore */ }
+    return PLAN_NONE;
+  }
+
+  function setPlan(next) {
+    const v = PLAN_VALUES.includes(next) ? next : PLAN_NONE;
+    try {
+      localStorage.setItem(PLAN_KEY, v);
+    } catch (_) { /* ignore */ }
+    return v;
+  }
+
+  function canAccessAstro() {
+    const p = getPlan();
+    return p === 'astro' || p === 'les_deux';
+  }
+
+  function canAccessCycle() {
+    const p = getPlan();
+    return p === 'cycle' || p === 'les_deux';
+  }
+
+  function setLockIntent(domain) {
+    lockIntent = domain === 'cycle' ? 'cycle' : 'astro';
+  }
+
+  function resolveView(screen) {
+    if (ASTRO_SCREENS.includes(screen) && !canAccessAstro()) {
+      setLockIntent('astro');
+      return 'plans';
+    }
+    if (CYCLE_SCREENS.includes(screen) && !canAccessCycle()) {
+      setLockIntent('cycle');
+      return 'plans';
+    }
+    return screen;
+  }
+
+  function updatePlansView() {
+    const view = document.getElementById('view-plans');
+    if (!view) return;
+    const title = document.getElementById('plansTitle');
+    const lead = document.getElementById('plansLead');
+    const badge = document.getElementById('plansBadge');
+    const domain = lockIntent === 'cycle' ? 'Cycle menstruel' : 'Astrologie';
+    if (title) title.textContent = 'Contenu verrouillé';
+    if (lead) {
+      lead.textContent =
+        lockIntent === 'cycle'
+          ? 'Cet espace Cycle menstruel demande un forfait actif. Choisis ci-dessous — le paiement arrivera bientôt.'
+          : 'Cet espace Astrologie demande un forfait actif. Choisis ci-dessous — le paiement arrivera bientôt.';
+    }
+    if (badge) badge.textContent = domain;
+    const plan = getPlan();
+    view.querySelectorAll('[data-plan-id]').forEach((card) => {
+      card.classList.toggle('is-current', card.dataset.planId === plan && plan !== PLAN_NONE);
+    });
+    const status = document.getElementById('plansStatus');
+    if (status) {
+      const labels = {
+        aucun: 'Aucun forfait actif',
+        astro: 'Forfait Astrologie actif',
+        cycle: 'Forfait Cycle menstruel actif',
+        les_deux: 'Forfait Astro + Cycle actif',
+      };
+      status.textContent = labels[plan] || labels.aucun;
+    }
+  }
+
   const SCREENS = [
     'splash',
     'onboarding',
@@ -50,6 +136,7 @@
     'journal',
     'profile',
     'calculator',
+    'plans',
   ];
 
   const SCREEN_ALIASES = {
@@ -68,6 +155,7 @@
     journal: 'journal',
     profile: 'profile',
     calculator: 'profile',
+    plans: 'splash',
   };
 
   const views = document.getElementById('views');
@@ -97,34 +185,41 @@
   }
 
   function show(screen) {
+    const requested = screen;
+    const viewScreen = resolveView(screen);
+    if (viewScreen === 'plans') updatePlansView();
+
     const all = views.querySelectorAll('.view');
     all.forEach((v) => {
       const id = v.dataset.screen;
-      const active = id === screen;
+      const active = id === viewScreen;
       v.classList.toggle('active', active);
       if (active) v.scrollTop = 0;
     });
 
-    const view = document.getElementById('view-' + screen);
+    const view = document.getElementById('view-' + viewScreen);
     const hideNav = !view || view.classList.contains('no-nav');
     bottomNav.classList.toggle('hidden', hideNav);
 
-    const navKey = NAV_MAP[screen] || null;
+    const navKey = NAV_MAP[viewScreen] || null;
     bottomNav.querySelectorAll('.nav-item').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.go === navKey);
     });
 
     picker.querySelectorAll('button').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.go === screen);
+      const goTarget = btn.dataset.go;
+      btn.classList.toggle('active', goTarget === requested || (viewScreen === 'plans' && goTarget === 'plans'));
     });
 
-    applyAmbiance(screen);
+    applyAmbiance(viewScreen === 'plans' ? 'gate' : viewScreen);
   }
 
   const AMBIANCE = {
     splash: 'gate',
+    plans: 'gate',
     cycle: 'cycle',
     calculator: 'cycle',
+    journal: 'cycle',
     astro: 'astro',
     reading: 'astro',
     moon: 'astro',
@@ -2217,6 +2312,16 @@
         toast('Sheet édition période (démo)');
       });
     }
+
+    // Forfaits : « Choisir » n’active rien (paiement plus tard)
+    document.querySelectorAll('[data-plan-choose]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toast('Paiement bientôt disponible · forfait non activé');
+        // Ne pas appeler setPlan — réservé au pont paiement / Market.
+      });
+    });
   }
 
   function buildPicker() {
@@ -2232,6 +2337,7 @@
       journal: '9 · Journal',
       profile: '10 · Profil',
       calculator: '11 · Calculateur',
+      plans: '12 · Forfaits',
     };
     SCREENS.forEach((s) => {
       const b = document.createElement('button');
@@ -2278,6 +2384,15 @@
       PERSONAS: PERSONAS,
       renderKrizouaVerbatim: renderKrizouaVerbatim,
       KRIZOUA_VERBATIM_TEXT: KRIZOUA_VERBATIM_TEXT,
+    };
+    /* Pont paiement / Market : set() uniquement après paiement réel — jamais depuis l’UI. */
+    window.CycleAstroPlan = {
+      get: getPlan,
+      set: setPlan,
+      canAccessAstro: canAccessAstro,
+      canAccessCycle: canAccessCycle,
+      key: PLAN_KEY,
+      values: PLAN_VALUES.slice(),
     };
   }
 
