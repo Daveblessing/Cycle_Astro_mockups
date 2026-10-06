@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Cycle & Astro · v1.1.0 · King Daveblessing</title>
+  <meta name="description" content="Cycle & Astro v1.1.0 — bien-être cycle et astrologie, King Daveblessing. Pas un avis médical." />
+  <meta name="version" content="1.1.0" />
+  <meta name="theme-color" content="#F9F6F0" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.1.0" />
+  <link rel="icon" type="image/png" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="styles.css?v=1.1.0" />
+</head>
+<body>
+  <p class="page-label">Cycle & Astro · v1.1.0</p>
+  <p class="page-hint">Deux ambiances séparées · Mes règles (clair) · Mon ciel (sombre) · démo FR.</p>
+  <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
+
+  <div class="phone ambiance-night" role="application" aria-label="Cycle & Astro">
+    <div class="stars" aria-hidden="true"></div>
+    <div class="stardust" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="status-bar">
+      <span id="clock">12:59</span>
+      <span class="icons">▮▮▮ · 100%</span>
+    </div>
+    <div class="app">
+      <div class="views" id="views">
+
+        <!-- 1. Accueil — deux entrées -->
+        <section class="view no-nav" id="view-splash" data-screen="splash" data-label="Accueil">
+          <div class="gate">
+            <img class="logo-mark" src="assets/logo-3-5.png" alt="Emblème King Daveblessing" />
+            <h1 class="gate-title">Cycle &amp; Astro</h1>
+            <p class="gate-lead">Mercredi 23 septembre 2026</p>
+            <div class="gate-doors">
+              <button class="door door-cycle" type="button" data-go="cycle">
+                <span class="door-kicker">Cycle</span>
+                <span class="door-label">Mes règles</span>
+              </button>
+              <button class="door door-astro" type="button" data-go="astro">
+                <span class="door-kicker">Astro</span>
+                <span class="door-label">Mon ciel</span>
+              </button>
+            </div>
+            <button type="button" class="link-silver gate-reset" id="btnResetPersonHome">Nouvelle personne</button>
+            <div class="gate-tools">
+              <button type="button" class="market-back" data-market-back aria-label="Retour au Market">← Market</button>
+              <select class="lang-select" data-lang-select aria-label="Langue"></select>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Onboarding disclaimer -->
+        <section class="view no-nav" id="view-onboarding" data-screen="onboarding" data-label="Onboarding disclaimer">
+          <div class="progress">
+            <div class="meta"><span>Étape 1 / 7</span><span>Disclaimer</span></div>
+            <div class="progress-bar"><span style="width:14%"></span></div>
+          </div>
+          <h2 class="h-serif h1" style="margin-bottom:8px;">Avant de commencer</h2>
+          <p class="body-muted" style="margin-bottom:14px;">Une lecture importante — bienveillance avant tout.</p>
+          <div class="disclaimer-box">
+            <p><strong>Cycle &amp; Astro n’est pas un dispositif médical.</strong></p>
+            <p style="margin-top:10px;" data-i18n-html="disc2">Les informations sur le cycle, la Lune, l’astrologie et le chemin de vie sont proposées à titre <strong>informatif et de bien-être personnel</strong>.</p>
+            <p style="margin-top:10px;" data-i18n-html="disc3">Elles ne constituent <strong>ni un diagnostic, ni un conseil médical, ni un moyen de contraception ou de conception</strong>.</p>
+            <p style="margin-top:10px;">Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="disclaimerCheck" />
+            <span>J’ai lu et j’accepte ce disclaimer. Je comprends que cette app est un outil de bien-être, pas un avis médical.</span>
+          </label>
+          <button class="btn btn-primary" id="btnAcceptDisclaimer" disabled data-go="splash">Continuer</button>
+          <button class="btn btn-ghost" data-go="splash">Quitter</button>
+          <p class="tiny" style="text-align:center;margin-top:16px;">Tu pourras relire ce texte dans Profil → Santé &amp; disclaimer.</p>
+        </section>
+
+        <!-- 3. Hub Aujourd’hui — ébauche restaurée (ffdfda3) -->
+        <section class="view" id="view-today" data-screen="today" data-label="Hub Aujourd’hui" data-nav="today">
+          <div class="hub-topbar">
+            <button type="button" class="market-back" data-market-back aria-label="Retour au Market">← Market</button>
+            <select class="lang-select" data-lang-select aria-label="Langue"></select>
+          </div>
+          <div class="greeting">
+            <p class="hello" id="hubHello" hidden>Bonjour, Aïcha</p>
+            <p class="date" id="hubDate">Mercredi 23 septembre 2026</p>
+          </div>
+
+          <div class="card glass-card cycle-hero" data-go="cycle">
+            <div class="cycle-hero-top">
+              <span class="phase-badge">Phase lutéale</span>
+            </div>
+            <div class="cycle-hero-body">
+              <div class="cycle-ring-wrap" aria-hidden="true">
+                <svg class="cycle-ring" viewBox="0 0 120 120" width="108" height="108">
+                  <circle class="ring-track" cx="60" cy="60" r="48" />
+                  <circle class="ring-progress" cx="60" cy="60" r="48"
+                    stroke-dasharray="220 82" stroke-dashoffset="40"
+                    transform="rotate(-90 60 60)" />
+                </svg>
+                <div class="cycle-ring-center">
+                  <span class="day-num">23</span>
+                </div>
+              </div>
+              <p class="hub-month">septembre</p>
+              <p class="hub-nextnum">29</p>
+            </div>
+            <button class="btn btn-primary cycle-cta" data-go="cycle" type="button">Voir le calendrier</button>
+            <p class="hub-nextline" id="hubMessage">Prochaines règles · vers le 29 septembre</p>
+          </div>
+
+          <div class="hub-chips" aria-label="Raccourcis">
+            <button type="button" class="hub-chip" data-go="calculator">• Calculateur</button>
+            <button type="button" class="hub-chip" data-go="reading">✦ Profil complet</button>
+            <button type="button" class="hub-chip hub-chip-reset" id="btnResetPersonHub">↺ Nouvelle personne</button>
+          </div>
+
+          <div class="grid-2 pillars-grid">
+            <button class="pillar-card pillar-cta" data-go="cycle" type="button">
+              <span class="label">Cycle menstruel</span>
+              <span class="glyph" aria-hidden="true">◉</span>
+              <span class="value">Jour 23</span>
+              <span class="sub">Ralentir et ressentir</span>
+            </button>
+            <button class="pillar-card pillar-cta" data-go="moon" type="button">
+              <span class="label">Lune</span>
+              <span class="glyph" aria-hidden="true">☾</span>
+              <span class="value">Gibbeuse</span>
+              <span class="sub">Écoute ce qui se termine</span>
+            </button>
+            <button class="pillar-card pillar-cta" data-go="astro" type="button">
+              <span class="label">Astro</span>
+              <span class="glyph" aria-hidden="true">✦</span>
+              <span class="value">Vierge</span>
+              <span class="sub">Message du jour</span>
+            </button>
+            <button class="pillar-card pillar-cta" data-go="path" type="button">
+              <span class="label">Chemin</span>
+              <span class="glyph" aria-hidden="true">8</span>
+              <span class="value">Maîtrise</span>
+              <span class="sub">Axes à explorer</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 4. Cycle — palette claire -->
+        <section class="view no-nav" id="view-cycle" data-screen="cycle" data-label="Mes règles" data-nav="cycle">
+          <div class="ambiance-head">
+            <button class="back" data-go="splash" type="button">← Accueil</button>
+            <img class="logo-mark" src="assets/logo-3-5.png" alt="" />
+            <span class="ambiance-head-spacer" aria-hidden="true"></span>
+          </div>
+          <h1 class="ambiance-title">Cycle</h1>
+          <p class="ambiance-sub">En douceur, à ton rythme.</p>
+          <div class="gold-rule" aria-hidden="true"></div>
+          <div class="emblem" aria-hidden="true">
+            <svg class="emblem-svg" viewBox="0 0 220 250">
+              <path fill="currentColor" d="M176 30c-11 2-20 14-20 28 0 16 10 28 22 32-15 1-30-10-34-26-5-18 4-36 20-42 4-2 8 2 12 8z"/>
+              <circle cx="110" cy="150" r="84" fill="none" stroke="currentColor" stroke-width="2.4"/>
+              <circle cx="110" cy="150" r="72" fill="none" stroke="currentColor" stroke-width="1.15"/>
+              <polygon points="110.0,78.0 152.4,208.6 41.4,127.9 178.6,127.9 67.6,208.6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="ambiance-today" id="cycleTodayLine">Aujourd’hui · mercredi 23 septembre 2026</p>
+          <p class="ambiance-next" id="cycleNextLine">Prochaine date · 29 septembre 2026</p>
+          <p class="ambiance-d0" id="cycleD0Line">Dernières règles · 1er septembre 2026 · cycle de 28 jours</p>
+          <p class="formula-line">Prochaine date = dernières règles + longueur du cycle</p>
+          <button class="btn btn-primary btn-lg" type="button" data-go="calculator">Voir ma date</button>
+          <p class="disclaimer-short">Bien-être, pas un avis médical.</p>
+          <div class="card cal-quiet">
+            <div class="cal-head">
+              <button class="cal-nav" type="button" aria-label="Mois précédent">‹</button>
+              <span class="month">Septembre 2026</span>
+              <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
+            </div>
+            <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle"></div>
+            <div class="cal-legend">
+              <span><i class="dot dot-period"></i> Jours de règles</span>
+              <span><i class="dot dot-today"></i> Aujourd’hui</span>
+            </div>
+          </div>
+          <button class="link-silver" type="button" id="btnEditPeriod">Corriger une période</button>
+        </section>
+
+        <!-- 5. Lune -->
+        <section class="view" id="view-moon" data-screen="moon" data-label="Lune" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Lune</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="moon-hero">
+            <div class="moon-visual" aria-hidden="true" title="Gibbeuse décroissante"></div>
+            <p class="h-serif h1">Gibbeuse décroissante</p>
+            <p class="italic" style="margin-top:6px;">23 septembre 2026 · illumination ~62 %</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Énergie du jour</h3>
+            <p class="body">Une piste pour ralentir et écouter ce qui se termine. La Lune décroissante invite au lâcher-prise — sans obligation, juste une invitation.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Phases du mois</h3>
+            <div class="grid-2" style="margin-bottom:0;">
+              <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">○</div>
+                <div class="h-serif" style="font-size:10px;">Nouvelle</div>
+                <div class="tiny">12 septembre</div>
+              </div>
+              <div class="card selected" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◐</div>
+                <div class="h-serif" style="font-size:10px;" data-i18n-html="q1">1<sup>er</sup> quartier</div>
+                <div class="tiny">14 septembre</div>
+              </div>
+              <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;" aria-hidden="true">●</div>
+                <div class="h-serif" style="font-size:10px;">Pleine</div>
+                <div class="tiny">26 septembre</div>
+              </div>
+              <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◑</div>
+                <div class="h-serif" style="font-size:10px;">Dernier q.</div>
+                <div class="tiny">fin septembre</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="cal-head">
+              <button class="cal-nav" type="button" aria-label="Mois précédent">‹</button>
+              <span class="month">Calendrier lunaire</span>
+              <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
+            </div>
+            <div class="cal-grid" id="moonCalendar" aria-label="Calendrier lunaire"></div>
+          </div>
+        </section>
+
+        <!-- 6. Astro -->
+        <section class="view no-nav" id="view-astro" data-screen="astro" data-label="Astro" data-nav="today">
+          <div class="ambiance-head">
+            <button class="back" data-go="splash" type="button">← Accueil</button>
+            <img class="logo-mark" src="assets/logo-3-5.png" alt="" />
+            <span class="ambiance-head-spacer" aria-hidden="true"></span>
+          </div>
+          <h1 class="ambiance-title">Astro</h1>
+          <p class="ambiance-sub">Tu es en sécurité ici.</p>
+          <div class="gold-rule" aria-hidden="true"></div>
+          <div class="emblem emblem-astro" aria-hidden="true">
+            <svg class="emblem-svg" viewBox="0 0 220 250">
+              <circle cx="28" cy="36" r="1.4" fill="currentColor"/>
+              <circle cx="196" cy="48" r="1.5" fill="currentColor"/>
+              <circle cx="176" cy="22" r="1.1" fill="currentColor"/>
+              <circle cx="18" cy="88" r="1.2" fill="currentColor"/>
+              <circle cx="110" cy="150" r="86" fill="none" stroke="currentColor" stroke-width="2.4"/>
+              <circle cx="110" cy="150" r="74" fill="none" stroke="currentColor" stroke-width="1.15"/>
+              <polygon points="110.0,76.0 153.4,209.5 39.8,127.0 180.2,127.0 66.6,209.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="ambiance-today">Mercredi 23 septembre 2026</p>
+          <button class="btn btn-primary btn-lg" type="button" data-go="reading">Lire le ciel</button>
+          <p class="disclaimer-short">Lecture symbolique. Pas un avis médical.</p>
+
+          <div class="card">
+            <div class="card-row" style="margin-bottom:12px;">
+              <div>
+                <p class="h-serif" style="font-size:14px;letter-spacing:0.1em;">Mercredi 23 septembre 2026</p>
+                <p class="italic">Balance — Air — Cardinal · Vénus</p>
+              </div>
+              <div class="natal-badge sun" aria-hidden="true">♍</div>
+            </div>
+            <h3 class="h-serif h3">Message du jour</h3>
+            <p class="body">Harmonie, écoute et juste mesure seront tes atouts. L’énergie du 23 septembre invite à l’équilibre — une piste, pas une sentence.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Phase lunaire</h3>
+            <div class="card-row">
+              <span class="body">Gibbeuse décroissante</span>
+              <span style="font-size:28px;color:var(--silver);" aria-hidden="true">☾</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Positions (aperçu)</h3>
+            <div class="planetary-list">
+              <span class="k">Soleil</span><span class="v">en Balance</span>
+              <span class="k">Lune</span><span class="v">en Gémeaux</span>
+              <span class="k">Mercure</span><span class="v">en Vierge</span>
+              <span class="k">Vénus</span><span class="v">en Scorpion</span>
+            </div>
+            <p class="tiny" style="margin-top:10px;">L’astro guide, elle ne dicte pas.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Niveaux d’énergie</h3>
+            <div class="energy-row">
+              <span class="name">Énergie solaire</span><span class="pct">55 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:55%"></div></div>
+            </div>
+            <div class="energy-row">
+              <span class="name">Clarté mentale</span><span class="pct">72 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:72%"></div></div>
+            </div>
+            <div class="energy-row">
+              <span class="name">Ouverture émotionnelle</span><span class="pct">40 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:40%"></div></div>
+            </div>
+            <div class="energy-row">
+              <span class="name">Ancrage</span><span class="pct">68 %</span>
+              <div class="energy-track"><div class="energy-fill" style="width:68%"></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Favorable aujourd’hui</h3>
+            <div class="chips">
+              <span class="chip selected">Santé &amp; bien-être</span>
+              <span class="chip selected">Organisation</span>
+              <span class="chip selected">Travail précis</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Mon thème natal lite</h3>
+            <div class="natal-row">
+              <div class="natal-badge sun" aria-hidden="true">☉</div>
+              <div class="meta"><div class="k">Soleil</div><div class="v">Vierge</div></div>
+            </div>
+            <div class="natal-row">
+              <div class="natal-badge moon" aria-hidden="true">☾</div>
+              <div class="meta"><div class="k">Lune</div><div class="v">Cancer</div></div>
+            </div>
+            <div class="natal-row">
+              <div class="natal-badge asc" aria-hidden="true">↑</div>
+              <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
+            </div>
+            <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
+            <button class="link-silver" type="button" data-go="reading">Profil complet</button>
+          </div>
+        </section>
+
+        <!-- 7. Chemin de vie -->
+        <section class="view" id="view-path" data-screen="path" data-label="Chemin de vie" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Chemin de vie</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="path-hero">
+            <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ NOMBRE ✦</p>
+            <div class="num">8</div>
+            <div class="title">La maîtrise</div>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Lecture douce</h3>
+            <p class="body">Ton chemin de vie 8 évoque la maîtrise, l’abondance et la responsabilité — des axes à explorer, librement. Ce n’est pas un destin figé : juste une boussole.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="h-serif h3">Invitations</h3>
+            <ul class="invite-list">
+              <li>Honorer ta capacité à structurer et à diriger avec cœur.</li>
+              <li>Équilibrer ambition et repos — la force se cultive aussi dans le calme.</li>
+              <li>Voir l’abondance comme circulation, pas comme pression.</li>
+              <li>Choisir la maîtrise de soi avant la maîtrise des autres.</li>
+            </ul>
+          </div>
+
+          <button class="btn btn-primary" type="button" data-go="reading" style="margin-top:4px;">Lire mon profil</button>
+          <p class="tiny" style="text-align:center;margin-top:8px;">Chemin · jour · signe &amp; décan · dons · axes</p>
+
+          <p class="footnote">Ce n’est pas un destin figé. Juste une boussole à explorer — tu restes libre.</p>
+        </section>
+
+        <!-- 8. Journal / check-in -->
+        <section class="view" id="view-journal" data-screen="journal" data-label="Journal / check-in" data-nav="journal">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Check-in</span>
+            <div class="side right"><button class="back" type="button" id="toggleHistory">Historique</button></div>
+          </div>
+
+          <div id="checkinForm">
+            <p class="body-muted" style="margin-bottom:8px;">Aujourd’hui · 23 septembre 2026</p>
+            <h3 class="h-serif h3" id="moodTitle">Comment tu te sens ?</h3>
+            <div class="chips" id="moodChips" role="group" aria-labelledby="moodTitle">
+              <button type="button" class="chip" data-mood="sereine">Sereine</button>
+              <button type="button" class="chip" data-mood="fatiguee">Fatiguée</button>
+              <button type="button" class="chip selected" data-mood="energique">Énergique</button>
+              <button type="button" class="chip" data-mood="sensible">Sensible</button>
+              <button type="button" class="chip" data-mood="motivee">Motivée</button>
+              <button type="button" class="chip" data-mood="calme">Besoin de calme</button>
+            </div>
+
+            <h3 class="h-serif h3" id="symptomTitle">Ce que tu ressens</h3>
+            <div class="symptom-list" id="symptomList" role="group" aria-labelledby="symptomTitle">
+              <label class="symptom-item"><input type="checkbox" /> Crampes légères</label>
+              <label class="symptom-item selected"><input type="checkbox" checked /> Fatigue</label>
+              <label class="symptom-item"><input type="checkbox" /> Ballonnements</label>
+              <label class="symptom-item"><input type="checkbox" /> Appétit changeant</label>
+              <label class="symptom-item selected"><input type="checkbox" checked /> Sensibilité émotionnelle</label>
+              <label class="symptom-item"><input type="checkbox" /> Sommeil agité</label>
+              <label class="symptom-item"><input type="checkbox" /> Peau sensible</label>
+              <label class="symptom-item"><input type="checkbox" /> Motivation</label>
+            </div>
+
+            <h3 class="h-serif h3" id="energyTitle">Énergie <span class="tiny" id="energyLabel">3 / 5</span></h3>
+            <div class="energy-slider" id="energySlider" role="group" aria-labelledby="energyTitle">
+              <button type="button" data-e="1">1</button>
+              <button type="button" data-e="2">2</button>
+              <button type="button" class="selected" data-e="3">3</button>
+              <button type="button" data-e="4">4</button>
+              <button type="button" data-e="5">5</button>
+            </div>
+
+            <h3 class="h-serif h3"><label for="noteField">Note (optionnel)</label></h3>
+            <textarea class="textarea" placeholder="Quelques mots pour toi…" id="noteField">Journée douce, un peu de fatigue en fin d’après-midi.</textarea>
+
+            <button class="btn btn-primary" type="button" id="btnSaveCheckin">Enregistrer</button>
+            <p class="tiny" style="text-align:center;margin-top:10px;">Liste soft · aucun terme pathologique · pas un avis médical.</p>
+          </div>
+
+          <div id="historyPanel" hidden>
+            <h3 class="h-serif h3">Historique récent</h3>
+            <div class="card" style="padding:4px 12px;" id="historyList">
+              <div class="history-item">
+                <span class="d">23 septembre</span>
+                <span class="c">Énergique · fatigue, sensibilité</span>
+                <span class="e">3/5</span>
+              </div>
+              <div class="history-item">
+                <span class="d">21 septembre</span>
+                <span class="c">Sereine</span>
+                <span class="e">4/5</span>
+              </div>
+              <div class="history-item">
+                <span class="d">20 septembre</span>
+                <span class="c">Sensible · besoin de calme</span>
+                <span class="e">2/5</span>
+              </div>
+              <div class="history-item">
+                <span class="d">18 septembre</span>
+                <span class="c">Motivée · énergie haute</span>
+                <span class="e">5/5</span>
+              </div>
+            </div>
+            <button class="btn btn-ghost" type="button" id="backToCheckin">Retour au check-in</button>
+          </div>
+        </section>
+
+        <!-- 9. Profil / Réglages -->
+        <section class="view" id="view-profile" data-screen="profile" data-label="Profil / Réglages" data-nav="profile">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Profil</span>
+            <div class="side right"></div>
+          </div>
+
+          <div class="profile-hero" id="profileHero">
+            <div class="avatar" id="profileAvatar">A</div>
+            <p class="name" id="profileName">Aïcha</p>
+            <p class="tags" id="profileTags">Soleil Vierge · Chemin 8 · Abidjan</p>
+          </div>
+
+          <button type="button" class="btn btn-ghost btn-reset-person" id="btnResetPersonProfile" data-ripple style="margin-bottom:12px;">↺ Nouvelle personne / Remise à zéro</button>
+
+          <div class="card" style="padding:4px 14px;">
+            <ul class="menu-list">
+              <li><button type="button" data-go="path">Mon chemin de vie <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" data-go="reading">Profil complet <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">Modifier mes infos <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">Intentions <span class="chev" aria-hidden="true">›</span></button></li>
+            </ul>
+          </div>
+
+          <h3 class="h-serif h3 section-gap">Réglages</h3>
+          <div class="card" style="padding:4px 14px;">
+            <ul class="menu-list">
+              <li><button type="button">Notifications <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">Données &amp; confidentialité <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" id="btnShowDisclaimer">Santé &amp; disclaimer <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">À propos <span class="chev" aria-hidden="true">›</span></button></li>
+            </ul>
+          </div>
+
+          <div class="card" id="disclaimerReread" hidden>
+            <h3 class="h-serif h3">Santé &amp; disclaimer</h3>
+            <div class="disclaimer-box">
+              <p><strong>Cycle &amp; Astro n’est pas un dispositif médical.</strong></p>
+              <p style="margin-top:8px;">Infos cycle, Lune, astro et chemin de vie = bien-être personnel uniquement. Pas de diagnostic, pas de conseil clinique, pas de contraception / conception.</p>
+              <p style="margin-top:8px;">Pour ta santé : un·e professionnel·le.</p>
+            </div>
+            <p class="tiny" style="margin-top:10px;">Accepté le 17 septembre 2026 · démo locale</p>
+            <button class="btn btn-ghost btn-sm" type="button" id="btnHideDisclaimer" style="margin-top:10px;width:auto;">Fermer</button>
+          </div>
+
+          <h3 class="h-serif h3 section-gap" id="dataTitle">Mes données</h3>
+          <div class="card data-card" aria-labelledby="dataTitle">
+            <p class="body data-note">Tes données restent sur ce téléphone. Aucun serveur.</p>
+            <p class="tiny" id="consentStatus">Consentement : pas encore donné</p>
+            <button type="button" class="btn btn-ghost" id="btnExportData">Exporter mes données</button>
+            <button type="button" class="btn btn-ghost btn-danger-soft" id="btnDeleteCycleData">Supprimer mes données de cycle</button>
+          </div>
+
+          <div class="card lang-card">
+            <label class="lang-row">
+              <span class="field-label">Langue</span>
+              <select class="lang-select" data-lang-select></select>
+            </label>
+          </div>
+
+          <button class="btn btn-primary" type="button" data-market-back style="margin-top:8px;">← Retour au Market</button>
+          <p class="tiny app-version" style="text-align:center;margin-top:12px;"><span>Version</span> <span id="appVersion">1.1.0</span></p>
+        </section>
+
+
+
+        <!-- 11. Lecture détaillée Chemin / Astro -->
+        <section class="view" id="view-reading" data-screen="reading" data-label="Profil complet" data-nav="today">
+          <div class="app-header">
+            <button class="back" data-go="today" type="button">← Aujourd’hui</button>
+            <span class="title">Profil</span>
+            <div class="side right"><button class="back" type="button" id="btnResetPersonReadingHdr" title="Remise à zéro">↺ Reset</button></div>
+          </div>
+
+          <h2 class="h-serif h1" style="margin-bottom:4px;">Profil complet</h2>
+          <p class="kind-line">Tu es en sécurité ici.</p>
+          <p class="body-muted" style="margin-bottom:12px;">Toute personne · chemin · astro · chiffres &amp; couleurs de chance · boussole douce, pas un destin.</p>
+          <button type="button" class="btn btn-ghost btn-reset-person" id="btnResetPersonReading" data-ripple style="margin-bottom:12px;">↺ Nouvelle personne / Remise à zéro</button>
+
+          <div class="persona-toggle krizoua-toggle" role="tablist" aria-label="Mode lecture">
+            <button type="button" class="persona-btn active" id="btnPersonaAicha" data-persona="aicha" data-ripple>Démo · Aïcha</button>
+            <button type="button" class="persona-btn persona-krizoua" id="btnPersonaKrizoua" data-persona="krizoua" data-ripple>✦ Krizoua verbatim</button>
+          </div>
+
+          <div class="card glass-card" id="readingFormCard">
+            <form id="readingForm" class="simple-form profile-form" novalidate>
+              <div class="form-row-2">
+                <label class="field">
+                  <span class="field-label">Prénom <em class="req">*</em></span>
+                  <input type="text" id="readFirstName" name="firstName" placeholder="Ex. Aïcha" autocomplete="given-name" required />
+                </label>
+                <label class="field">
+                  <span class="field-label">Nom</span>
+                  <input type="text" id="readLastName" name="lastName" placeholder="Ex. Koné" autocomplete="family-name" />
+                </label>
+              </div>
+              <label class="field">
+                <span class="field-label">Genre <span class="opt">(optionnel)</span></span>
+                <select id="readGender" name="gender">
+                  <option value="unspecified">Non précisé</option>
+                  <option value="femme">Femme</option>
+                  <option value="homme">Homme</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Date de naissance <em class="req">*</em></span>
+                <input type="date" id="readBirth" name="birth" required />
+              </label>
+              <label class="field">
+                <span class="field-label">Heure de naissance <span class="opt">(recommandée)</span></span>
+                <input type="time" id="readBirthTime" name="birthTime" />
+              </label>
+              <label class="field">
+                <span class="field-label">Ville de naissance</span>
+                <input type="text" id="readPlace" name="place" placeholder="Ex. Abidjan" autocomplete="address-level2" />
+              </label>
+              <!-- legacy hidden name for Krizoua detect / compat -->
+              <input type="hidden" id="readName" name="name" value="" />
+              <button class="btn btn-primary btn-lg btn-generate-reading" type="submit" id="btnGenerateReading" data-ripple>Lire mon profil</button>
+            </form>
+            <p class="tiny form-hint" id="readingEmptyHint">Prénom + date · le reste affine la lecture (heure → note ascendant).</p>
+            <div id="recentProfiles" class="recent-profiles" hidden>
+              <p class="tiny recent-label">Profils récents</p>
+              <ul class="recent-list" id="recentProfilesList"></ul>
+            </div>
+          </div>
+          <div class="loading-state" id="readingLoading" hidden>
+            <div class="loading-orb" aria-hidden="true"></div>
+            <p class="body-muted">Génération de ton profil complet…</p>
+          </div>
+
+          <p class="tiny read-fr-note" id="readingFrNote" hidden>La lecture détaillée est en français.</p>
+          <div id="readingOutput" hidden>
+
+            <!-- Mode verbatim KD (Krizoua) -->
+            <div id="readVerbatimWrap" hidden>
+              <div class="card reading-verbatim">
+                <p class="tiny" style="letter-spacing:0.14em;color:var(--gold);margin-bottom:10px;">✦ EXEMPLE KD · TEXTE SOURCE ✦</p>
+                <div class="verbatim-body" id="readVerbatimBody"></div>
+              </div>
+              <p class="footnote" id="readVerbatimDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
+            </div>
+
+            <!-- Mode générateur structuré (multi-personnes) -->
+            <div id="readStructuredWrap">
+              <!-- 1. En-tête identité -->
+              <div class="card reading-id" id="readBlockId">
+                <p class="tiny" style="letter-spacing:0.16em;color:var(--gold);margin-bottom:6px;">✦ PROFIL COMPLET ✦</p>
+                <p class="read-name" id="outName">—</p>
+                <p class="read-meta" id="outBirthPlace">—</p>
+              </div>
+
+              <!-- 2. Synthèse pills -->
+              <div class="card">
+                <h3 class="h-serif h3">Synthèse</h3>
+                <div class="synth-pills" id="outSynthPills" aria-label="Synthèse rapide"></div>
+                <ul class="synth-grid" id="outSynth">
+                  <li><span class="k">Chemin de vie</span><strong id="outLifePath">—</strong></li>
+                  <li><span class="k">Signe · décan</span><strong id="outSignDecan">—</strong></li>
+                  <li><span class="k">Vibration jour</span><strong id="outDayVibe">—</strong></li>
+                  <li><span class="k">Élément</span><strong id="outElement">—</strong></li>
+                </ul>
+              </div>
+
+              <!-- 3. Chemin de vie (détail Gemini) -->
+              <div class="path-hero" style="padding-top:8px;">
+                <p class="tiny" style="letter-spacing:0.2em;color:var(--gold);margin-bottom:4px;">✦ CHEMIN DE VIE ✦</p>
+                <div class="num" id="outPathNum">—</div>
+                <div class="title" id="outPathTitle">—</div>
+              </div>
+              <div class="card">
+                <p class="calc-reminder tiny" id="outPathCalc"></p>
+                <div class="body reading-body" id="outPathBody"></div>
+              </div>
+
+              <!-- 4. Astro -->
+              <div class="card">
+                <h3 class="h-serif h3">Astrologie · signe &amp; décan</h3>
+                <p class="sign-line" id="outSignLine">—</p>
+                <div class="body" id="outSignTraits">—</div>
+                <p class="body-muted asc-note" id="outAscNote" hidden></p>
+              </div>
+
+              <!-- 5. Profil numérique -->
+              <div class="card">
+                <h3 class="h-serif h3">Profil numérique</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Chemin · vibration du jour · expression / âme simplifiés (lettres du nom, A=1…).</p>
+                <ul class="synth-grid" id="outNumProfile">
+                  <li><span class="k">Chemin</span><strong id="outNumPath">—</strong></li>
+                  <li><span class="k">Jour · vib.</span><strong id="outNumDay">—</strong></li>
+                  <li><span class="k">Expression</span><strong id="outNumExpr">—</strong></li>
+                  <li><span class="k">Âme (voyelles)</span><strong id="outNumSoul">—</strong></li>
+                </ul>
+                <div class="body" id="outVibeText" style="margin-top:10px;">—</div>
+                <p class="vibe-badge" style="margin-top:8px;"><span id="outVibeNum">—</span></p>
+              </div>
+
+              <!-- 6. Chiffres de chance -->
+              <div class="card">
+                <h3 class="h-serif h3">Chiffres de chance</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Suggestions symboliques dérivées du chemin, du jour et de la date — pas une garantie.</p>
+                <div class="luck-chips" id="outLuckyNumbers"></div>
+              </div>
+
+              <!-- 7. Couleurs & parfums -->
+              <div class="card">
+                <h3 class="h-serif h3">Couleurs &amp; parfums de chance</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Suggestions bien-être (chemin × élément) — à explorer librement, sans dogme.</p>
+                <div class="luck-block">
+                  <p class="tiny luck-k">Couleurs</p>
+                  <div class="luck-chips colors" id="outLuckyColors"></div>
+                </div>
+                <div class="luck-block" style="margin-top:10px;">
+                  <p class="tiny luck-k">Parfums / notes</p>
+                  <div class="luck-chips scents" id="outLuckyScents"></div>
+                </div>
+              </div>
+
+              <!-- 8. Cultiver / Axes -->
+              <div class="card">
+                <h3 class="h-serif h3">Ce que tu peux cultiver</h3>
+                <ul class="read-bullets" id="outCultivate"></ul>
+                <h3 class="h-serif h3" style="margin-top:14px;">Axes d’attention</h3>
+                <ul class="read-bullets" id="outAttention"></ul>
+              </div>
+
+              <!-- 9. Domaines -->
+              <div class="card">
+                <h3 class="h-serif h3">Domaines à explorer</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Pistes concrètes chemin × signe — invitations, pas prescriptions.</p>
+                <ul class="read-bullets domains-list" id="outGifts"></ul>
+              </div>
+
+              <!-- 10. Plan 7 jours -->
+              <div class="card">
+                <h3 class="h-serif h3">Plan d’exploration · 7 jours</h3>
+                <p class="body-muted" style="margin-bottom:8px;font-size:12px;">Actions douces — ajuste selon ton rythme.</p>
+                <ul class="read-bullets week-list" id="outWeekPlan"></ul>
+              </div>
+
+              <!-- 11. Questions miroir -->
+              <div class="card">
+                <h3 class="h-serif h3">Questions miroir</h3>
+                <ul class="read-bullets mirror-list" id="outMirrors"></ul>
+              </div>
+
+              <!-- 12. Disclaimer -->
+              <p class="footnote" id="readDisclaimer">Ces éléments sont proposés à titre informatif et de bien-être personnel. Ce n’est pas un destin figé, ni un avis médical, ni un diagnostic. Chiffres, couleurs et parfums sont des suggestions symboliques. Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. Calculateur de menstruation -->
+        <section class="view" id="view-calculator" data-screen="calculator" data-label="Calculateur de menstruation" data-nav="profile">
+          <div class="app-header">
+            <button class="back" data-go="cycle" type="button">← Cycle</button>
+            <span class="title">Ta date</span>
+            <div class="side right"></div>
+          </div>
+
+          <p class="body" style="margin-bottom:14px;">Deux infos. Puis ta date, en grand.</p>
+
+          <div class="card glass-card" id="calcFormCard">
+            <form id="calcForm" class="simple-form" novalidate>
+              <label class="field">
+                <span class="field-label">Date des dernières règles</span>
+                <input type="date" id="calcLastStart" name="lastStart" value="2026-09-01" required />
+                <span class="date-words" id="calcLastStartWords">1er septembre 2026</span>
+              </label>
+              <label class="field">
+                <span class="field-label">Longueur du cycle</span>
+                <input type="number" id="calcCycleLen" name="cycleLen" min="21" max="35" value="28" inputmode="numeric" required />
+              </label>
+              <details class="calc-more">
+                <summary>Durée des règles</summary>
+                <label class="field">
+                  <span class="field-label">Jours de règles</span>
+                  <input type="number" id="calcPeriodLen" name="periodLen" min="2" max="8" value="5" inputmode="numeric" />
+                </label>
+              </details>
+              <button class="btn btn-primary btn-lg" type="submit" id="btnCalc">Voir ma date</button>
+              <p class="under-btn">Douce nuit</p>
+            </form>
+          </div>
+
+          <div class="card glass-card calc-results" id="calcResults" hidden>
+            <p class="calc-kicker">Prochaine date</p>
+            <p class="calc-big-date" id="calcNextStart">—</p>
+            <p class="formula-line" id="calcFormula">Prochaine date = dernières règles + longueur du cycle</p>
+            <p class="calc-phase" id="calcPhaseLabel">—</p>
+            <p class="body" id="calcDayLine">Jour du cycle</p>
+            <p class="body" id="calcDayNum" hidden>—</p>
+            <p class="body">Fin douce · <span id="calcNextEnd">—</span></p>
+            <ul class="calc-upcoming" id="calcUpcoming"></ul>
+            <p class="footnote">Bien-être seulement. Pas un avis médical.</p>
+          </div>
+
+          <p class="footnote" id="calcDisclaimerAlways">Bien-être seulement. Pas un avis médical.</p>
+        </section>
+
+
+        <!-- Forfaits / verrouillage -->
+        <section class="view no-nav" id="view-plans" data-screen="plans" data-label="Forfaits">
+          <div class="plans-lock">
+            <div class="plans-topbar">
+              <button class="market-back plans-back" data-go="splash" type="button">← Accueil</button>
+              <button type="button" class="market-back" data-market-back aria-label="Retour au Market">← Market</button>
+            </div>
+            <div class="plans-lock-icon" aria-hidden="true">🔒</div>
+            <p class="plans-badge" id="plansBadge">Astrologie</p>
+            <h2 class="h-serif h1 plans-title" id="plansTitle">Contenu verrouillé</h2>
+            <p class="body-muted plans-lead" id="plansLead">Cet espace Astrologie demande un forfait actif.</p>
+            <p class="body plans-market-line">Les forfaits sont proposés sur King Daveblessing Market.</p>
+            <p class="plans-status" id="plansStatus">Aucun forfait actif</p>
+
+            <div class="plans-list" role="list">
+              <article class="plans-card" data-plan-id="astro" role="listitem">
+                <div class="plans-card-top">
+                  <p class="plans-card-kicker">Astrologie</p>
+                </div>
+                <p class="plans-card-desc">Déverrouille Astro, le profil complet et la mission de vie.</p>
+                <button type="button" class="btn btn-primary plans-choose" data-plan-choose="astro">Choisir</button>
+              </article>
+
+              <article class="plans-card" data-plan-id="cycle" role="listitem">
+                <div class="plans-card-top">
+                  <p class="plans-card-kicker">Cycle menstruel</p>
+                </div>
+                <p class="plans-card-desc">Déverrouille le cycle, le calculateur et le journal du jour.</p>
+                <button type="button" class="btn btn-primary plans-choose" data-plan-choose="cycle">Choisir</button>
+              </article>
+
+              <article class="plans-card plans-card-featured" data-plan-id="les_deux" role="listitem">
+                <div class="plans-card-top">
+                  <p class="plans-card-kicker">Astro + Cycle</p>
+                </div>
+                <p class="plans-card-desc">Les deux espaces, dans la même application.</p>
+                <button type="button" class="btn btn-primary plans-choose" data-plan-choose="les_deux">Choisir</button>
+              </article>
+            </div>
+
+            <p class="footnote plans-foot">Aucun forfait n’est activé depuis cet écran.</p>
+            <button type="button" class="btn btn-ghost" data-market-back>← Retour au Market</button>
+            <button type="button" class="btn btn-ghost" data-go="today">Voir le hub</button>
+          </div>
+        </section>
+
+
+      </div>
+
+      <nav class="bottom-nav" id="bottomNav" aria-label="Navigation principale">
+        <button class="nav-item" data-go="splash" type="button" data-ripple><span class="ico" aria-hidden="true">✦</span><span class="nav-label">Accueil</span></button>
+        <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel" data-ripple><span class="ico" aria-hidden="true">◉</span><span class="nav-label">Cycle</span></button>
+        <button class="nav-item" data-go="journal" type="button" data-ripple><span class="ico" aria-hidden="true">✎</span><span class="nav-label">Journal</span></button>
+        <button class="nav-item" data-go="profile" type="button" data-ripple><span class="ico" aria-hidden="true">◎</span><span class="nav-label">Plus</span></button>
+      </nav>
+
+      <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- Consentement données de cycle -->
+      <div class="sheet-backdrop" id="consentSheet" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="consentTitle" aria-describedby="consentLead">
+          <h2 class="h-serif h1 sheet-title" id="consentTitle">Tes données de cycle</h2>
+          <p class="body" id="consentLead">Avant d’enregistrer, voici ce qui est gardé :</p>
+          <ul class="sheet-list">
+            <li>Tes dates de règles et la longueur de ton cycle.</li>
+            <li>Ton journal du jour : humeur, sensations, énergie, note.</li>
+            <li>Tout reste sur ce téléphone uniquement. Rien n’est envoyé sur un serveur.</li>
+            <li>Ce n’est pas un suivi médical.</li>
+          </ul>
+          <p class="tiny">Tu peux exporter ou supprimer ces données à tout moment dans Profil.</p>
+          <button type="button" class="btn btn-primary" id="btnConsentYes">J’accepte</button>
+          <button type="button" class="btn btn-ghost" id="btnConsentNo">Non merci</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js?v=1.1.0"></script>
+  <script src="app.js?v=1.1.0"></script>
+</body>
+</html>
