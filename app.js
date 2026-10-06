@@ -1,5 +1,5 @@
 /**
- * Cycle & Astro · v1.1.0
+ * Cycle & Astro · v1.2.0
  * Navigation hash légère + profil complet multi-personnes (pas de backend)
  * King Daveblessing · Abidjan · FR + EN/ES/PT/中文 · bien-être, pas un avis médical
  */
@@ -11,14 +11,14 @@
    * Tunnel TEMPORAIRE : à remplacer par le domaine définitif quand il sera en ligne.
    */
   const MARKET_URL = 'https://followed-electronic-midwest-arrange.trycloudflare.com/#/';
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.2.0';
 
   /* Clés localStorage (tout reste sur le téléphone, aucun serveur). */
   const LANG_KEY = 'ca_lang_v1';
   const CONSENT_KEY = 'ca_consent_cycle_v1';
   const JOURNAL_KEY = 'ca_journal_v1';
   /* Données de cycle effacées par « Supprimer mes données de cycle » (jamais ca_plan_v1). */
-  const CYCLE_DATA_KEYS = ['ca_calc_v1', JOURNAL_KEY, 'ca_period_edits_v1', CONSENT_KEY];
+  const CYCLE_DATA_KEYS = ['ca_calc_v1', JOURNAL_KEY, 'ca_period_edits_v1', 'ca_periods_v1', CONSENT_KEY];
 
   const I18N = window.CA_I18N || null;
   let currentLang = 'fr';
@@ -77,8 +77,8 @@
       nextPeriodEst: '2026-09-29',
     },
     moon: {
-      phase: 'Gibbeuse décroissante',
-      illumination: 62,
+      phase: 'Gibbeuse croissante', // calculée : 23 sept. 2026, Lune en Verseau
+      illumination: 89,
     },
     today: '2026-09-23',
   };
@@ -323,20 +323,6 @@
     const offset = 1;
     const daysInMonth = 30;
     const today = 23;
-    // Jours de règles via le moteur (D0, P, C), pas une liste magique.
-    const periodDays = new Set();
-    for (let d = 1; d <= daysInMonth; d++) {
-      const iso = '2026-09-' + String(d).padStart(2, '0');
-      const snap = computeCalc(
-        DEMO.cycle.lastPeriodStart,
-        DEMO.cycle.avgPeriod,
-        DEMO.cycle.avgCycle,
-        parseYMD(iso)
-      );
-      if (snap && snap.dayInCycle >= 1 && snap.dayInCycle <= snap.periodLen) {
-        periodDays.add(d);
-      }
-    }
 
     for (let i = 0; i < offset; i++) {
       const blank = document.createElement('div');
@@ -345,13 +331,26 @@
       container.appendChild(blank);
     }
 
+    // v1.2.0 : chaque jour prend la couleur foncée de sa phase (moteur D0, P, C),
+    // + repère « aujourd’hui » + phases principales de la Lune (calculées).
     for (let d = 1; d <= daysInMonth; d++) {
+      const date = parseYMD('2026-09-' + String(d).padStart(2, '0'));
+      const snap = computeCalc(DEMO.cycle.lastPeriodStart, DEMO.cycle.avgPeriod, DEMO.cycle.avgCycle, date);
+      const key = snap ? snap.phase.key : 'luteale';
       const cell = document.createElement('div');
-      cell.className = 'cal-day';
-      if (periodDays.has(d)) cell.classList.add('period');
+      cell.className = 'cal-day ph-day ph-' + key;
       if (d === today) cell.classList.add('today');
-      cell.textContent = String(d);
-      cell.title = d === today ? t('Aujourd’hui') : periodDays.has(d) ? t('Règles (saisie)') : '';
+      const moon = majorMoonOn(date);
+      cell.innerHTML =
+        '<span class="cd-num">' + d + '</span>' +
+        (d === today ? '<span class="cd-today" aria-hidden="true">' + escapeHtml(t('auj.')) + '</span>' : '') +
+        (moon ? '<span class="moon-mini ' + moon + '" aria-hidden="true"></span>' : '');
+      const label = [fmtDate(date, { year: false }), t(PHASE_META[key].full)];
+      if (d === today) label.push(t('Aujourd’hui'));
+      if (moon) label.push(t(MAJOR_MOON_FR[moon]));
+      cell.title = label.join(' · ');
+      cell.setAttribute('aria-label', label.join(' · '));
+      cell.setAttribute('role', 'gridcell');
       container.appendChild(cell);
     }
   }
@@ -370,14 +369,14 @@
     const offset = 1;
     const daysInMonth = 30;
     const today = 23;
-    // Simple phase markers for demo (septembre 2026)
-    const phases = {
-      12: 'new',
-      14: 'half',
-      18: 'gib',
-      23: 'gib',
-      26: 'full',
-    };
+    // v1.2.0 : phases principales calculées (Soleil + Lune), septembre 2026
+    const phases = {};
+    const cls = { new: 'new', fq: 'half', full: 'full', lq: 'lq' };
+    for (let d = 1; d <= daysInMonth; d++) {
+      const m = majorMoonOn(new Date(2026, 8, d));
+      if (m) phases[d] = cls[m];
+    }
+    if (!phases[today]) phases[today] = 'gib';
 
     for (let i = 0; i < offset; i++) {
       const blank = document.createElement('div');
@@ -2008,8 +2007,12 @@
         dayLine.textContent = t('Jour {n} sur {c}', { n: res.dayInCycle, c: res.cycleLen });
       }
       if (phaseLabel) {
-        phaseLabel.textContent = t(res.phase.label);
+        phaseLabel.textContent = t(PHASE_META[res.phase.key].full);
+        phaseLabel.className = 'calc-phase phase-chip ph-' + res.phase.key;
       }
+      const start = res.nextStart ? addDays(res.nextStart, -res.cycleLen) : null;
+      renderPhaseTimeline(document.getElementById('calcTimeline'), res);
+      if (start) renderPhaseList(document.getElementById('calcPhaseList'), res, start);
       if (ring) {
         const circ = 2 * Math.PI * 30;
         const frac = Math.min(1, res.dayInCycle / res.cycleLen);
@@ -2077,7 +2080,11 @@
         return;
       }
       lastCalcRes = res;
+      sessionCalcInputs = data;
       renderCalcResults(res);
+      guidePhase = null;
+      renderPhaseGuide();
+      renderTrends();
       const results = document.getElementById('calcResults');
       if (results) results.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
       // Enregistrer seulement avec consentement explicite (sinon : session uniquement).
@@ -2154,6 +2161,7 @@
     syncCalcWords();
     const results = document.getElementById('calcResults');
     if (results) results.hidden = true;
+    sessionCalcInputs = null;
   }
 
   function resetCurrentPerson(opts) {
@@ -2331,6 +2339,7 @@
           if (ok) {
             saveJournalEntry(entry);
             renderJournalHistory();
+            renderTrends();
             toast('Check-in enregistré ✦');
           } else {
             toast('Check-in noté pour cette session · non enregistré');
@@ -2378,9 +2387,11 @@
     if (editPeriod) {
       editPeriod.addEventListener('click', () => {
         // Correction de période : rien n’est enregistré sans consentement.
-        requireCycleConsent(() => {
-          toast('Correction de période · bientôt disponible');
-        });
+        // v1.2.0 : ouvre « Mon historique de règles » (rien n’est enregistré sans consentement).
+        const sec = document.getElementById('secHistory');
+        if (sec) sec.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        const f = document.getElementById('histStart');
+        if (f) setTimeout(() => f.focus({ preventScroll: true }), 350);
       });
     }
 
@@ -2528,7 +2539,7 @@
     const energyBtn = document.querySelector('#energySlider button.selected');
     const note = document.getElementById('noteField');
     return {
-      date: DEMO.today,
+      date: toYMD(checkinDate()),
       mood: mood ? mood.dataset.mood : null,
       symptoms: symptoms,
       energy: energyBtn ? Number(energyBtn.dataset.e) : null,
@@ -2635,8 +2646,11 @@
       try { localStorage.removeItem(k); } catch (_) { /* ignore */ }
     });
     consentRefusedThisSession = false;
+    sessionPeriods = null;
     clearCalcForNewPerson();
     renderJournalHistory();
+    renderHistory();
+    renderTrends();
     renderConsentStatus();
     toast('Données de cycle supprimées');
   }
@@ -2757,6 +2771,7 @@
     updatePlansView();
     renderConsentStatus();
     renderJournalHistory();
+    renderAllV12();
     applyI18n();
   }
 
@@ -2801,6 +2816,835 @@
     if (clockEl) clockEl.textContent = h + ':' + m;
   }
 
+
+  /* ================================================================
+   * v1.2.0 — Options inspirées du benchmark (Flo, Clue, Stardust,
+   * Natural Cycles, Ovia, Co–Star, The Pattern, CHANI, Sanctuary,
+   * TimePassages). Tout tourne sur le téléphone : aucun serveur,
+   * aucun paiement. Bien-être seulement, pas un avis médical.
+   * ================================================================ */
+
+  /* —— Phases : couleurs foncées (texte blanc, contraste AA) —— */
+  const PHASE_ORDER = ['menstruelle', 'folliculaire', 'ovulatoire', 'luteale'];
+  const PHASE_META = {
+    menstruelle: { name: 'Menstruelle', full: 'Phase menstruelle', color: '#7A1F3D' },
+    folliculaire: { name: 'Folliculaire', full: 'Phase folliculaire', color: '#1F5E4A' },
+    ovulatoire: { name: 'Ovulatoire (estimée)', full: 'Phase ovulatoire (estimée)', color: '#8A5200' },
+    luteale: { name: 'Lutéale', full: 'Phase lutéale', color: '#4A2C5E' },
+  };
+
+  /** Segments du cycle (jours 1..C groupés par phase, même moteur que softPhase). */
+  function phaseSegments(P, C) {
+    const segs = [];
+    for (let d = 1; d <= C; d++) {
+      const key = softPhase(d, P, C).key;
+      const last = segs[segs.length - 1];
+      if (last && last.key === key) last.end = d;
+      else segs.push({ key: key, start: d, end: d });
+    }
+    return segs;
+  }
+
+  /** Entrées actives du calculateur : session > enregistrées > démo. */
+  let sessionCalcInputs = null;
+  function activeCalcInputs() {
+    const src = sessionCalcInputs || loadCalcInputs();
+    return {
+      lastStart: src.lastStart || DEMO.cycle.lastPeriodStart,
+      periodLen: clampPeriod(src.periodLen),
+      cycleLen: clampCycle(src.cycleLen),
+    };
+  }
+
+  function phaseOfDate(date) {
+    const inp = activeCalcInputs();
+    const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen, date);
+    return res ? res.phase.key : null;
+  }
+
+  /** Frise des 4 phases + repère « aujourd’hui ». */
+  function renderPhaseTimeline(container, res) {
+    if (!container || !res) return;
+    const C = res.cycleLen;
+    const segs = phaseSegments(res.periodLen, C);
+    const bar = segs
+      .map((s) => {
+        const n = s.end - s.start + 1;
+        const range = s.start === s.end ? String(s.start) : s.start + '–' + s.end;
+        // Si le repère du jour tombe au milieu du segment, le libellé passe à gauche pour rester lisible.
+        const rel = (res.dayInCycle - s.start + 0.5) / n;
+        const side = res.dayInCycle >= s.start && res.dayInCycle <= s.end && n >= 6 && rel > 0.3 && rel < 0.8 ? ' pt-left' : '';
+        return (
+          '<span class="pt-seg ph-' + s.key + side + '" style="flex:' + n + ' 1 0" title="' +
+          escapeHtml(t(PHASE_META[s.key].full)) + '"><span class="pt-range">' + range + '</span></span>'
+        );
+      })
+      .join('');
+    const pct = ((res.dayInCycle - 0.5) / C) * 100;
+    let shift = -50;
+    if (pct > 65) shift = -Math.min(95, 50 + (pct - 65) * 1.3);
+    if (pct < 35) shift = -Math.max(5, 50 - (35 - pct) * 1.3);
+    container.innerHTML =
+      '<div class="pt-marker" style="left:' + pct.toFixed(2) + '%"><span class="pt-marker-label" style="transform:translateX(' + shift.toFixed(1) + '%)">' +
+      escapeHtml(t('Aujourd’hui · jour {n}', { n: res.dayInCycle })) + '</span><span class="pt-marker-arrow" aria-hidden="true"></span></div>' +
+      '<div class="pt-bar" role="img" aria-label="' +
+      escapeHtml(t('Frise du cycle : {p}', { p: segs.map((s) => t(PHASE_META[s.key].name) + ' ' + s.start + '–' + s.end).join(', ') })) +
+      '">' + bar + '</div>' +
+      '<div class="pt-scale" aria-hidden="true"><span>' + escapeHtml(t('Jour 1')) + '</span><span>' +
+      escapeHtml(t('Jour {n}', { n: C })) + '</span></div>';
+  }
+
+  function renderPhaseList(container, res, startDate) {
+    if (!container || !res) return;
+    const segs = phaseSegments(res.periodLen, res.cycleLen);
+    container.innerHTML = '';
+    segs.forEach((s) => {
+      const li = document.createElement('li');
+      li.className = 'pl-item' + (s.key === res.phase.key ? ' is-current' : '');
+      const a = addDays(startDate, s.start - 1);
+      const b = addDays(startDate, s.end - 1);
+      const days = s.start === s.end
+        ? t('jour {a}', { a: s.start })
+        : t('jours {a} à {b}', { a: s.start, b: s.end });
+      li.innerHTML =
+        '<span class="pl-sw ph-' + s.key + '" aria-hidden="true"></span>' +
+        '<span class="pl-txt"><strong>' + escapeHtml(t(PHASE_META[s.key].name)) + '</strong>' +
+        '<span class="pl-sub">' + escapeHtml(days) + ' · ' +
+        escapeHtml(fmtDate(a, { year: false }) + ' → ' + fmtDate(b, { year: false })) + '</span></span>' +
+        (s.key === res.phase.key ? '<span class="pl-here">' + escapeHtml(t('tu es ici')) + '</span>' : '');
+      container.appendChild(li);
+    });
+  }
+
+  /* —— Ciel : Soleil et Lune calculés sur le téléphone (précision ~1°) —— */
+  const SIGNS = [
+    { fr: 'Bélier', glyph: '♈\uFE0E', el: 'Feu' },
+    { fr: 'Taureau', glyph: '♉\uFE0E', el: 'Terre' },
+    { fr: 'Gémeaux', glyph: '♊\uFE0E', el: 'Air' },
+    { fr: 'Cancer', glyph: '♋\uFE0E', el: 'Eau' },
+    { fr: 'Lion', glyph: '♌\uFE0E', el: 'Feu' },
+    { fr: 'Vierge', glyph: '♍\uFE0E', el: 'Terre' },
+    { fr: 'Balance', glyph: '♎\uFE0E', el: 'Air' },
+    { fr: 'Scorpion', glyph: '♏\uFE0E', el: 'Eau' },
+    { fr: 'Sagittaire', glyph: '♐\uFE0E', el: 'Feu' },
+    { fr: 'Capricorne', glyph: '♑\uFE0E', el: 'Terre' },
+    { fr: 'Verseau', glyph: '♒\uFE0E', el: 'Air' },
+    { fr: 'Poissons', glyph: '♓\uFE0E', el: 'Eau' },
+  ];
+  const MOON_NAMES = [
+    'Nouvelle lune', 'Premier croissant', 'Premier quartier', 'Gibbeuse croissante',
+    'Pleine lune', 'Gibbeuse décroissante', 'Dernier quartier', 'Dernier croissant',
+  ];
+
+  function skyAt(utcMs) {
+    const rad = Math.PI / 180;
+    const n360 = (x) => ((x % 360) + 360) % 360;
+    const d = utcMs / 86400000 + 2440587.5 - 2451545.0;
+    const L = 218.316 + 13.176396 * d;
+    const M = 134.963 + 13.064993 * d;
+    const F = 93.272 + 13.22935 * d;
+    const Ms = 357.529 + 0.98560028 * d;
+    const D = 297.85 + 12.190749 * d;
+    const moon = n360(
+      L + 6.289 * Math.sin(M * rad) + 1.274 * Math.sin((2 * D - M) * rad) + 0.658 * Math.sin(2 * D * rad) +
+      0.214 * Math.sin(2 * M * rad) - 0.186 * Math.sin(Ms * rad) - 0.114 * Math.sin(2 * F * rad)
+    );
+    const q = 280.459 + 0.98564736 * d;
+    const sun = n360(q + 1.915 * Math.sin(Ms * rad) + 0.02 * Math.sin(2 * Ms * rad));
+    const elong = n360(moon - sun);
+    return {
+      sunLon: sun,
+      moonLon: moon,
+      elong: elong,
+      illum: (1 - Math.cos(elong * rad)) / 2,
+      sunSign: Math.floor(sun / 30),
+      moonSign: Math.floor(moon / 30),
+      phaseIdx: Math.floor(n360(elong + 22.5) / 45),
+    };
+  }
+
+  /** Midi UTC du jour (Abidjan = UTC+0). */
+  function noonUtc(d) {
+    return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12);
+  }
+
+  /** Phase lunaire principale qui tombe ce jour-là : new | fq | full | lq | null. */
+  function majorMoonOn(d) {
+    const t0 = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    const a = skyAt(t0).elong;
+    const b = skyAt(t0 + 86400000).elong;
+    const keys = { 0: 'new', 90: 'fq', 180: 'full', 270: 'lq' };
+    for (const tgt of [0, 90, 180, 270]) {
+      const da = (((a - tgt) % 360) + 360) % 360;
+      const db = (((b - tgt) % 360) + 360) % 360;
+      if (db < da && da > 180) return keys[tgt];
+    }
+    return null;
+  }
+  const MAJOR_MOON_FR = { new: 'Nouvelle lune', fq: 'Premier quartier', full: 'Pleine lune', lq: 'Dernier quartier' };
+
+  function moonGroup(elong) {
+    if (elong < 22.5 || elong >= 337.5) return 'new';
+    if (elong < 157.5) return 'waxing';
+    if (elong < 202.5) return 'full';
+    return 'waning';
+  }
+
+  /* —— Conseils par phase (bien-être, inspiré de Clue / Stardust) —— */
+  const PHASE_GUIDE = {
+    menstruelle: {
+      energy: 'Énergie plus basse : c’est normal de vouloir ralentir.',
+      mood: 'Besoin de calme et d’intériorité. Sois douce avec toi.',
+      care: 'Chaleur sur le ventre, sieste, bain tiède, coucher plus tôt.',
+      food: 'Repas chauds et simples, bien boire, aliments riches en fer (légumes verts, haricots).',
+      move: 'Marche lente, étirements, respiration. Rien d’obligatoire.',
+    },
+    folliculaire: {
+      energy: 'L’énergie remonte jour après jour.',
+      mood: 'Curiosité et envie de nouveau : bon moment pour lancer des projets.',
+      care: 'Organise ta semaine, essaie une nouvelle routine.',
+      food: 'Assiettes fraîches et colorées : fruits, légumes, céréales complètes.',
+      move: 'Danse, cardio léger, activités qui donnent de l’élan.',
+    },
+    ovulatoire: {
+      energy: 'Souvent le pic d’énergie du cycle (estimation).',
+      mood: 'Plus d’aisance pour parler, partager, rencontrer.',
+      care: 'Moments à deux ou entre amies, prises de parole.',
+      food: 'Fibres, légumes crus, beaucoup d’eau.',
+      move: 'Séances plus soutenues si ton corps en a envie.',
+    },
+    luteale: {
+      energy: 'L’énergie baisse peu à peu, surtout en fin de phase.',
+      mood: 'Sensibilité plus forte : écoute-la sans te juger.',
+      care: 'Finir plutôt que commencer, ranger, poser des limites douces.',
+      food: 'Repas réguliers, céréales complètes, moins de sel si tu te sens gonflée.',
+      move: 'Yoga, marche, renforcement doux.',
+    },
+  };
+  const GUIDE_FIELDS = [
+    ['energy', 'Énergie'],
+    ['mood', 'Humeur'],
+    ['care', 'Soin de soi'],
+    ['food', 'Alimentation'],
+    ['move', 'Mouvement'],
+  ];
+  let guidePhase = null;
+
+  function renderPhaseGuide() {
+    const tabs = document.getElementById('phaseTabs');
+    const box = document.getElementById('phaseGuide');
+    if (!tabs || !box) return;
+    const inp = activeCalcInputs();
+    const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
+    const current = res ? res.phase.key : 'luteale';
+    if (!guidePhase) guidePhase = current;
+    tabs.innerHTML = '';
+    PHASE_ORDER.forEach((key) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'phase-tab ph-' + key + (key === guidePhase ? ' is-active' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', key === guidePhase ? 'true' : 'false');
+      b.setAttribute('aria-controls', 'phaseGuide');
+      b.dataset.phase = key;
+      b.textContent = t(PHASE_META[key].name).replace(/\s*[（(].*[)）]$/, '');
+      tabs.appendChild(b);
+    });
+    const g = PHASE_GUIDE[guidePhase];
+    const seg = res ? phaseSegments(res.periodLen, res.cycleLen).find((s) => s.key === guidePhase) : null;
+    const days = seg
+      ? (seg.start === seg.end ? t('jour {a}', { a: seg.start }) : t('jours {a} à {b}', { a: seg.start, b: seg.end }))
+      : '';
+    box.innerHTML =
+      '<p class="pg-head ph-' + guidePhase + '">' + escapeHtml(t(PHASE_META[guidePhase].full)) +
+      (days ? ' · ' + escapeHtml(days) : '') +
+      (guidePhase === current ? ' · ' + escapeHtml(t('maintenant')) : '') + '</p>' +
+      '<dl class="pg-list">' +
+      GUIDE_FIELDS.map((f) => '<div class="pg-row"><dt>' + escapeHtml(t(f[1])) + '</dt><dd>' + escapeHtml(t(g[f[0]])) + '</dd></div>').join('') +
+      '</dl>' +
+      (guidePhase === 'ovulatoire'
+        ? '<p class="tiny pg-note">' + escapeHtml(t('L’ovulation est une estimation. Ce n’est ni une contraception, ni un conseil de fertilité.')) + '</p>'
+        : '');
+  }
+
+  /* —— Historique des règles + moyennes (Flo, Clue, Natural Cycles) —— */
+  const PERIODS_KEY = 'ca_periods_v1';
+  const DEMO_PERIODS = [
+    { start: '2026-07-07', len: 5 },
+    { start: '2026-08-04', len: 5 },
+    { start: '2026-09-01', len: 5 },
+  ];
+
+  function loadPeriods() {
+    try {
+      const raw = localStorage.getItem(PERIODS_KEY);
+      const list = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(list)) return list.filter((p) => p && parseYMD(p.start));
+    } catch (_) { /* ignore */ }
+    return null;
+  }
+  let sessionPeriods = null; // si consentement refusé : session uniquement
+
+  function currentPeriods() {
+    const stored = loadPeriods();
+    if (stored && stored.length) return { list: stored, example: false };
+    if (sessionPeriods && sessionPeriods.length) return { list: sessionPeriods, example: false };
+    return { list: DEMO_PERIODS.slice(), example: true };
+  }
+
+  function periodStats(list) {
+    const sorted = list.slice().sort((a, b) => (a.start < b.start ? -1 : 1));
+    const cycles = [];
+    for (let i = 1; i < sorted.length; i++) {
+      cycles.push(daysBetween(parseYMD(sorted[i - 1].start), parseYMD(sorted[i].start)));
+    }
+    const lens = sorted.map((p) => Number(p.len) || 0).filter((n) => n > 0);
+    const avg = (arr) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null);
+    return {
+      sorted: sorted,
+      cycles: cycles,
+      avgCycle: avg(cycles),
+      avgPeriod: avg(lens),
+      minCycle: cycles.length ? Math.min.apply(null, cycles) : null,
+      maxCycle: cycles.length ? Math.max.apply(null, cycles) : null,
+    };
+  }
+
+  function fmtNum(x) {
+    if (x == null) return '—';
+    const r = Math.round(x * 10) / 10;
+    const s = String(r);
+    return currentLang === 'fr' || currentLang === 'es' || currentLang === 'pt' ? s.replace('.', ',') : s;
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('histList');
+    const stats = document.getElementById('histStats');
+    const note = document.getElementById('histExampleNote');
+    if (!list || !stats) return;
+    const cur = currentPeriods();
+    const st = periodStats(cur.list);
+    stats.innerHTML =
+      '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t('Cycle moyen')) + '</span><strong>' +
+      escapeHtml(st.avgCycle == null ? '—' : t('{n} j', { n: fmtNum(st.avgCycle) })) + '</strong></div>' +
+      '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t('Règles moyennes')) + '</span><strong>' +
+      escapeHtml(st.avgPeriod == null ? '—' : t('{n} j', { n: fmtNum(st.avgPeriod) })) + '</strong></div>' +
+      '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t('Cycles min–max')) + '</span><strong>' +
+      escapeHtml(st.minCycle == null ? '—' : (st.minCycle === st.maxCycle ? t('{n} j', { n: st.minCycle }) : st.minCycle + '–' + t('{n} j', { n: st.maxCycle }))) + '</strong></div>';
+    list.innerHTML = '';
+    st.sorted.slice().reverse().forEach((p, idxRev) => {
+      const i = st.sorted.length - 1 - idxRev;
+      const li = document.createElement('li');
+      li.className = 'hist-item';
+      const d = parseYMD(p.start);
+      const cyc = i < st.cycles.length ? st.cycles[i] : null;
+      const parts = [t('{n} j de règles', { n: p.len })];
+      if (cyc != null) parts.push(t('cycle de {n} j', { n: cyc }));
+      li.innerHTML =
+        '<span class="pl-sw ph-menstruelle" aria-hidden="true"></span>' +
+        '<span class="pl-txt"><strong>' + escapeHtml(fmtDate(d)) + '</strong><span class="pl-sub">' +
+        escapeHtml(parts.join(' · ')) + '</span></span>' +
+        (cur.example ? '' : '<button type="button" class="hist-del" data-del="' + escapeHtml(p.start) + '" aria-label="' +
+          escapeHtml(t('Supprimer cette période')) + '">×</button>');
+      list.appendChild(li);
+    });
+    if (note) note.hidden = !cur.example;
+  }
+
+  function savePeriods(list, persist) {
+    const clean = list
+      .filter((p) => parseYMD(p.start))
+      .sort((a, b) => (a.start < b.start ? -1 : 1))
+      .slice(-24);
+    if (persist) {
+      try { localStorage.setItem(PERIODS_KEY, JSON.stringify(clean)); } catch (_) { /* ignore */ }
+    } else {
+      sessionPeriods = clean;
+    }
+  }
+
+  function bindHistory() {
+    const form = document.getElementById('histForm');
+    const startEl = document.getElementById('histStart');
+    const lenEl = document.getElementById('histLen');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const start = startEl && startEl.value;
+        const d = parseYMD(start);
+        if (!d) { toast('Date invalide'); return; }
+        if (d > productToday()) { toast('Choisis une date passée'); return; }
+        const len = Math.min(10, Math.max(1, Math.round(Number(lenEl && lenEl.value) || 5)));
+        const cur = currentPeriods();
+        const base = cur.example ? [] : cur.list.filter((p) => p.start !== start);
+        base.push({ start: start, len: len });
+        requireCycleConsent((ok) => {
+          savePeriods(base, ok);
+          renderHistory();
+          toast(ok ? 'Période ajoutée ✦' : 'Période notée pour cette session · non enregistrée');
+        });
+      });
+    }
+    const list = document.getElementById('histList');
+    if (list) {
+      list.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-del]');
+        if (!b) return;
+        const start = b.dataset.del;
+        const stored = loadPeriods();
+        if (stored) savePeriods(stored.filter((p) => p.start !== start), true);
+        if (sessionPeriods) sessionPeriods = sessionPeriods.filter((p) => p.start !== start);
+        renderHistory();
+        toast('Période supprimée');
+      });
+    }
+    const use = document.getElementById('btnUseAverages');
+    if (use) {
+      use.addEventListener('click', () => {
+        const cur = currentPeriods();
+        const st = periodStats(cur.list);
+        const last = st.sorted[st.sorted.length - 1];
+        const cEl = document.getElementById('calcCycleLen');
+        const pEl = document.getElementById('calcPeriodLen');
+        const lEl = document.getElementById('calcLastStart');
+        if (cEl && st.avgCycle != null) cEl.value = String(clampCycle(st.avgCycle));
+        if (pEl && st.avgPeriod != null) pEl.value = String(clampPeriod(st.avgPeriod));
+        if (lEl && last) lEl.value = last.start;
+        syncCalcWords();
+        go('calculator');
+        toast('Moyennes reprises · appuie sur « Voir ma date »');
+      });
+    }
+  }
+
+  /* —— Tendances par phase (Clue Analyse, Flo, Natural Cycles) —— */
+  const TREND_EXAMPLE = {
+    menstruelle: { n: 4, energy: 2.3, sym: ['Crampes légères', 'Fatigue'], mood: 'calme' },
+    folliculaire: { n: 6, energy: 3.8, sym: ['Motivation'], mood: 'motivee' },
+    ovulatoire: { n: 2, energy: 4.5, sym: ['Motivation'], mood: 'energique' },
+    luteale: { n: 9, energy: 2.9, sym: ['Ballonnements', 'Sensibilité émotionnelle'], mood: 'sensible' },
+  };
+
+  function computeTrends() {
+    const entries = loadJournal();
+    if (!entries.length) return { data: TREND_EXAMPLE, example: true };
+    const acc = {};
+    PHASE_ORDER.forEach((k) => { acc[k] = { n: 0, eSum: 0, eN: 0, sym: {}, mood: {} }; });
+    entries.forEach((e) => {
+      const d = parseYMD(e.date);
+      if (!d) return;
+      const k = phaseOfDate(d);
+      if (!acc[k]) return;
+      const a = acc[k];
+      a.n++;
+      if (e.energy) { a.eSum += Number(e.energy); a.eN++; }
+      (e.symptoms || []).forEach((s) => { a.sym[s] = (a.sym[s] || 0) + 1; });
+      if (e.mood) a.mood[e.mood] = (a.mood[e.mood] || 0) + 1;
+    });
+    const top = (obj, n) => Object.keys(obj).sort((x, y) => obj[y] - obj[x]).slice(0, n);
+    const data = {};
+    PHASE_ORDER.forEach((k) => {
+      const a = acc[k];
+      data[k] = { n: a.n, energy: a.eN ? a.eSum / a.eN : null, sym: top(a.sym, 2), mood: top(a.mood, 1)[0] || null };
+    });
+    return { data: data, example: false };
+  }
+
+  function renderTrends() {
+    const box = document.getElementById('trendsGrid');
+    const note = document.getElementById('trendsExample');
+    if (!box) return;
+    const tr = computeTrends();
+    box.innerHTML = '';
+    PHASE_ORDER.forEach((k) => {
+      const d = tr.data[k];
+      const row = document.createElement('div');
+      row.className = 'tr-row';
+      const ePct = d.energy == null ? 0 : Math.round((d.energy / 5) * 100);
+      const details = [];
+      if (d.mood && MOOD_FR[d.mood]) details.push(t('Humeur : {m}', { m: t(MOOD_FR[d.mood]) }));
+      if (d.sym && d.sym.length) details.push(t('Sensations : {s}', { s: d.sym.map((x) => t(x)).join(', ') }));
+      row.innerHTML =
+        '<p class="tr-head ph-' + k + '"><span>' + escapeHtml(t(PHASE_META[k].name)) + '</span><span class="tr-n">' +
+        escapeHtml(d.n > 1 ? t('{n} check-ins', { n: d.n }) : t('{n} check-in', { n: d.n })) + '</span></p>' +
+        '<div class="tr-energy"><span class="tr-k">' + escapeHtml(t('Énergie')) + '</span>' +
+        '<span class="tr-track" aria-hidden="true"><span class="tr-fill ph-' + k + '" style="width:' + ePct + '%"></span></span>' +
+        '<span class="tr-v">' + escapeHtml(d.energy == null ? '—' : fmtNum(d.energy) + ' / 5') + '</span></div>' +
+        '<p class="tr-detail">' + (details.length ? details.map(escapeHtml).join('<br>') : escapeHtml(t('Pas encore de check-in dans cette phase'))) + '</p>';
+      box.appendChild(row);
+    });
+    if (note) note.hidden = !tr.example;
+  }
+
+  /* —— Rappels agenda .ics (Clue, Flo) — sans serveur ni notification push —— */
+  function icsEscape(s) {
+    return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  }
+  function icsFold(line) {
+    const out = [];
+    let cur = line;
+    while (cur.length > 60) {
+      out.push(cur.slice(0, 60));
+      cur = ' ' + cur.slice(60);
+    }
+    out.push(cur);
+    return out.join('\r\n');
+  }
+  function icsDate(d) {
+    return toYMD(d).replace(/-/g, '');
+  }
+
+  function buildIcs(includePhases) {
+    const inp = activeCalcInputs();
+    const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
+    if (!res) return null;
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    const segs = phaseSegments(res.periodLen, res.cycleLen);
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//King Daveblessing//Cycle & Astro ' + APP_VERSION + '//FR',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'X-WR-CALNAME:' + icsEscape('Cycle & Astro'),
+    ];
+    const disc = t('Estimation bien-être. Pas un avis médical.');
+    const ev = (uid, start, endExcl, summary, desc, alarm) => {
+      lines.push('BEGIN:VEVENT');
+      lines.push('UID:' + uid + '@cycle-astro.king-daveblessing');
+      lines.push('DTSTAMP:' + stamp);
+      lines.push('DTSTART;VALUE=DATE:' + icsDate(start));
+      lines.push('DTEND;VALUE=DATE:' + icsDate(endExcl));
+      lines.push('SUMMARY:' + icsEscape(summary));
+      lines.push('DESCRIPTION:' + icsEscape(desc));
+      lines.push('TRANSP:TRANSPARENT');
+      if (alarm) {
+        lines.push('BEGIN:VALARM');
+        lines.push('ACTION:DISPLAY');
+        lines.push('TRIGGER:-PT15H');
+        lines.push('DESCRIPTION:' + icsEscape(alarm));
+        lines.push('END:VALARM');
+      }
+      lines.push('END:VEVENT');
+    };
+    res.periods.forEach((per, i) => {
+      const cycleStart = per.start;
+      segs.forEach((s) => {
+        const a = addDays(cycleStart, s.start - 1);
+        const bEx = addDays(cycleStart, s.end);
+        const id = 'ca-' + s.key + '-' + icsDate(a);
+        if (s.key === 'menstruelle') {
+          ev(id, a, bEx, t('Règles prévues · Cycle & Astro'), disc, t('Règles prévues demain'));
+        } else if (includePhases) {
+          const desc = s.key === 'ovulatoire'
+            ? disc + ' ' + t('L’ovulation est une estimation. Ce n’est ni une contraception, ni un conseil de fertilité.')
+            : disc;
+          ev(id, a, bEx, t(PHASE_META[s.key].full) + ' · Cycle & Astro', desc, null);
+        }
+      });
+      if (i === res.periods.length - 1) return;
+    });
+    lines.push('END:VCALENDAR');
+    return lines.map(icsFold).join('\r\n') + '\r\n';
+  }
+
+  function downloadIcs() {
+    const inc = document.getElementById('icsPhases');
+    const ics = buildIcs(!inc || inc.checked);
+    if (!ics) { toast('Date invalide'); return; }
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cycle-astro-rappels.ics';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+    toast('Fichier agenda prêt · ouvre-le pour ajouter les rappels');
+  }
+
+  /* —— Question de journal selon la phase et la Lune (CHANI) —— */
+  const PROMPTS_PHASE = {
+    menstruelle: [
+      'De quoi ai-je besoin pour me reposer vraiment aujourd’hui ?',
+      'Qu’est-ce que je peux laisser partir ce mois-ci ?',
+      'Quel petit geste doux puis-je m’offrir ce soir ?',
+    ],
+    folliculaire: [
+      'Quelle idée nouvelle me donne envie d’avancer ?',
+      'Quel premier pas simple puis-je faire cette semaine ?',
+      'Qu’est-ce qui me rend curieuse en ce moment ?',
+    ],
+    ovulatoire: [
+      'Avec qui ai-je envie de partager quelque chose ?',
+      'Qu’est-ce que j’ose dire ou demander aujourd’hui ?',
+      'Où est-ce que je me sens rayonnante ?',
+    ],
+    luteale: [
+      'Qu’est-ce qui me demande plus de douceur en ce moment ?',
+      'Quelle tâche puis-je terminer pour me sentir plus légère ?',
+      'À quoi ai-je besoin de dire non, gentiment ?',
+    ],
+  };
+  const PROMPTS_MOON = {
+    new: 'Nouvelle lune : quelle intention simple je pose pour ce cycle ?',
+    waxing: 'Lune croissante : qu’est-ce que je veux nourrir et faire grandir ?',
+    full: 'Pleine lune : qu’est-ce qui s’éclaire pour moi en ce moment ?',
+    waning: 'Lune décroissante : de quoi puis-je me délester ?',
+  };
+  let promptIdx = 0;
+
+  function checkinDate() {
+    const el = document.getElementById('checkinDate');
+    const d = el && parseYMD(el.value);
+    if (d && d <= productToday()) return d;
+    return productToday();
+  }
+
+  function promptList(d) {
+    const phase = phaseOfDate(d) || 'luteale';
+    const sky = skyAt(noonUtc(d));
+    return { list: [PROMPTS_MOON[moonGroup(sky.elong)]].concat(PROMPTS_PHASE[phase]), phase: phase, sky: sky };
+  }
+
+  function renderPrompt() {
+    const txt = document.getElementById('promptText');
+    const meta = document.getElementById('promptMeta');
+    const chip = document.getElementById('checkinPhase');
+    const d = checkinDate();
+    const p = promptList(d);
+    if (txt) txt.textContent = t(p.list[promptIdx % p.list.length]);
+    if (meta) meta.textContent = t(PHASE_META[p.phase].full) + ' · ' + t(MOON_NAMES[p.sky.phaseIdx]);
+    if (chip) {
+      chip.className = 'phase-chip ph-' + p.phase;
+      chip.textContent = t(PHASE_META[p.phase].full);
+    }
+  }
+
+  function bindJournalV12() {
+    const el = document.getElementById('checkinDate');
+    if (el) {
+      el.max = DEMO.today;
+      if (!el.value) el.value = DEMO.today;
+      el.addEventListener('change', () => { promptIdx = 0; renderPrompt(); });
+    }
+    const next = document.getElementById('btnPromptNext');
+    if (next) next.addEventListener('click', () => { promptIdx++; renderPrompt(); });
+    const use = document.getElementById('btnPromptUse');
+    if (use) {
+      use.addEventListener('click', () => {
+        const note = document.getElementById('noteField');
+        const txt = document.getElementById('promptText');
+        if (!note || !txt) return;
+        const q = txt.textContent.trim();
+        note.value = (note.value ? note.value.replace(/\s+$/, '') + '\n\n' : '') + q + '\n';
+        note.focus();
+        toast('Question ajoutée à ta note');
+      });
+    }
+  }
+
+  /* —— Astro : horoscope du jour, ciel du jour, compatibilité —— */
+  const HORO_TEXT = {
+    'Bélier': 'Le Soleil passe face à ton signe : les relations demandent écoute et compromis. Avance, mais à deux.',
+    'Taureau': 'Journée pour remettre de l’ordre dans ton quotidien. Un rythme plus doux te rend plus efficace.',
+    'Gémeaux': 'La Lune en Verseau réveille ton envie d’apprendre. Note les idées qui arrivent, trie demain.',
+    'Cancer': 'Ton foyer a besoin d’harmonie. Un petit rangement ou une conversation apaisée fera du bien.',
+    'Lion': 'Tes mots portent aujourd’hui. Un message sincère peut rapprocher quelqu’un de toi.',
+    'Vierge': 'Ta saison se termine : fais le bilan de ce que tu as construit et reconnais tes efforts.',
+    'Balance': 'Le Soleil entre dans ton signe : nouveau départ personnel. Choisis une chose qui te ressemble.',
+    'Scorpion': 'Moment de recul. Le repos et le silence t’aident à voir plus clair.',
+    'Sagittaire': 'Tes amitiés et tes projets de groupe sont favorisés. Propose, rassemble, partage.',
+    'Capricorne': 'Ton travail est sous les projecteurs. Montre ce que tu sais faire, sans te surcharger.',
+    'Verseau': 'La Lune est dans ton signe : tes émotions parlent fort. Une envie d’ailleurs peut naître.',
+    'Poissons': 'Journée pour lâcher un poids ancien. Ce qui part laisse de la place au neuf.',
+  };
+  const PLANET_DAY = [
+    ['Soleil', 'Jour du Soleil : rayonner, se montrer, se faire plaisir.'],
+    ['Lune', 'Jour de la Lune : écouter ses émotions, prendre soin du foyer.'],
+    ['Mars', 'Jour de Mars : agir, oser, bouger le corps.'],
+    ['Mercure', 'Jour de Mercure : échanger, écrire, apprendre.'],
+    ['Jupiter', 'Jour de Jupiter : voir grand, partager, remercier.'],
+    ['Vénus', 'Jour de Vénus : beauté, douceur, relations.'],
+    ['Saturne', 'Jour de Saturne : structurer, finir, se reposer.'],
+  ];
+  const COMPAT = [
+    { title: 'Miroir', score: 4, text: 'Même signe : vous vous comprenez vite. Le défi : ne pas amplifier les mêmes travers.' },
+    { title: 'Apprentissage', score: 3, text: 'Signes voisins : vous êtes très différents, chacun apprend de l’autre avec patience.' },
+    { title: 'Complicité', score: 4, text: 'Lien fluide et amical : vous vous stimulez sans effort.' },
+    { title: 'Friction créative', score: 2, text: 'Tensions possibles : en parlant franchement, elles deviennent un moteur.' },
+    { title: 'Harmonie naturelle', score: 5, text: 'Même élément : vous partagez le même rythme et les mêmes valeurs.' },
+    { title: 'Ajustement', score: 2, text: 'Peu de points communs au départ : le lien demande des ajustements réguliers.' },
+    { title: 'Attraction des contraires', score: 3, text: 'Signes opposés : forte attirance, à équilibrer par l’écoute.' },
+  ];
+
+  function signIndexFromFr(fr) {
+    const i = SIGNS.findIndex((s) => s.fr === fr);
+    return i < 0 ? 5 : i;
+  }
+
+  function defaultSunSignIdx() {
+    try {
+      const p = loadLastProfile();
+      if (p) {
+        let sign = p.sign || null;
+        if (!sign && p.birthIso) {
+          const sd = sunSignDecan(p.birthIso);
+          sign = sd && sd.sign;
+        }
+        const i = SIGNS.findIndex((s) => s.fr === sign);
+        if (i >= 0) return i;
+      }
+    } catch (_) { /* ignore */ }
+    return signIndexFromFr(DEMO.sunSign);
+  }
+
+  function fillSignSelect(sel, selectedIdx) {
+    if (!sel) return;
+    const keep = sel.value !== '' && sel.options.length ? Number(sel.value) : selectedIdx;
+    sel.innerHTML = '';
+    SIGNS.forEach((s, i) => {
+      const o = document.createElement('option');
+      o.value = String(i);
+      o.textContent = s.glyph + ' ' + t(s.fr);
+      sel.appendChild(o);
+    });
+    sel.value = String(keep);
+  }
+
+  function renderHoroscope() {
+    const sel = document.getElementById('horoSign');
+    if (!sel) return;
+    fillSignSelect(sel, defaultSunSignIdx());
+    const s = SIGNS[Number(sel.value)] || SIGNS[5];
+    const title = document.getElementById('horoTitle');
+    const text = document.getElementById('horoText');
+    const sky = document.getElementById('horoSky');
+    if (title) title.textContent = s.glyph + ' ' + t(s.fr) + ' · ' + t(s.el);
+    if (text) text.textContent = t(HORO_TEXT[s.fr]);
+    if (sky) {
+      const k = skyAt(noonUtc(productToday()));
+      sky.textContent = t('Ciel du {d} : Soleil en {s}, Lune en {m} ({p}).', {
+        d: fmtDate(productToday(), { year: false }),
+        s: t(SIGNS[k.sunSign].fr),
+        m: t(SIGNS[k.moonSign].fr),
+        p: t(MOON_NAMES[k.phaseIdx]).toLowerCase(),
+      });
+    }
+  }
+
+  function renderSky() {
+    const el = document.getElementById('skyDate');
+    const list = document.getElementById('skyList');
+    const txt = document.getElementById('skyText');
+    const words = document.getElementById('skyDateWords');
+    if (!el || !list) return;
+    if (!el.value) el.value = DEMO.today;
+    const d = parseYMD(el.value) || productToday();
+    const k = skyAt(noonUtc(d));
+    const pd = PLANET_DAY[d.getDay()];
+    if (words) words.textContent = fmtDate(d, { weekday: true });
+    const row = (a, b) => '<span class="k">' + escapeHtml(a) + '</span><span class="v">' + escapeHtml(b) + '</span>';
+    list.innerHTML =
+      row(t('Planète du jour'), t(pd[0])) +
+      row(t('Soleil'), t('en {s}', { s: t(SIGNS[k.sunSign].fr) })) +
+      row(t('Lune'), t('en {s}', { s: t(SIGNS[k.moonSign].fr) })) +
+      row(t('Phase'), t(MOON_NAMES[k.phaseIdx]) + ' · ' + Math.round(k.illum * 100) + ' %');
+    if (txt) txt.textContent = t(pd[1]);
+  }
+
+  function renderCompat(show) {
+    const a = document.getElementById('compatA');
+    const b = document.getElementById('compatB');
+    const out = document.getElementById('compatOut');
+    if (!a || !b || !out) return;
+    fillSignSelect(a, defaultSunSignIdx());
+    fillSignSelect(b, 6);
+    if (!show && out.hidden) return;
+    const ia = Number(a.value);
+    const ib = Number(b.value);
+    let k = Math.abs(ia - ib);
+    if (k > 6) k = 12 - k;
+    const c = COMPAT[k];
+    const stars = '★★★★★'.slice(0, c.score) + '☆☆☆☆☆'.slice(0, 5 - c.score);
+    out.hidden = false;
+    out.innerHTML =
+      '<p class="compat-stars" role="img" aria-label="' + escapeHtml(t('{n} sur 5', { n: c.score })) + '">' + stars + '</p>' +
+      '<p class="h-serif compat-title">' + escapeHtml(t(c.title)) + '</p>' +
+      '<p class="tiny compat-pair">' + escapeHtml(SIGNS[ia].glyph + ' ' + t(SIGNS[ia].fr) + ' (' + t(SIGNS[ia].el) + ') · ' +
+        SIGNS[ib].glyph + ' ' + t(SIGNS[ib].fr) + ' (' + t(SIGNS[ib].el) + ')') + '</p>' +
+      '<p class="body">' + escapeHtml(t(c.text)) + '</p>';
+  }
+
+  function bindAstroV12() {
+    const sel = document.getElementById('horoSign');
+    if (sel) sel.addEventListener('change', renderHoroscope);
+    const sd = document.getElementById('skyDate');
+    if (sd) sd.addEventListener('change', renderSky);
+    const reset = document.getElementById('btnSkyToday');
+    if (reset && sd) reset.addEventListener('click', () => { sd.value = DEMO.today; renderSky(); });
+    const btn = document.getElementById('btnCompat');
+    if (btn) btn.addEventListener('click', () => renderCompat(true));
+    ['compatA', 'compatB'].forEach((id) => {
+      const s = document.getElementById(id);
+      if (s) s.addEventListener('change', () => {
+        const out = document.getElementById('compatOut');
+        if (out && !out.hidden) renderCompat(true);
+      });
+    });
+  }
+
+  /* —— Écran Cycle : frise, liste, sauts de section —— */
+  function renderCycleV12() {
+    const inp = { lastStart: DEMO.cycle.lastPeriodStart, periodLen: DEMO.cycle.avgPeriod, cycleLen: DEMO.cycle.avgCycle };
+    const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
+    renderPhaseTimeline(document.getElementById('cycleTimeline'), res);
+    renderPhaseList(document.getElementById('cyclePhaseList'), res, parseYMD(inp.lastStart));
+    renderPhaseGuide();
+    renderHistory();
+    renderTrends();
+  }
+
+  function bindCycleV12() {
+    document.querySelectorAll('[data-jump]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const target = document.getElementById(b.dataset.jump);
+        if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      });
+    });
+    const tabs = document.getElementById('phaseTabs');
+    if (tabs) {
+      tabs.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-phase]');
+        if (!b) return;
+        guidePhase = b.dataset.phase;
+        renderPhaseGuide();
+        const again = tabs.querySelector('[data-phase="' + guidePhase + '"]');
+        if (again) again.focus();
+      });
+      tabs.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const i = PHASE_ORDER.indexOf(guidePhase);
+        guidePhase = PHASE_ORDER[(i + (e.key === 'ArrowRight' ? 1 : 3)) % 4];
+        renderPhaseGuide();
+        const again = tabs.querySelector('[data-phase="' + guidePhase + '"]');
+        if (again) again.focus();
+        e.preventDefault();
+      });
+    }
+    const ics = document.getElementById('btnIcs');
+    if (ics) ics.addEventListener('click', downloadIcs);
+    bindHistory();
+  }
+
+  function renderAllV12() {
+    renderCycleV12();
+    renderPrompt();
+    renderHoroscope();
+    renderSky();
+    renderCompat(false);
+  }
+
   function init() {
     currentLang = getLang();
     document.documentElement.lang = (I18N && (I18N.LANGS.find((l) => l.code === currentLang) || {}).html) || 'fr';
@@ -2822,6 +3666,9 @@
     bindResetPerson();
     bindConsent();
     bindDataAndMarket();
+    bindCycleV12();
+    bindJournalV12();
+    bindAstroV12();
     fillLangSelects();
     renderProductSurfaces();
     renderConsentStatus();

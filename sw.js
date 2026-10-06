@@ -1,10 +1,10 @@
-/* Cycle & Astro · service worker (v1.1.0)
+/* Cycle & Astro · service worker (v1.2.0)
  * - index.html, styles.css, app.js, i18n.js : RÉSEAU D’ABORD (le cache ne sert qu’hors connexion),
  *   pour que le téléphone ne reste jamais bloqué sur une ancienne version.
  * - images et polices : cache d’abord.
  * - Les instantanés figés (/releases/...) ne passent pas par ce service worker.
  */
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const CACHE = 'cycle-astro-v' + VERSION;
 const CORE = ['./', './index.html', './styles.css', './app.js', './i18n.js', './manifest.webmanifest', './assets/logo-3-5.png', './assets/icon-192.png'];
 

@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cycle & Astro · v1.1.0 · King Daveblessing</title>
-  <meta name="description" content="Cycle & Astro v1.1.0 — bien-être cycle et astrologie, King Daveblessing. Pas un avis médical." />
-  <meta name="version" content="1.1.0" />
+  <title>Cycle & Astro · v1.2.0 · King Daveblessing</title>
+  <meta name="description" content="Cycle & Astro v1.2.0 — bien-être cycle et astrologie, King Daveblessing. Pas un avis médical." />
+  <meta name="version" content="1.2.0" />
   <meta name="theme-color" content="#F9F6F0" />
-  <link rel="manifest" href="manifest.webmanifest?v=1.1.0" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.2.0" />
   <link rel="icon" type="image/png" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="styles.css?v=1.1.0" />
+  <link rel="stylesheet" href="styles.css?v=1.2.0" />
 </head>
 <body>
-  <p class="page-label">Cycle & Astro · v1.1.0</p>
+  <p class="page-label">Cycle & Astro · v1.2.0</p>
   <p class="page-hint">Deux ambiances séparées · Mes règles (clair) · Mon ciel (sombre) · démo FR.</p>
   <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
 
@@ -176,12 +176,81 @@
               <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
             </div>
             <div class="cal-grid" id="cycleCalendar" aria-label="Calendrier du cycle"></div>
-            <div class="cal-legend">
-              <span><i class="dot dot-period"></i> Jours de règles</span>
-              <span><i class="dot dot-today"></i> Aujourd’hui</span>
+            <div class="cal-legend phase-legend" aria-label="Légende des phases">
+              <span><i class="ph-sw ph-menstruelle" aria-hidden="true"></i> Menstruelle</span>
+              <span><i class="ph-sw ph-folliculaire" aria-hidden="true"></i> Folliculaire</span>
+              <span><i class="ph-sw ph-ovulatoire" aria-hidden="true"></i> Ovulatoire (estimée)</span>
+              <span><i class="ph-sw ph-luteale" aria-hidden="true"></i> Lutéale</span>
+              <span><i class="ph-sw ph-today-sw" aria-hidden="true"></i> Aujourd’hui</span>
+            </div>
+            <div class="cal-legend moon-legend" aria-label="Phases de la Lune">
+              <span><i class="moon-mini new legend" aria-hidden="true"></i> Nouvelle lune</span>
+              <span><i class="moon-mini fq legend" aria-hidden="true"></i> Premier quartier</span>
+              <span><i class="moon-mini full legend" aria-hidden="true"></i> Pleine lune</span>
+              <span><i class="moon-mini lq legend" aria-hidden="true"></i> Dernier quartier</span>
             </div>
           </div>
           <button class="link-silver" type="button" id="btnEditPeriod">Corriger une période</button>
+
+          <nav class="v12-jump" aria-label="Aller à">
+            <button type="button" class="hub-chip" data-jump="secPhases">Phases</button>
+            <button type="button" class="hub-chip" data-jump="secConseils">Conseils</button>
+            <button type="button" class="hub-chip" data-jump="secAgenda">Agenda</button>
+            <button type="button" class="hub-chip" data-jump="secHistory">Historique</button>
+            <button type="button" class="hub-chip" data-jump="secTrends">Tendances</button>
+          </nav>
+
+          <section class="card v12-card" id="secPhases" aria-labelledby="phasesTitle">
+            <h3 class="h-serif h3" id="phasesTitle">Tes 4 phases</h3>
+            <div class="phase-timeline" id="cycleTimeline"></div>
+            <ul class="phase-list" id="cyclePhaseList"></ul>
+            <p class="tiny ovu-note">L’ovulation affichée est une estimation (environ 14 jours avant les règles suivantes). Ce n’est ni une contraception, ni un conseil de fertilité.</p>
+          </section>
+
+          <section class="card v12-card" id="secConseils" aria-labelledby="conseilsTitle">
+            <h3 class="h-serif h3" id="conseilsTitle">Conseils de phase</h3>
+            <p class="tiny">Bien-être seulement, pas un avis médical.</p>
+            <div class="phase-tabs" id="phaseTabs" role="tablist" aria-label="Phases du cycle"></div>
+            <div class="phase-guide" id="phaseGuide" role="tabpanel" aria-live="polite"></div>
+          </section>
+
+          <section class="card v12-card" id="secAgenda" aria-labelledby="agendaTitle">
+            <h3 class="h-serif h3" id="agendaTitle">Rappels dans ton agenda</h3>
+            <p class="body">Un fichier .ics à ouvrir avec l’agenda du téléphone : prochaines règles sur 3 cycles, avec un rappel la veille.</p>
+            <label class="check-row v12-check">
+              <input type="checkbox" id="icsPhases" checked />
+              <span>Ajouter aussi les 4 phases</span>
+            </label>
+            <button type="button" class="btn btn-primary" id="btnIcs">Télécharger le fichier agenda (.ics)</button>
+            <p class="tiny">Aucun serveur, aucune notification envoyée par l’app.</p>
+          </section>
+
+          <section class="card v12-card" id="secHistory" aria-labelledby="histTitle">
+            <h3 class="h-serif h3" id="histTitle">Mon historique de règles</h3>
+            <div class="hist-stats" id="histStats"></div>
+            <ul class="phase-list hist-list" id="histList"></ul>
+            <p class="tiny" id="histExampleNote">Exemple affiché tant que tu n’as rien ajouté.</p>
+            <form class="simple-form hist-form" id="histForm" novalidate>
+              <label class="field">
+                <span class="field-label">Début des règles</span>
+                <input type="date" id="histStart" value="2026-09-01" max="2026-09-23" />
+              </label>
+              <label class="field">
+                <span class="field-label">Jours de règles</span>
+                <input type="number" id="histLen" min="1" max="10" value="5" inputmode="numeric" />
+              </label>
+              <button type="submit" class="btn btn-ghost">Ajouter cette période</button>
+            </form>
+            <button type="button" class="btn btn-primary" id="btnUseAverages">Utiliser mes moyennes dans le calculateur</button>
+          </section>
+
+          <section class="card v12-card" id="secTrends" aria-labelledby="trendsTitle">
+            <h3 class="h-serif h3" id="trendsTitle">Tendances par phase</h3>
+            <p class="tiny">Calculées à partir de ton journal : énergie moyenne, humeur et sensations les plus notées.</p>
+            <p class="tiny" id="trendsExample">Exemple affiché tant que ton journal est vide.</p>
+            <div class="trends-grid" id="trendsGrid"></div>
+            <button type="button" class="link-silver" data-go="journal">Ajouter un check-in</button>
+          </section>
         </section>
 
         <!-- 5. Lune -->
@@ -193,14 +262,14 @@
           </div>
 
           <div class="moon-hero">
-            <div class="moon-visual" aria-hidden="true" title="Gibbeuse décroissante"></div>
-            <p class="h-serif h1">Gibbeuse décroissante</p>
-            <p class="italic" style="margin-top:6px;">23 septembre 2026 · illumination ~62 %</p>
+            <div class="moon-visual waxing" aria-hidden="true" title="Gibbeuse croissante"></div>
+            <p class="h-serif h1">Gibbeuse croissante</p>
+            <p class="italic" style="margin-top:6px;">23 septembre 2026 · illumination ~89 %</p>
           </div>
 
           <div class="card">
             <h3 class="h-serif h3">Énergie du jour</h3>
-            <p class="body">Une piste pour ralentir et écouter ce qui se termine. La Lune décroissante invite au lâcher-prise — sans obligation, juste une invitation.</p>
+            <p class="body">Une piste pour nourrir ce qui grandit. La Lune croissante invite à préparer et rassembler — sans obligation, juste une invitation.</p>
           </div>
 
           <div class="card">
@@ -209,14 +278,14 @@
               <div class="card" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">○</div>
                 <div class="h-serif" style="font-size:10px;">Nouvelle</div>
-                <div class="tiny">12 septembre</div>
-              </div>
-              <div class="card selected" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◐</div>
-                <div class="h-serif" style="font-size:10px;" data-i18n-html="q1">1<sup>er</sup> quartier</div>
-                <div class="tiny">14 septembre</div>
+                <div class="tiny">11 septembre</div>
               </div>
               <div class="card" style="padding:12px;margin:0;">
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◐</div>
+                <div class="h-serif" style="font-size:10px;" data-i18n-html="q1">1<sup>er</sup> quartier</div>
+                <div class="tiny">18 septembre</div>
+              </div>
+              <div class="card selected" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;" aria-hidden="true">●</div>
                 <div class="h-serif" style="font-size:10px;">Pleine</div>
                 <div class="tiny">26 septembre</div>
@@ -224,7 +293,7 @@
               <div class="card" style="padding:12px;margin:0;">
                 <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◑</div>
                 <div class="h-serif" style="font-size:10px;">Dernier q.</div>
-                <div class="tiny">fin septembre</div>
+                <div class="tiny">3 octobre</div>
               </div>
             </div>
           </div>
@@ -276,10 +345,22 @@
             <p class="body">Harmonie, écoute et juste mesure seront tes atouts. L’énergie du 23 septembre invite à l’équilibre — une piste, pas une sentence.</p>
           </div>
 
+          <div class="card v12-card" id="secHoroscope">
+            <h3 class="h-serif h3">Horoscope du jour</h3>
+            <label class="field">
+              <span class="field-label">Ton signe solaire</span>
+              <select id="horoSign" class="v12-select"></select>
+            </label>
+            <p class="h-serif horo-title" id="horoTitle">—</p>
+            <p class="body" id="horoText">—</p>
+            <p class="tiny" id="horoSky">—</p>
+            <p class="tiny">Lecture symbolique par signe solaire. Pas une prédiction.</p>
+          </div>
+
           <div class="card">
             <h3 class="h-serif h3">Phase lunaire</h3>
             <div class="card-row">
-              <span class="body">Gibbeuse décroissante</span>
+              <span class="body">Gibbeuse croissante</span>
               <span style="font-size:28px;color:var(--silver);" aria-hidden="true">☾</span>
             </div>
           </div>
@@ -288,11 +369,24 @@
             <h3 class="h-serif h3">Positions (aperçu)</h3>
             <div class="planetary-list">
               <span class="k">Soleil</span><span class="v">en Balance</span>
-              <span class="k">Lune</span><span class="v">en Gémeaux</span>
+              <span class="k">Lune</span><span class="v">en Verseau</span>
               <span class="k">Mercure</span><span class="v">en Vierge</span>
               <span class="k">Vénus</span><span class="v">en Scorpion</span>
             </div>
             <p class="tiny" style="margin-top:10px;">L’astro guide, elle ne dicte pas.</p>
+          </div>
+
+          <div class="card v12-card" id="secSky">
+            <h3 class="h-serif h3">Ciel du jour · voyage dans le temps</h3>
+            <label class="field">
+              <span class="field-label">Choisis une date</span>
+              <input type="date" id="skyDate" value="2026-09-23" min="1900-01-01" max="2100-12-31" />
+              <span class="date-words" id="skyDateWords"></span>
+            </label>
+            <div class="planetary-list" id="skyList"></div>
+            <p class="body" id="skyText" style="margin-top:10px;"></p>
+            <button type="button" class="link-silver" id="btnSkyToday">Revenir au 23 septembre 2026</button>
+            <p class="tiny">Soleil et Lune calculés sur le téléphone (précision d’environ un degré). Les autres planètes ne sont pas calculées.</p>
           </div>
 
           <div class="card">
@@ -322,6 +416,23 @@
               <span class="chip selected">Organisation</span>
               <span class="chip selected">Travail précis</span>
             </div>
+          </div>
+
+          <div class="card v12-card" id="secCompat">
+            <h3 class="h-serif h3">Compatibilité des signes</h3>
+            <div class="compat-row">
+              <label class="field">
+                <span class="field-label">Toi</span>
+                <select id="compatA" class="v12-select"></select>
+              </label>
+              <label class="field">
+                <span class="field-label">L’autre personne</span>
+                <select id="compatB" class="v12-select"></select>
+              </label>
+            </div>
+            <button type="button" class="btn btn-primary" id="btnCompat">Voir notre lien</button>
+            <div class="compat-out" id="compatOut" hidden></div>
+            <p class="tiny">Par signe solaire seulement. Une piste de dialogue, pas une vérité sur la relation.</p>
           </div>
 
           <div class="card">
@@ -388,6 +499,21 @@
 
           <div id="checkinForm">
             <p class="body-muted" style="margin-bottom:8px;">Aujourd’hui · 23 septembre 2026</p>
+            <label class="field checkin-date-field">
+              <span class="field-label">Jour du check-in</span>
+              <input type="date" id="checkinDate" value="2026-09-23" max="2026-09-23" />
+            </label>
+            <p class="checkin-phase-row"><span class="phase-chip ph-luteale" id="checkinPhase">Phase lutéale</span></p>
+
+            <div class="card v12-card prompt-card" id="promptCard">
+              <p class="calc-kicker">Question du jour</p>
+              <p class="body prompt-text" id="promptText">—</p>
+              <p class="tiny" id="promptMeta">—</p>
+              <div class="prompt-actions">
+                <button type="button" class="btn btn-ghost btn-sm" id="btnPromptNext">Autre question</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="btnPromptUse">Écrire dans ma note</button>
+              </div>
+            </div>
             <h3 class="h-serif h3" id="moodTitle">Comment tu te sens ?</h3>
             <div class="chips" id="moodChips" role="group" aria-labelledby="moodTitle">
               <button type="button" class="chip" data-mood="sereine">Sereine</button>
@@ -518,7 +644,7 @@
           </div>
 
           <button class="btn btn-primary" type="button" data-market-back style="margin-top:8px;">← Retour au Market</button>
-          <p class="tiny app-version" style="text-align:center;margin-top:12px;"><span>Version</span> <span id="appVersion">1.1.0</span></p>
+          <p class="tiny app-version" style="text-align:center;margin-top:12px;"><span>Version</span> <span id="appVersion">1.2.0</span></p>
         </section>
 
 
@@ -749,6 +875,9 @@
             <p class="formula-line" id="calcFormula">Prochaine date = dernières règles + longueur du cycle</p>
             <p class="calc-phase" id="calcPhaseLabel">—</p>
             <p class="body" id="calcDayLine">Jour du cycle</p>
+            <div class="phase-timeline" id="calcTimeline"></div>
+            <ul class="phase-list" id="calcPhaseList"></ul>
+            <p class="tiny ovu-note">L’ovulation affichée est une estimation (environ 14 jours avant les règles suivantes). Ce n’est ni une contraception, ni un conseil de fertilité.</p>
             <p class="body" id="calcDayNum" hidden>—</p>
             <p class="body">Fin douce · <span id="calcNextEnd">—</span></p>
             <ul class="calc-upcoming" id="calcUpcoming"></ul>
@@ -823,7 +952,7 @@
           <h2 class="h-serif h1 sheet-title" id="consentTitle">Tes données de cycle</h2>
           <p class="body" id="consentLead">Avant d’enregistrer, voici ce qui est gardé :</p>
           <ul class="sheet-list">
-            <li>Tes dates de règles et la longueur de ton cycle.</li>
+            <li>Tes dates de règles, ton historique et la longueur de ton cycle.</li>
             <li>Ton journal du jour : humeur, sensations, énergie, note.</li>
             <li>Tout reste sur ce téléphone uniquement. Rien n’est envoyé sur un serveur.</li>
             <li>Ce n’est pas un suivi médical.</li>
@@ -836,7 +965,7 @@
     </div>
   </div>
 
-  <script src="i18n.js?v=1.1.0"></script>
-  <script src="app.js?v=1.1.0"></script>
+  <script src="i18n.js?v=1.2.0"></script>
+  <script src="app.js?v=1.2.0"></script>
 </body>
 </html>
