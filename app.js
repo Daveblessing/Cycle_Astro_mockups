@@ -1,10 +1,55 @@
 /**
- * Cycle & Astro · v3.4
+ * Cycle & Astro · v1.1.0
  * Navigation hash légère + profil complet multi-personnes (pas de backend)
- * King Daveblessing · Abidjan · FR · polish premium / manipulation simple
+ * King Daveblessing · Abidjan · FR + EN/ES/PT/中文 · bien-être, pas un avis médical
  */
 (function () {
   'use strict';
+
+  /* —— Configuration (un seul endroit) ——
+   * MARKET_URL : adresse du King Daveblessing Market pour « Retour au Market ».
+   * Tunnel TEMPORAIRE : à remplacer par le domaine définitif quand il sera en ligne.
+   */
+  const MARKET_URL = 'https://followed-electronic-midwest-arrange.trycloudflare.com/#/';
+  const APP_VERSION = '1.1.0';
+
+  /* Clés localStorage (tout reste sur le téléphone, aucun serveur). */
+  const LANG_KEY = 'ca_lang_v1';
+  const CONSENT_KEY = 'ca_consent_cycle_v1';
+  const JOURNAL_KEY = 'ca_journal_v1';
+  /* Données de cycle effacées par « Supprimer mes données de cycle » (jamais ca_plan_v1). */
+  const CYCLE_DATA_KEYS = ['ca_calc_v1', JOURNAL_KEY, 'ca_period_edits_v1', CONSENT_KEY];
+
+  const I18N = window.CA_I18N || null;
+  let currentLang = 'fr';
+
+  function getLang() {
+    try {
+      const v = localStorage.getItem(LANG_KEY);
+      if (I18N && I18N.CODES.includes(v)) return v;
+    } catch (_) { /* ignore */ }
+    return 'fr';
+  }
+
+  /** t('Texte français', { d: '...' }) → traduction dans la langue choisie. */
+  function t(fr, vars) {
+    let out = fr;
+    if (I18N && currentLang !== 'fr') {
+      const e = I18N.DICT[fr];
+      if (e && e[currentLang]) out = e[currentLang];
+    }
+    if (vars) {
+      Object.keys(vars).forEach((k) => {
+        out = out.split('{' + k + '}').join(vars[k]);
+      });
+    }
+    return out;
+  }
+
+  function fmtDate(d, opts) {
+    if (I18N) return I18N.formatDate(d, currentLang, opts);
+    return d.getDate() + ' ' + d.getMonth() + ' ' + d.getFullYear();
+  }
 
   /** Mois de référence démo forcé : septembre 2026 (même si Date() réelle dérive). */
   const DEMO_REF_MONTH = { year: 2026, month: 8, label: 'Septembre 2026' }; // month 0-index
@@ -100,14 +145,14 @@
     const lead = document.getElementById('plansLead');
     const badge = document.getElementById('plansBadge');
     const domain = lockIntent === 'cycle' ? 'Cycle menstruel' : 'Astrologie';
-    if (title) title.textContent = 'Contenu verrouillé';
+    if (title) title.textContent = t('Contenu verrouillé');
     if (lead) {
       lead.textContent =
         lockIntent === 'cycle'
-          ? 'Cet espace Cycle menstruel demande un forfait actif. Choisis ci-dessous — le paiement arrivera bientôt.'
-          : 'Cet espace Astrologie demande un forfait actif. Choisis ci-dessous — le paiement arrivera bientôt.';
+          ? t('Cet espace Cycle menstruel demande un forfait actif.')
+          : t('Cet espace Astrologie demande un forfait actif.');
     }
-    if (badge) badge.textContent = domain;
+    if (badge) badge.textContent = t(domain);
     const plan = getPlan();
     view.querySelectorAll('[data-plan-id]').forEach((card) => {
       card.classList.toggle('is-current', card.dataset.planId === plan && plan !== PLAN_NONE);
@@ -120,7 +165,7 @@
         cycle: 'Forfait Cycle menstruel actif',
         les_deux: 'Forfait Astro + Cycle actif',
       };
-      status.textContent = labels[plan] || labels.aucun;
+      status.textContent = t(labels[plan] || labels.aucun);
     }
   }
 
@@ -168,18 +213,17 @@
     const raw = (location.hash || '#/today').replace(/^#\/?/, '');
     let screen = raw.split('/')[0] || 'today';
     if (SCREEN_ALIASES[screen]) screen = SCREEN_ALIASES[screen];
-    return SCREENS.includes(screen) || screen === 'market' ? screen : 'today';
+    return SCREENS.includes(screen) ? screen : 'today';
   }
 
   function go(screen, push) {
     if (!screen) return;
     if (SCREEN_ALIASES[screen]) screen = SCREEN_ALIASES[screen];
     if (screen === 'market') {
-      show('market');
-      if (push !== false) location.hash = '#/market';
+      backToMarket();
       return;
     }
-    if (!SCREENS.includes(screen) && screen !== 'market') screen = 'splash';
+    if (!SCREENS.includes(screen)) screen = 'splash';
     show(screen);
     if (push !== false) location.hash = '#/' + screen;
   }
@@ -212,6 +256,7 @@
     });
 
     applyAmbiance(viewScreen === 'plans' ? 'gate' : viewScreen);
+    applyI18n();
   }
 
   const AMBIANCE = {
@@ -236,10 +281,10 @@
 
   function toast(msg) {
     if (!toastEl) return;
-    toastEl.textContent = msg;
+    toastEl.textContent = t(msg);
     toastEl.classList.add('show');
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 2600);
   }
 
   function rippleAt(el, evt) {
@@ -265,7 +310,7 @@
   /* —— Calendars —— */
   function buildCycleCalendar(container) {
     if (!container) return;
-    const dows = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
+    const dows = I18N ? I18N.DOWS[currentLang] : ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
     container.innerHTML = '';
     dows.forEach((d) => {
       const el = document.createElement('div');
@@ -306,14 +351,14 @@
       if (periodDays.has(d)) cell.classList.add('period');
       if (d === today) cell.classList.add('today');
       cell.textContent = String(d);
-      cell.title = d === today ? 'Aujourd’hui' : periodDays.has(d) ? 'Règles (saisie)' : '';
+      cell.title = d === today ? t('Aujourd’hui') : periodDays.has(d) ? t('Règles (saisie)') : '';
       container.appendChild(cell);
     }
   }
 
   function buildMoonCalendar(container) {
     if (!container) return;
-    const dows = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
+    const dows = I18N ? I18N.DOWS[currentLang] : ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
     container.innerHTML = '';
     dows.forEach((d) => {
       const el = document.createElement('div');
@@ -1760,6 +1805,7 @@
 
   /* —— Calculateur de menstruation —— */
   const CALC_KEY = 'ca_calc_v1';
+  let lastCalcRes = null;
   const FR_MONTHS = [
     'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
     'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
@@ -1804,7 +1850,7 @@
     const words = document.getElementById('calcLastStartWords');
     if (!words) return;
     const d = lastEl && parseYMD(lastEl.value);
-    words.textContent = d ? formatFRSpoken(d) : '';
+    words.textContent = d ? fmtDate(d) : '';
   }
 
   function daysBetween(a, b) {
@@ -1825,7 +1871,7 @@
     const winStart = center - 1; // fenêtre ±1
     const winEnd = center + 1;
     if (dayInCycle >= 1 && dayInCycle <= P) {
-      return { key: 'menstruelle', label: 'Règles' };
+      return { key: 'menstruelle', label: 'Règles' }; // libellés traduits à l’affichage
     }
     if (dayInCycle >= winStart && dayInCycle <= winEnd) {
       return { key: 'ovulatoire', label: 'Milieu de cycle' };
@@ -1948,21 +1994,21 @@
     const upcoming = document.getElementById('calcUpcoming');
     const ring = document.getElementById('calcRingProgress');
 
-    if (nextStart) nextStart.textContent = formatFR(res.nextStart);
-    if (nextEnd) nextEnd.textContent = formatFR(res.nextEnd);
+    if (nextStart) nextStart.textContent = fmtDate(res.nextStart, { ordinal: false });
+    if (nextEnd) nextEnd.textContent = fmtDate(res.nextEnd, { ordinal: false });
 
     const formula = document.getElementById('calcFormula');
     if (formula) {
       formula.hidden = false;
-      formula.textContent = 'Prochaine date = dernières règles + longueur du cycle';
+      formula.textContent = t('Prochaine date = dernières règles + longueur du cycle');
     }
     if (res.dayInCycle != null) {
       if (dayNum) dayNum.textContent = String(res.dayInCycle);
       if (dayLine) {
-        dayLine.textContent = 'Jour ' + res.dayInCycle + ' sur ' + res.cycleLen;
+        dayLine.textContent = t('Jour {n} sur {c}', { n: res.dayInCycle, c: res.cycleLen });
       }
       if (phaseLabel) {
-        phaseLabel.textContent = res.phase.label;
+        phaseLabel.textContent = t(res.phase.label);
       }
       if (ring) {
         const circ = 2 * Math.PI * 30;
@@ -1975,7 +2021,7 @@
     } else {
       if (dayNum) dayNum.textContent = '—';
       if (dayLine) {
-        dayLine.textContent = 'Date de début dans le futur — jour non calculé';
+        dayLine.textContent = t('Date de début dans le futur — jour non calculé');
       }
       if (phaseLabel) phaseLabel.textContent = '—';
       if (ring) ring.setAttribute('stroke-dasharray', '0 188.5');
@@ -1989,9 +2035,9 @@
           '<span class="n">#' +
           (i + 1) +
           '</span><span class="r">' +
-          formatFR(per.start) +
+          fmtDate(per.start, { ordinal: false }) +
           ' → ' +
-          formatFR(per.end) +
+          fmtDate(per.end, { ordinal: false }) +
           '</span>';
         upcoming.appendChild(li);
       });
@@ -2025,16 +2071,24 @@
         periodLen: Number(periodLen) || 5,
         cycleLen: Number(cycleLen) || 28,
       };
-      saveCalcInputs(data);
       const res = computeCalc(data.lastStart, data.periodLen, data.cycleLen);
       if (!res) {
         toast('Date invalide');
         return;
       }
+      lastCalcRes = res;
       renderCalcResults(res);
       const results = document.getElementById('calcResults');
-      if (results) results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      toast('Ta date est prête');
+      if (results) results.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
+      // Enregistrer seulement avec consentement explicite (sinon : session uniquement).
+      requireCycleConsent((ok) => {
+        if (ok) {
+          saveCalcInputs(data);
+          toast('Ta date est prête');
+        } else {
+          toast('Ta date est prête · non enregistrée');
+        }
+      });
     });
   }
 
@@ -2107,7 +2161,7 @@
     const skipConfirm = !!opts.skipConfirm;
     if (!skipConfirm) {
       const ok = window.confirm(
-        'Nouvelle personne / Remise à zéro ?\n\nLe formulaire, les résultats et le profil courant seront vidés. Les profils récents restent disponibles.'
+        t('Nouvelle personne / Remise à zéro ?\n\nLe formulaire, les résultats et le profil courant seront vidés. Les profils récents restent disponibles.')
       );
       if (!ok) return false;
     }
@@ -2125,7 +2179,7 @@
     const hello = document.getElementById('hubHello');
     if (hello) hello.textContent = 'Bonjour ✦';
     const hubDate = document.getElementById('hubDate');
-    if (hubDate) hubDate.textContent = 'Mercredi 23 septembre 2026';
+    if (hubDate) hubDate.textContent = fmtDate(productToday(), { weekday: true, cap: true });
     const avatar = document.getElementById('profileAvatar');
     if (avatar) avatar.textContent = '?';
     const pname = document.getElementById('profileName');
@@ -2151,24 +2205,21 @@
     const msg = document.getElementById('hubMessage');
     if (msg) {
       const d = res.nextStart;
-      msg.textContent =
-        'Prochaines règles · vers le ' + d.getDate() + ' ' + FR_MONTHS[d.getMonth()];
+      msg.textContent = t('Prochaines règles · vers le {d}', { d: fmtDate(d, { year: false }) });
     }
     const today = productToday();
     const start = parseYMD(DEMO.cycle.lastPeriodStart);
     const cycleLine = document.getElementById('cycleTodayLine');
     if (cycleLine) {
-      cycleLine.textContent =
-        'Aujourd’hui · ' + weekdayFR(today) + ' ' + formatFR(today);
+      cycleLine.textContent = t('Aujourd’hui · {d}', { d: fmtDate(today, { weekday: true }) });
     }
     const cycleNext = document.getElementById('cycleNextLine');
     if (cycleNext) {
-      cycleNext.textContent = 'Prochaine date · ' + formatFR(res.nextStart);
+      cycleNext.textContent = t('Prochaine date · {d}', { d: fmtDate(res.nextStart) });
     }
     const d0 = document.getElementById('cycleD0Line');
     if (d0 && start) {
-      d0.textContent =
-        'Dernières règles · ' + formatFRSpoken(start) + ' · cycle de ' + res.cycleLen + ' jours';
+      d0.textContent = t('Dernières règles · {d} · cycle de {n} jours', { d: fmtDate(start), n: res.cycleLen });
     }
   }
 
@@ -2229,8 +2280,12 @@
       moodChips.addEventListener('click', (e) => {
         const chip = e.target.closest('.chip');
         if (!chip) return;
-        moodChips.querySelectorAll('.chip').forEach((c) => c.classList.remove('selected'));
+        moodChips.querySelectorAll('.chip').forEach((c) => {
+          c.classList.remove('selected');
+          c.setAttribute('aria-pressed', 'false');
+        });
         chip.classList.add('selected');
+        chip.setAttribute('aria-pressed', 'true');
       });
     }
 
@@ -2257,8 +2312,12 @@
       energySlider.addEventListener('click', (e) => {
         const b = e.target.closest('button[data-e]');
         if (!b) return;
-        energySlider.querySelectorAll('button').forEach((x) => x.classList.remove('selected'));
+        energySlider.querySelectorAll('button').forEach((x) => {
+          x.classList.remove('selected');
+          x.setAttribute('aria-pressed', 'false');
+        });
         b.classList.add('selected');
+        b.setAttribute('aria-pressed', 'true');
         if (energyLabel) energyLabel.textContent = b.dataset.e + ' / 5';
       });
     }
@@ -2267,7 +2326,16 @@
     const saveBtn = document.getElementById('btnSaveCheckin');
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
-        toast('Check-in enregistré ✦');
+        const entry = readCheckinEntry();
+        requireCycleConsent((ok) => {
+          if (ok) {
+            saveJournalEntry(entry);
+            renderJournalHistory();
+            toast('Check-in enregistré ✦');
+          } else {
+            toast('Check-in noté pour cette session · non enregistré');
+          }
+        });
       });
     }
 
@@ -2309,7 +2377,10 @@
     const editPeriod = document.getElementById('btnEditPeriod');
     if (editPeriod) {
       editPeriod.addEventListener('click', () => {
-        toast('Sheet édition période (démo)');
+        // Correction de période : rien n’est enregistré sans consentement.
+        requireCycleConsent(() => {
+          toast('Correction de période · bientôt disponible');
+        });
       });
     }
 
@@ -2318,9 +2389,384 @@
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        toast('Paiement bientôt disponible · forfait non activé');
-        // Ne pas appeler setPlan — réservé au pont paiement / Market.
+        // Ne JAMAIS appeler setPlan ici — réservé au pont paiement / Market.
+        toast('Les forfaits se choisissent sur King Daveblessing Market');
+        setTimeout(backToMarket, 900);
       });
+    });
+  }
+
+  /* —— Retour au Market ——
+   * Dans un cadre (iframe du Market) : message au parent, puis navigation haute si autorisée.
+   * Seule : navigation vers MARKET_URL.
+   */
+  function backToMarket() {
+    let inFrame = false;
+    try {
+      inFrame = window.self !== window.top;
+    } catch (_) {
+      inFrame = true;
+    }
+    if (inFrame) {
+      try {
+        window.parent.postMessage({ type: 'cycle-astro:back-to-market' }, '*');
+      } catch (_) { /* ignore */ }
+      try {
+        window.top.location.href = MARKET_URL;
+      } catch (_) { /* navigation haute refusée : le Market gère le message */ }
+      return;
+    }
+    window.location.href = MARKET_URL;
+  }
+
+  function prefersReducedMotion() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /* —— Consentement données de cycle —— */
+  let consentRefusedThisSession = false;
+  let consentCallback = null;
+  let consentReturnFocus = null;
+
+  function getConsent() {
+    try {
+      const raw = localStorage.getItem(CONSENT_KEY);
+      if (raw) {
+        const c = JSON.parse(raw);
+        if (c && c.accepted) return c;
+      }
+    } catch (_) { /* ignore */ }
+    return null;
+  }
+
+  function requireCycleConsent(cb) {
+    if (getConsent()) return cb(true);
+    if (consentRefusedThisSession) return cb(false);
+    openConsentSheet(cb);
+  }
+
+  function openConsentSheet(cb) {
+    const sheet = document.getElementById('consentSheet');
+    if (!sheet) return cb(false);
+    consentCallback = cb;
+    consentReturnFocus = document.activeElement;
+    sheet.hidden = false;
+    applyI18n();
+    const yes = document.getElementById('btnConsentYes');
+    if (yes) setTimeout(() => yes.focus(), 30);
+  }
+
+  function closeConsentSheet(accepted) {
+    const sheet = document.getElementById('consentSheet');
+    if (sheet) sheet.hidden = true;
+    if (accepted) {
+      try {
+        localStorage.setItem(
+          CONSENT_KEY,
+          JSON.stringify({ accepted: true, at: new Date().toISOString(), version: APP_VERSION })
+        );
+      } catch (_) { /* ignore */ }
+      toast('Merci · tes données restent sur ce téléphone');
+    } else {
+      consentRefusedThisSession = true;
+    }
+    const cb = consentCallback;
+    consentCallback = null;
+    if (consentReturnFocus && consentReturnFocus.focus) {
+      try { consentReturnFocus.focus(); } catch (_) { /* ignore */ }
+    }
+    renderConsentStatus();
+    if (cb) setTimeout(() => cb(!!accepted), accepted ? 900 : 0);
+  }
+
+  function bindConsent() {
+    const yes = document.getElementById('btnConsentYes');
+    const no = document.getElementById('btnConsentNo');
+    const sheet = document.getElementById('consentSheet');
+    if (yes) yes.addEventListener('click', () => closeConsentSheet(true));
+    if (no) no.addEventListener('click', () => closeConsentSheet(false));
+    if (sheet) {
+      sheet.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeConsentSheet(false);
+        } else if (e.key === 'Tab') {
+          // Garder le focus dans la feuille
+          const items = [yes, no].filter(Boolean);
+          const i = items.indexOf(document.activeElement);
+          if (e.shiftKey && i <= 0) { e.preventDefault(); items[items.length - 1].focus(); }
+          else if (!e.shiftKey && i === items.length - 1) { e.preventDefault(); items[0].focus(); }
+        }
+      });
+    }
+  }
+
+  function renderConsentStatus() {
+    const el = document.getElementById('consentStatus');
+    if (!el) return;
+    const c = getConsent();
+    if (c && c.at) {
+      const d = new Date(c.at);
+      el.textContent = t('Consentement : accepté le {d}', { d: fmtDate(d) });
+    } else {
+      el.textContent = t('Consentement : pas encore donné');
+    }
+  }
+
+  /* —— Journal (check-in) : stocké seulement avec consentement —— */
+  function readCheckinEntry() {
+    const mood = document.querySelector('#moodChips .chip.selected');
+    const symptoms = [];
+    document.querySelectorAll('#symptomList .symptom-item').forEach((item) => {
+      const input = item.querySelector('input');
+      if (input && input.checked) symptoms.push(item.dataset.fr || item.textContent.trim());
+    });
+    const energyBtn = document.querySelector('#energySlider button.selected');
+    const note = document.getElementById('noteField');
+    return {
+      date: DEMO.today,
+      mood: mood ? mood.dataset.mood : null,
+      symptoms: symptoms,
+      energy: energyBtn ? Number(energyBtn.dataset.e) : null,
+      note: note ? note.value : '',
+      savedAt: new Date().toISOString(),
+    };
+  }
+
+  function loadJournal() {
+    try {
+      const raw = localStorage.getItem(JOURNAL_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveJournalEntry(entry) {
+    const list = loadJournal().filter((e) => e.date !== entry.date);
+    list.unshift(entry);
+    try {
+      localStorage.setItem(JOURNAL_KEY, JSON.stringify(list.slice(0, 120)));
+    } catch (_) { /* ignore */ }
+  }
+
+  const MOOD_FR = {
+    sereine: 'Sereine',
+    fatiguee: 'Fatiguée',
+    energique: 'Énergique',
+    sensible: 'Sensible',
+    motivee: 'Motivée',
+    calme: 'Besoin de calme',
+  };
+
+  function renderJournalHistory() {
+    const box = document.getElementById('historyList');
+    if (!box) return;
+    box.querySelectorAll('.history-item.saved').forEach((n) => n.remove());
+    const list = loadJournal();
+    list.slice(0, 5).reverse().forEach((e) => {
+      const d = parseYMD(e.date);
+      if (!d) return;
+      const row = document.createElement('div');
+      row.className = 'history-item saved';
+      const dd = document.createElement('span');
+      dd.className = 'd';
+      dd.textContent = fmtDate(d, { year: false, ordinal: false });
+      const cc = document.createElement('span');
+      cc.className = 'c';
+      const parts = [];
+      if (e.mood && MOOD_FR[e.mood]) parts.push(t(MOOD_FR[e.mood]));
+      if (e.symptoms && e.symptoms.length) parts.push(e.symptoms.map((x) => t(x)).join(', '));
+      cc.textContent = parts.join(' · ') || '—';
+      const ee = document.createElement('span');
+      ee.className = 'e';
+      ee.textContent = e.energy ? e.energy + '/5' : '—';
+      row.appendChild(dd);
+      row.appendChild(cc);
+      row.appendChild(ee);
+      box.insertBefore(row, box.firstChild);
+    });
+  }
+
+  /* —— Mes données : export / suppression —— */
+  function exportData() {
+    const data = {};
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.indexOf('ca_') === 0) {
+          const raw = localStorage.getItem(k);
+          try { data[k] = JSON.parse(raw); } catch (_) { data[k] = raw; }
+        }
+      }
+    } catch (_) { /* ignore */ }
+    const payload = {
+      app: 'Cycle & Astro',
+      version: APP_VERSION,
+      exportedAt: new Date().toISOString(),
+      note: 'Données stockées uniquement sur ce téléphone (localStorage). Bien-être, pas un avis médical.',
+      data: data,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cycle-astro-mes-donnees-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 500);
+    toast('Export prêt · fichier téléchargé');
+  }
+
+  function deleteCycleData() {
+    const ok = window.confirm(
+      t('Supprimer tes données de cycle ?\n\nDates, calculs et journal enregistrés sur ce téléphone seront effacés. Ton forfait ne change pas.')
+    );
+    if (!ok) return;
+    CYCLE_DATA_KEYS.forEach((k) => {
+      try { localStorage.removeItem(k); } catch (_) { /* ignore */ }
+    });
+    consentRefusedThisSession = false;
+    clearCalcForNewPerson();
+    renderJournalHistory();
+    renderConsentStatus();
+    toast('Données de cycle supprimées');
+  }
+
+  function bindDataAndMarket() {
+    document.querySelectorAll('[data-market-back]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        backToMarket();
+      });
+    });
+    const ex = document.getElementById('btnExportData');
+    if (ex) ex.addEventListener('click', exportData);
+    const del = document.getElementById('btnDeleteCycleData');
+    if (del) del.addEventListener('click', deleteCycleData);
+    const ver = document.getElementById('appVersion');
+    if (ver) ver.textContent = APP_VERSION;
+  }
+
+  /* —— Traductions ——
+   * Le français du HTML est la source. Chaque nœud texte garde son original
+   * pour pouvoir revenir au français. Les lectures longues restent en français.
+   */
+  const I18N_SKIP = '#readingOutput, .verbatim-body, textarea, script, style, #recentProfilesList, .lang-select';
+  const textOrig = new WeakMap();
+  const I18N_ATTRS = ['placeholder', 'aria-label', 'title'];
+
+  function translateString(fr) {
+    if (!I18N || currentLang === 'fr') return fr;
+    const e = I18N.DICT[fr];
+    return e && e[currentLang] ? e[currentLang] : null;
+  }
+
+  function applyI18n() {
+    if (!I18N) return;
+    const root = document.querySelector('.phone');
+    if (!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = walker.nextNode())) {
+      const parent = n.parentElement;
+      if (!parent || parent.closest(I18N_SKIP) || parent.closest('[data-i18n-html]')) continue;
+      let orig = textOrig.get(n);
+      const cur = n.nodeValue;
+      const trimmed = cur.trim();
+      if (!trimmed) continue;
+      if (orig === undefined) {
+        // Premier passage : on ne mémorise que les textes connus (source FR).
+        if (!I18N.DICT[trimmed]) continue;
+        orig = trimmed;
+        textOrig.set(n, orig);
+      }
+      const tr = currentLang === 'fr' ? orig : (I18N.DICT[orig] && I18N.DICT[orig][currentLang]) || orig;
+      const lead = cur.match(/^\s*/)[0];
+      const tail = cur.match(/\s*$/)[0];
+      const next = lead + tr + tail;
+      if (cur !== next) n.nodeValue = next;
+    }
+    root.querySelectorAll('[data-i18n-html]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-html');
+      const entry = I18N.HTML[key];
+      if (entry) el.innerHTML = entry[currentLang] || entry.fr;
+    });
+    I18N_ATTRS.forEach((attr) => {
+      root.querySelectorAll('[' + attr + ']').forEach((el) => {
+        const store = 'i18nOrig' + attr.replace(/-([a-z])/g, (_, c) => c.toUpperCase()).replace(/^./, (c) => c.toUpperCase());
+        let orig = el.dataset[store];
+        if (orig === undefined) {
+          const v = el.getAttribute(attr);
+          if (!v || !I18N.DICT[v.trim()]) return;
+          orig = v.trim();
+          el.dataset[store] = orig;
+        }
+        const tr = currentLang === 'fr' ? orig : (I18N.DICT[orig] && I18N.DICT[orig][currentLang]) || orig;
+        if (el.getAttribute(attr) !== tr) el.setAttribute(attr, tr);
+      });
+    });
+    const note = document.getElementById('readingFrNote');
+    if (note) note.hidden = currentLang === 'fr';
+  }
+
+  function fillLangSelects() {
+    if (!I18N) return;
+    document.querySelectorAll('[data-lang-select]').forEach((sel) => {
+      if (!sel.options.length) {
+        I18N.LANGS.forEach((l) => {
+          const o = document.createElement('option');
+          o.value = l.code;
+          o.textContent = l.label;
+          o.lang = l.html;
+          sel.appendChild(o);
+        });
+        sel.addEventListener('change', () => setLang(sel.value));
+      }
+      sel.value = currentLang;
+    });
+  }
+
+  function setLang(code, silent) {
+    if (!I18N || !I18N.CODES.includes(code)) code = 'fr';
+    currentLang = code;
+    if (!silent) {
+      try { localStorage.setItem(LANG_KEY, code); } catch (_) { /* ignore */ }
+    }
+    const meta = I18N ? I18N.LANGS.find((l) => l.code === code) : null;
+    document.documentElement.lang = meta ? meta.html : 'fr';
+    document.documentElement.setAttribute('data-lang', code);
+    fillLangSelects();
+    // Re-rendu des textes dynamiques puis des textes statiques
+    buildCycleCalendar(document.getElementById('cycleCalendar'));
+    buildMoonCalendar(document.getElementById('moonCalendar'));
+    renderProductSurfaces();
+    syncCalcWords();
+    if (lastCalcRes) {
+      const box = document.getElementById('calcResults');
+      if (box && !box.hidden) renderCalcResults(lastCalcRes);
+    }
+    updatePlansView();
+    renderConsentStatus();
+    renderJournalHistory();
+    applyI18n();
+  }
+
+  /* —— Hors connexion : service worker (pas dans les instantanés figés) —— */
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    if (/\/releases\//.test(location.pathname)) return; // instantané figé : pas de SW
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js?v=' + APP_VERSION, { scope: './' }).catch(() => { /* ignore */ });
     });
   }
 
@@ -2356,6 +2802,17 @@
   }
 
   function init() {
+    currentLang = getLang();
+    document.documentElement.lang = (I18N && (I18N.LANGS.find((l) => l.code === currentLang) || {}).html) || 'fr';
+    document.querySelectorAll('#symptomList .symptom-item').forEach((item) => {
+      item.dataset.fr = item.textContent.trim();
+    });
+    document.querySelectorAll('#moodChips .chip').forEach((c) => {
+      c.setAttribute('aria-pressed', c.classList.contains('selected') ? 'true' : 'false');
+    });
+    document.querySelectorAll('#energySlider button').forEach((b) => {
+      b.setAttribute('aria-pressed', b.classList.contains('selected') ? 'true' : 'false');
+    });
     buildPicker();
     buildCycleCalendar(document.getElementById('cycleCalendar'));
     buildMoonCalendar(document.getElementById('moonCalendar'));
@@ -2363,12 +2820,19 @@
     bindCalculator();
     bindReading();
     bindResetPerson();
+    bindConsent();
+    bindDataAndMarket();
+    fillLangSelects();
     renderProductSurfaces();
+    renderConsentStatus();
+    renderJournalHistory();
+    registerServiceWorker();
     tickClock();
     setInterval(tickClock, 30000);
 
     window.addEventListener('hashchange', () => show(parseHash()));
     const initial = parseHash();
+    setLang(currentLang, true);
     show(initial);
     if (!location.hash) location.hash = '#/' + initial;
 
@@ -2393,6 +2857,12 @@
       canAccessCycle: canAccessCycle,
       key: PLAN_KEY,
       values: PLAN_VALUES.slice(),
+    };
+    window.CycleAstroApp = {
+      version: APP_VERSION,
+      marketUrl: MARKET_URL,
+      setLang: setLang,
+      getLang: () => currentLang,
     };
   }
 

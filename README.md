@@ -1,4 +1,19 @@
-# Cycle & Astro — Maquettes HTML · v3.3
+# Cycle & Astro — v1.1.0
+
+## Nouveautés v1.1.0 (6 octobre 2026)
+
+- **Aucun prix dans l’app** : les prix restent uniquement sur King Daveblessing Market. Les écrans verrouillés gardent les trois forfaits (Astrologie, Cycle menstruel, Astro + Cycle) et ce que chacun déverrouille. « Choisir » ramène au Market et n’active jamais de forfait.
+- **Retour au Market** : bouton discret sur le hub, l’accueil, les écrans verrouillés et le profil. Dans un cadre (iframe) : `postMessage({ type: 'cycle-astro:back-to-market' })` au parent, puis navigation haute si le navigateur l’autorise. Seule : ouvre `MARKET_URL` (constante unique en haut de `app.js`, tunnel temporaire).
+- **Consentement données de cycle** : avant d’enregistrer (calculateur, check-in, correction de période), une feuille explique ce qui est gardé, que tout reste sur le téléphone (localStorage, aucun serveur), que ce n’est pas médical. Clé `ca_consent_cycle_v1`. Refus : l’écran marche pour la session, rien n’est enregistré. Profil → **Exporter mes données** (JSON de toutes les clés `ca_*`) et **Supprimer mes données de cycle** (ne touche pas `ca_plan_v1`).
+- **Langues** : FR (source), EN, ES, PT, 中文. Clé `ca_lang_v1`. Dictionnaire dans `i18n.js`. Les lectures longues (profil complet généré, Krizoua verbatim) restent en français, avec une note.
+- **Accessibilité + hors connexion** : contrastes AA, anneau de focus or foncé, `aria-live` sur les toasts, attribut `lang` mis à jour, mouvement réduit respecté. `sw.js` : réseau d’abord pour HTML/CSS/JS, cache d’abord pour images et polices. `manifest.webmanifest`.
+- **Version figée** : `releases/v1.1.0/` (copie complète, sans service worker) + tag git `v1.1.0`.
+
+Forfaits : `ca_plan_v1` = `aucun | astro | cycle | les_deux` (défaut `aucun`). `window.CycleAstroPlan.set` réservé au futur paiement.
+
+---
+
+## Historique maquettes · v3.3
 
 **Marque :** King Daveblessing · nuit cosmique noir/or  
 **Viewport cible :** 390 × 844 (shell téléphone dans la page)  

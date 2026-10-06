@@ -3700,18 +3700,6 @@ html, body {
   color: #5C4A28;
   letter-spacing: 0.04em;
 }
-.plans-card-price {
-  margin: 0;
-  font-weight: 600;
-  font-size: 15px;
-  color: #1A1A1A;
-  white-space: nowrap;
-}
-.plans-card-price span {
-  font-weight: 400;
-  font-size: 12px;
-  color: #5C4A28;
-}
 .plans-card-desc {
   margin: 0 0 12px;
   font-size: 13px;
@@ -3734,7 +3722,225 @@ html, body {
   color: #5C4A28 !important;
 }
 .phone.ambiance-gate .plans-lead,
-.phone.ambiance-gate .plans-card-desc,
-.phone.ambiance-gate .plans-card-price {
+.phone.ambiance-gate .plans-card-desc {
   color: #1A1A1A !important;
 }
+
+/* —— v1.1.0 · Retour Market, langue, données, consentement, accessibilité —— */
+.hub-topbar,
+.gate-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 6px;
+}
+.gate-tools {
+  justify-content: center;
+  margin-top: 14px;
+}
+.phone .market-back {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(197, 160, 89, 0.75);
+  border-radius: 999px;
+  color: #1A1A1A;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  min-height: 32px;
+  padding: 5px 12px;
+  cursor: pointer;
+  opacity: 1;
+}
+.phone .market-back:hover { border-color: #8F7024; }
+.phone .lang-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #FBF7F0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235C4A28' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid rgba(197, 160, 89, 0.75);
+  border-radius: 999px;
+  color: #1A1A1A;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 32px;
+  padding: 5px 28px 5px 12px;
+  cursor: pointer;
+}
+.phone .lang-card { padding: 12px 16px; }
+.phone .lang-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.phone .lang-row .field-label { margin: 0; }
+
+.phone .data-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.phone .data-card .data-note,
+.phone .data-card .tiny { margin: 0; }
+.phone .data-card .btn { margin: 0; }
+.phone .btn-danger-soft,
+#view-profile .btn-danger-soft {
+  border-color: #A85A72 !important;
+  color: #1A1A1A !important;
+}
+.phone .app-version { color: #1A1A1A !important; }
+
+.phone .plans-market-line {
+  text-align: center;
+  margin: 0 8px 4px;
+  font-weight: 500;
+  color: #1A1A1A !important;
+}
+.phone .read-fr-note {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-left: 2px solid #C5A059;
+  background: #FBF7F0;
+  color: #1A1A1A !important;
+}
+
+/* Feuille de consentement */
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(26, 26, 26, 0.42);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.sheet-backdrop[hidden] { display: none; }
+.sheet {
+  width: 100%;
+  max-height: 88%;
+  overflow-y: auto;
+  background: #FBF7F0;
+  color: #1A1A1A;
+  border-top: 1px solid #C5A059;
+  border-radius: 22px 22px 0 0;
+  padding: 22px 20px 26px;
+  box-shadow: 0 -10px 30px rgba(20, 16, 8, 0.18);
+}
+.phone .sheet .sheet-title { margin: 0 0 8px; font-size: 20px; }
+.phone .sheet .body,
+.phone .sheet .tiny,
+.phone .sheet li { color: #1A1A1A !important; opacity: 1 !important; }
+.sheet-list {
+  margin: 8px 0 12px;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.sheet-list li { margin-bottom: 6px; }
+.sheet-list li::marker { color: #8F7024; }
+.phone .sheet .btn { width: 100%; margin-top: 10px; }
+
+/* Toasts lisibles, même traduits */
+.phone .toast {
+  white-space: normal;
+  max-width: 86%;
+  text-align: center;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-color: #C5A059;
+}
+
+/* Anneau de focus visible (or foncé) */
+.phone button:focus-visible,
+.phone a:focus-visible,
+.phone input:focus-visible,
+.phone select:focus-visible,
+.phone textarea:focus-visible,
+.phone summary:focus-visible,
+.phone [tabindex]:focus-visible,
+.phone .symptom-item:focus-within {
+  outline: 3px solid #8F7024 !important;
+  outline-offset: 2px !important;
+}
+#view-today .pillar-card:focus-visible {
+  outline: 3px solid #C5A059 !important;
+}
+
+/* Lecteurs d’écran : libellés visibles lisibles */
+.phone .cal-day.muted { color: #5C4A28; }
+
+/* Mouvement réduit : poussière d’étoiles coupée, pas d’animations */
+@media (prefers-reduced-motion: reduce) {
+  .phone .stardust,
+  .phone.ambiance-astro .stardust,
+  .phone.ambiance-cycle .stardust,
+  .phone.ambiance-night .stardust,
+  .phone.ambiance-gate .stardust {
+    display: none !important;
+  }
+  .phone *,
+  .phone *::before,
+  .phone *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 中文 : polices système de repli */
+html[data-lang="zh"] body,
+html[data-lang="zh"] .phone,
+html[data-lang="zh"] .phone .body,
+html[data-lang="zh"] .phone .tiny,
+html[data-lang="zh"] .phone button,
+html[data-lang="zh"] .phone select,
+html[data-lang="zh"] .phone input,
+html[data-lang="zh"] .phone li,
+html[data-lang="zh"] .phone p,
+html[data-lang="zh"] .phone span,
+html[data-lang="zh"] .phone label {
+  font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", system-ui, sans-serif;
+}
+html[data-lang="zh"] .phone .h1,
+html[data-lang="zh"] .phone .h3,
+html[data-lang="zh"] .phone .h-serif,
+html[data-lang="zh"] .phone .ambiance-title,
+html[data-lang="zh"] .phone .gate-title,
+html[data-lang="zh"] .phone .app-header .title,
+html[data-lang="zh"] .phone .field-label,
+html[data-lang="zh"] .phone .door-kicker,
+html[data-lang="zh"] .phone .pillar-card .label,
+html[data-lang="zh"] #view-today .greeting .date,
+html[data-lang="zh"] #view-today .phase-badge,
+html[data-lang="zh"] .phone .plans-card-kicker,
+html[data-lang="zh"] .phone .plans-badge {
+  font-family: Cinzel, "Songti SC", "STSong", "Noto Serif CJK SC", "Noto Serif SC", "Source Han Serif SC", "PingFang SC", "Microsoft YaHei", serif;
+  letter-spacing: 0.04em;
+}
+.plans-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.plans-topbar .plans-back { margin: 0; align-self: auto; }
+
+/* Contrastes AA (v1.1.0) : seules les couleurs de texte trop pâles changent. */
+.door-cycle .door-kicker { color: #9A4B63 !important; }
+.phone #view-onboarding .progress .meta span { color: #5C4A28 !important; opacity: 1 !important; }
+.phone #view-onboarding .check-row span { color: #1A1A1A !important; opacity: 1 !important; }
+.phone .app-header .back,
+.phone .ambiance-head .back,
+.phone .app-header .side .back {
+  color: #5C4A28 !important;
+  opacity: 1 !important;
+}
+.phone .planetary-list .k { color: #5C4A28 !important; opacity: 1 !important; }
+.phone .planetary-list .v { color: #1A1A1A !important; opacity: 1 !important; }
+.phone .field-label .req { color: #9A4B63 !important; opacity: 1 !important; }
+.phone .field-label .opt { color: #5C4A28 !important; opacity: 1 !important; }
+.phone .calc-more summary { color: #1A1A1A !important; opacity: 1 !important; }

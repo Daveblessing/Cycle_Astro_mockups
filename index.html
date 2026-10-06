@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cycle & Astro · v3.4 · King Daveblessing</title>
-  <meta name="description" content="Cycle & Astro · v3.4 — maquettes premium KD, 4 piliers, nuit cosmique, manipulation simplifiée." />
-  <meta name="version" content="3.3" />
-  <link rel="stylesheet" href="styles.css?v=f81a5ab" />
+  <title>Cycle & Astro · v1.1.0 · King Daveblessing</title>
+  <meta name="description" content="Cycle & Astro v1.1.0 — bien-être cycle et astrologie, King Daveblessing. Pas un avis médical." />
+  <meta name="version" content="1.1.0" />
+  <meta name="theme-color" content="#F9F6F0" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.1.0" />
+  <link rel="icon" type="image/png" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="styles.css?v=1.1.0" />
 </head>
 <body>
-  <p class="page-label">Cycle & Astro · v3.4</p>
+  <p class="page-label">Cycle & Astro · v1.1.0</p>
   <p class="page-hint">Deux ambiances séparées · Mes règles (clair) · Mon ciel (sombre) · démo FR.</p>
   <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
 
@@ -43,6 +47,10 @@
               </button>
             </div>
             <button type="button" class="link-silver gate-reset" id="btnResetPersonHome">Nouvelle personne</button>
+            <div class="gate-tools">
+              <button type="button" class="market-back" data-market-back aria-label="Retour au Market">← Market</button>
+              <select class="lang-select" data-lang-select aria-label="Langue"></select>
+            </div>
           </div>
         </section>
 
@@ -56,8 +64,8 @@
           <p class="body-muted" style="margin-bottom:14px;">Une lecture importante — bienveillance avant tout.</p>
           <div class="disclaimer-box">
             <p><strong>Cycle &amp; Astro n’est pas un dispositif médical.</strong></p>
-            <p style="margin-top:10px;">Les informations sur le cycle, la Lune, l’astrologie et le chemin de vie sont proposées à titre <strong>informatif et de bien-être personnel</strong>.</p>
-            <p style="margin-top:10px;">Elles ne constituent <strong>ni un diagnostic, ni un conseil médical, ni un moyen de contraception ou de conception</strong>.</p>
+            <p style="margin-top:10px;" data-i18n-html="disc2">Les informations sur le cycle, la Lune, l’astrologie et le chemin de vie sont proposées à titre <strong>informatif et de bien-être personnel</strong>.</p>
+            <p style="margin-top:10px;" data-i18n-html="disc3">Elles ne constituent <strong>ni un diagnostic, ni un conseil médical, ni un moyen de contraception ou de conception</strong>.</p>
             <p style="margin-top:10px;">Pour toute question de santé, consulte un·e professionnel·le de santé.</p>
           </div>
           <label class="check-row">
@@ -71,12 +79,16 @@
 
         <!-- 3. Hub Aujourd’hui — ébauche restaurée (ffdfda3) -->
         <section class="view" id="view-today" data-screen="today" data-label="Hub Aujourd’hui" data-nav="today">
+          <div class="hub-topbar">
+            <button type="button" class="market-back" data-market-back aria-label="Retour au Market">← Market</button>
+            <select class="lang-select" data-lang-select aria-label="Langue"></select>
+          </div>
           <div class="greeting">
             <p class="hello" id="hubHello" hidden>Bonjour, Aïcha</p>
             <p class="date" id="hubDate">Mercredi 23 septembre 2026</p>
           </div>
 
-          <div class="card glass-card cycle-hero" data-go="cycle" role="button" tabindex="0">
+          <div class="card glass-card cycle-hero" data-go="cycle">
             <div class="cycle-hero-top">
               <span class="phase-badge">Phase lutéale</span>
             </div>
@@ -108,25 +120,25 @@
           <div class="grid-2 pillars-grid">
             <button class="pillar-card pillar-cta" data-go="cycle" type="button">
               <span class="label">Cycle menstruel</span>
-              <span class="glyph">◉</span>
+              <span class="glyph" aria-hidden="true">◉</span>
               <span class="value">Jour 23</span>
               <span class="sub">Ralentir et ressentir</span>
             </button>
             <button class="pillar-card pillar-cta" data-go="moon" type="button">
               <span class="label">Lune</span>
-              <span class="glyph">☾</span>
+              <span class="glyph" aria-hidden="true">☾</span>
               <span class="value">Gibbeuse</span>
               <span class="sub">Écoute ce qui se termine</span>
             </button>
             <button class="pillar-card pillar-cta" data-go="astro" type="button">
               <span class="label">Astro</span>
-              <span class="glyph">✦</span>
+              <span class="glyph" aria-hidden="true">✦</span>
               <span class="value">Vierge</span>
               <span class="sub">Message du jour</span>
             </button>
             <button class="pillar-card pillar-cta" data-go="path" type="button">
               <span class="label">Chemin</span>
-              <span class="glyph">8</span>
+              <span class="glyph" aria-hidden="true">8</span>
               <span class="value">Maîtrise</span>
               <span class="sub">Axes à explorer</span>
             </button>
@@ -195,22 +207,22 @@
             <h3 class="h-serif h3">Phases du mois</h3>
             <div class="grid-2" style="margin-bottom:0;">
               <div class="card" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">○</div>
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">○</div>
                 <div class="h-serif" style="font-size:10px;">Nouvelle</div>
                 <div class="tiny">12 septembre</div>
               </div>
               <div class="card selected" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">◐</div>
-                <div class="h-serif" style="font-size:10px;">1<sup>er</sup> quartier</div>
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◐</div>
+                <div class="h-serif" style="font-size:10px;" data-i18n-html="q1">1<sup>er</sup> quartier</div>
                 <div class="tiny">14 septembre</div>
               </div>
               <div class="card" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;">●</div>
+                <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;" aria-hidden="true">●</div>
                 <div class="h-serif" style="font-size:10px;">Pleine</div>
                 <div class="tiny">26 septembre</div>
               </div>
               <div class="card" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;">◑</div>
+                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◑</div>
                 <div class="h-serif" style="font-size:10px;">Dernier q.</div>
                 <div class="tiny">fin septembre</div>
               </div>
@@ -219,9 +231,9 @@
 
           <div class="card">
             <div class="cal-head">
-              <button class="cal-nav" type="button">‹</button>
+              <button class="cal-nav" type="button" aria-label="Mois précédent">‹</button>
               <span class="month">Calendrier lunaire</span>
-              <button class="cal-nav" type="button">›</button>
+              <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
             </div>
             <div class="cal-grid" id="moonCalendar" aria-label="Calendrier lunaire"></div>
           </div>
@@ -268,7 +280,7 @@
             <h3 class="h-serif h3">Phase lunaire</h3>
             <div class="card-row">
               <span class="body">Gibbeuse décroissante</span>
-              <span style="font-size:28px;color:var(--silver);">☾</span>
+              <span style="font-size:28px;color:var(--silver);" aria-hidden="true">☾</span>
             </div>
           </div>
 
@@ -315,15 +327,15 @@
           <div class="card">
             <h3 class="h-serif h3">Mon thème natal lite</h3>
             <div class="natal-row">
-              <div class="natal-badge sun">☉</div>
+              <div class="natal-badge sun" aria-hidden="true">☉</div>
               <div class="meta"><div class="k">Soleil</div><div class="v">Vierge</div></div>
             </div>
             <div class="natal-row">
-              <div class="natal-badge moon">☾</div>
+              <div class="natal-badge moon" aria-hidden="true">☾</div>
               <div class="meta"><div class="k">Lune</div><div class="v">Cancer</div></div>
             </div>
             <div class="natal-row">
-              <div class="natal-badge asc">↑</div>
+              <div class="natal-badge asc" aria-hidden="true">↑</div>
               <div class="meta"><div class="k">Ascendant</div><div class="v">Scorpion <span class="tiny">(si heure)</span></div></div>
             </div>
             <p class="italic" style="margin-top:8px;">Manque heure / lieu ? Complète dans Profil pour affiner.</p>
@@ -376,8 +388,8 @@
 
           <div id="checkinForm">
             <p class="body-muted" style="margin-bottom:8px;">Aujourd’hui · 23 septembre 2026</p>
-            <h3 class="h-serif h3">Comment tu te sens ?</h3>
-            <div class="chips" id="moodChips">
+            <h3 class="h-serif h3" id="moodTitle">Comment tu te sens ?</h3>
+            <div class="chips" id="moodChips" role="group" aria-labelledby="moodTitle">
               <button type="button" class="chip" data-mood="sereine">Sereine</button>
               <button type="button" class="chip" data-mood="fatiguee">Fatiguée</button>
               <button type="button" class="chip selected" data-mood="energique">Énergique</button>
@@ -386,8 +398,8 @@
               <button type="button" class="chip" data-mood="calme">Besoin de calme</button>
             </div>
 
-            <h3 class="h-serif h3">Ce que tu ressens</h3>
-            <div class="symptom-list" id="symptomList">
+            <h3 class="h-serif h3" id="symptomTitle">Ce que tu ressens</h3>
+            <div class="symptom-list" id="symptomList" role="group" aria-labelledby="symptomTitle">
               <label class="symptom-item"><input type="checkbox" /> Crampes légères</label>
               <label class="symptom-item selected"><input type="checkbox" checked /> Fatigue</label>
               <label class="symptom-item"><input type="checkbox" /> Ballonnements</label>
@@ -398,8 +410,8 @@
               <label class="symptom-item"><input type="checkbox" /> Motivation</label>
             </div>
 
-            <h3 class="h-serif h3">Énergie <span class="tiny" id="energyLabel">3 / 5</span></h3>
-            <div class="energy-slider" id="energySlider">
+            <h3 class="h-serif h3" id="energyTitle">Énergie <span class="tiny" id="energyLabel">3 / 5</span></h3>
+            <div class="energy-slider" id="energySlider" role="group" aria-labelledby="energyTitle">
               <button type="button" data-e="1">1</button>
               <button type="button" data-e="2">2</button>
               <button type="button" class="selected" data-e="3">3</button>
@@ -407,7 +419,7 @@
               <button type="button" data-e="5">5</button>
             </div>
 
-            <h3 class="h-serif h3">Note (optionnel)</h3>
+            <h3 class="h-serif h3"><label for="noteField">Note (optionnel)</label></h3>
             <textarea class="textarea" placeholder="Quelques mots pour toi…" id="noteField">Journée douce, un peu de fatigue en fin d’après-midi.</textarea>
 
             <button class="btn btn-primary" type="button" id="btnSaveCheckin">Enregistrer</button>
@@ -416,7 +428,7 @@
 
           <div id="historyPanel" hidden>
             <h3 class="h-serif h3">Historique récent</h3>
-            <div class="card" style="padding:4px 12px;">
+            <div class="card" style="padding:4px 12px;" id="historyList">
               <div class="history-item">
                 <span class="d">23 septembre</span>
                 <span class="c">Énergique · fatigue, sensibilité</span>
@@ -460,22 +472,22 @@
 
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
-              <li><button type="button" data-go="path">Mon chemin de vie <span class="chev">›</span></button></li>
-              <li><button type="button" data-go="reading">Profil complet <span class="chev">›</span></button></li>
-              <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev">›</span></button></li>
-              <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev">›</span></button></li>
-              <li><button type="button">Modifier mes infos <span class="chev">›</span></button></li>
-              <li><button type="button">Intentions <span class="chev">›</span></button></li>
+              <li><button type="button" data-go="path">Mon chemin de vie <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" data-go="reading">Profil complet <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" data-go="calculator">Calculateur de menstruation <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" data-go="astro">Mon thème simplifié <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">Modifier mes infos <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">Intentions <span class="chev" aria-hidden="true">›</span></button></li>
             </ul>
           </div>
 
           <h3 class="h-serif h3 section-gap">Réglages</h3>
           <div class="card" style="padding:4px 14px;">
             <ul class="menu-list">
-              <li><button type="button">Notifications <span class="chev">›</span></button></li>
-              <li><button type="button">Données &amp; confidentialité <span class="chev">›</span></button></li>
-              <li><button type="button" id="btnShowDisclaimer">Santé &amp; disclaimer <span class="chev">›</span></button></li>
-              <li><button type="button">À propos <span class="chev">›</span></button></li>
+              <li><button type="button">Notifications <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">Données &amp; confidentialité <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button" id="btnShowDisclaimer">Santé &amp; disclaimer <span class="chev" aria-hidden="true">›</span></button></li>
+              <li><button type="button">À propos <span class="chev" aria-hidden="true">›</span></button></li>
             </ul>
           </div>
 
@@ -490,8 +502,23 @@
             <button class="btn btn-ghost btn-sm" type="button" id="btnHideDisclaimer" style="margin-top:10px;width:auto;">Fermer</button>
           </div>
 
-          <button class="btn btn-primary" type="button" data-go="market" style="margin-top:8px;">← Retour au Market</button>
-          <p class="tiny" style="text-align:center;margin-top:12px;">Route cible Market : #/cycle-astro · alias #/cycle</p>
+          <h3 class="h-serif h3 section-gap" id="dataTitle">Mes données</h3>
+          <div class="card data-card" aria-labelledby="dataTitle">
+            <p class="body data-note">Tes données restent sur ce téléphone. Aucun serveur.</p>
+            <p class="tiny" id="consentStatus">Consentement : pas encore donné</p>
+            <button type="button" class="btn btn-ghost" id="btnExportData">Exporter mes données</button>
+            <button type="button" class="btn btn-ghost btn-danger-soft" id="btnDeleteCycleData">Supprimer mes données de cycle</button>
+          </div>
+
+          <div class="card lang-card">
+            <label class="lang-row">
+              <span class="field-label">Langue</span>
+              <select class="lang-select" data-lang-select></select>
+            </label>
+          </div>
+
+          <button class="btn btn-primary" type="button" data-market-back style="margin-top:8px;">← Retour au Market</button>
+          <p class="tiny app-version" style="text-align:center;margin-top:12px;"><span>Version</span> <span id="appVersion">1.1.0</span></p>
         </section>
 
 
@@ -561,6 +588,7 @@
             <p class="body-muted">Génération de ton profil complet…</p>
           </div>
 
+          <p class="tiny read-fr-note" id="readingFrNote" hidden>La lecture détaillée est en français.</p>
           <div id="readingOutput" hidden>
 
             <!-- Mode verbatim KD (Krizoua) -->
@@ -734,18 +762,21 @@
         <!-- Forfaits / verrouillage -->
         <section class="view no-nav" id="view-plans" data-screen="plans" data-label="Forfaits">
           <div class="plans-lock">
-            <button class="back plans-back" data-go="splash" type="button">← Accueil</button>
+            <div class="plans-topbar">
+              <button class="market-back plans-back" data-go="splash" type="button">← Accueil</button>
+              <button type="button" class="market-back" data-market-back aria-label="Retour au Market">← Market</button>
+            </div>
             <div class="plans-lock-icon" aria-hidden="true">🔒</div>
             <p class="plans-badge" id="plansBadge">Astrologie</p>
             <h2 class="h-serif h1 plans-title" id="plansTitle">Contenu verrouillé</h2>
-            <p class="body-muted plans-lead" id="plansLead">Cet espace demande un forfait actif. Choisis ci-dessous — le paiement arrivera bientôt.</p>
+            <p class="body-muted plans-lead" id="plansLead">Cet espace Astrologie demande un forfait actif.</p>
+            <p class="body plans-market-line">Les forfaits sont proposés sur King Daveblessing Market.</p>
             <p class="plans-status" id="plansStatus">Aucun forfait actif</p>
 
             <div class="plans-list" role="list">
               <article class="plans-card" data-plan-id="astro" role="listitem">
                 <div class="plans-card-top">
                   <p class="plans-card-kicker">Astrologie</p>
-                  <p class="plans-card-price">10 000 F <span>/ mois</span></p>
                 </div>
                 <p class="plans-card-desc">Déverrouille Astro, le profil complet et la mission de vie.</p>
                 <button type="button" class="btn btn-primary plans-choose" data-plan-choose="astro">Choisir</button>
@@ -754,7 +785,6 @@
               <article class="plans-card" data-plan-id="cycle" role="listitem">
                 <div class="plans-card-top">
                   <p class="plans-card-kicker">Cycle menstruel</p>
-                  <p class="plans-card-price">10 000 F <span>/ mois</span></p>
                 </div>
                 <p class="plans-card-desc">Déverrouille le cycle, le calculateur et le journal du jour.</p>
                 <button type="button" class="btn btn-primary plans-choose" data-plan-choose="cycle">Choisir</button>
@@ -763,44 +793,50 @@
               <article class="plans-card plans-card-featured" data-plan-id="les_deux" role="listitem">
                 <div class="plans-card-top">
                   <p class="plans-card-kicker">Astro + Cycle</p>
-                  <p class="plans-card-price">15 000 F <span>/ mois</span></p>
                 </div>
                 <p class="plans-card-desc">Les deux espaces, dans la même application.</p>
                 <button type="button" class="btn btn-primary plans-choose" data-plan-choose="les_deux">Choisir</button>
               </article>
             </div>
 
-            <p class="footnote plans-foot">Paiement bientôt disponible. Aucun forfait n’est activé depuis cet écran.</p>
+            <p class="footnote plans-foot">Aucun forfait n’est activé depuis cet écran.</p>
+            <button type="button" class="btn btn-ghost" data-market-back>← Retour au Market</button>
             <button type="button" class="btn btn-ghost" data-go="today">Voir le hub</button>
           </div>
         </section>
 
-        <!-- Market stub -->
-        <section class="view no-nav" id="view-market" data-screen="market" data-label="Retour Market (stub)">
-          <div class="splash" style="justify-content:center;">
-            <p class="brand-kd">KING DAVEBLESSING MARKET</p>
-            <h1 class="brand-name" style="font-size:20px;">Retour Market</h1>
-            <p class="tagline">Stub de navigation — en prod, ceci ramène au shell Market (#/ ou home). Aucune modification du repo Market dans ce livrable.</p>
-            <div class="cta-wrap">
-              <button class="btn btn-primary" data-go="today">Revenir à Cycle &amp; Astro</button>
-              <button class="btn btn-ghost" data-go="splash">Splash</button>
-            </div>
-          </div>
-        </section>
 
       </div>
 
       <nav class="bottom-nav" id="bottomNav" aria-label="Navigation principale">
-        <button class="nav-item" data-go="splash" type="button" data-ripple><span class="ico">✦</span><span class="nav-label">Accueil</span></button>
-        <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel" data-ripple><span class="ico">◉</span><span class="nav-label">Cycle</span></button>
-        <button class="nav-item" data-go="journal" type="button" data-ripple><span class="ico">✎</span><span class="nav-label">Journal</span></button>
-        <button class="nav-item" data-go="profile" type="button" data-ripple><span class="ico">◎</span><span class="nav-label">Plus</span></button>
+        <button class="nav-item" data-go="splash" type="button" data-ripple><span class="ico" aria-hidden="true">✦</span><span class="nav-label">Accueil</span></button>
+        <button class="nav-item" data-go="cycle" type="button" title="Cycle menstruel" aria-label="Cycle menstruel" data-ripple><span class="ico" aria-hidden="true">◉</span><span class="nav-label">Cycle</span></button>
+        <button class="nav-item" data-go="journal" type="button" data-ripple><span class="ico" aria-hidden="true">✎</span><span class="nav-label">Journal</span></button>
+        <button class="nav-item" data-go="profile" type="button" data-ripple><span class="ico" aria-hidden="true">◎</span><span class="nav-label">Plus</span></button>
       </nav>
 
-      <div class="toast" id="toast" role="status"></div>
+      <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- Consentement données de cycle -->
+      <div class="sheet-backdrop" id="consentSheet" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="consentTitle" aria-describedby="consentLead">
+          <h2 class="h-serif h1 sheet-title" id="consentTitle">Tes données de cycle</h2>
+          <p class="body" id="consentLead">Avant d’enregistrer, voici ce qui est gardé :</p>
+          <ul class="sheet-list">
+            <li>Tes dates de règles et la longueur de ton cycle.</li>
+            <li>Ton journal du jour : humeur, sensations, énergie, note.</li>
+            <li>Tout reste sur ce téléphone uniquement. Rien n’est envoyé sur un serveur.</li>
+            <li>Ce n’est pas un suivi médical.</li>
+          </ul>
+          <p class="tiny">Tu peux exporter ou supprimer ces données à tout moment dans Profil.</p>
+          <button type="button" class="btn btn-primary" id="btnConsentYes">J’accepte</button>
+          <button type="button" class="btn btn-ghost" id="btnConsentNo">Non merci</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="i18n.js?v=1.1.0"></script>
+  <script src="app.js?v=1.1.0"></script>
 </body>
 </html>
