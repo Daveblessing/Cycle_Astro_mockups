@@ -1,4 +1,13 @@
-# Cycle & Astro — v1.1.0
+# Cycle & Astro — v1.2.0
+
+## Nouveautés v1.2.0 (6 octobre 2026)
+
+- **Phases en couleurs foncées** (texte blanc, contraste AA) : menstruelle #7A1F3D, folliculaire #1F5E4A, ovulatoire (estimée) #8A5200, lutéale #4A2C5E. Calendrier de septembre, légende, repère du jour, frise des 4 phases sur Cycle et dans le calculateur.
+- **Cycle** (verrou Cycle) : Lune sur le calendrier, conseils par phase, rappels agenda `.ics`, historique des règles et moyennes (`ca_periods_v1`, avec consentement), tendances par phase depuis le journal, question du jour dans le journal, check-in à une date choisie.
+- **Astro** (verrou Astro) : horoscope du jour par signe, ciel du jour / voyage dans le temps (Soleil et Lune calculés), compatibilité des signes.
+- Écran Lune corrigé (23 septembre 2026 = gibbeuse croissante, Lune en Verseau ; nouvelle lune 11, 1er quartier 18, pleine 26, dernier quartier 3 octobre).
+- Aucun prix, aucun paiement. Export et suppression incluent `ca_periods_v1`.
+- **Version figée** : `releases/v1.2.0/` + tag `v1.2.0`. Benchmark : `docs/benchmark-v1.2.md`.
 
 ## Nouveautés v1.1.0 (6 octobre 2026)
 
