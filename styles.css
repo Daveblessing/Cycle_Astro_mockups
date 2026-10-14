@@ -4703,3 +4703,11 @@ html[data-lang="zh"] .phone .plans-badge {
 .phone #view-historique .hist-stats { grid-template-columns: repeat(3, 1fr); }
 .phone #histNext { color: #7A5A14; }
 .phone #view-historique [hidden] { display: none !important; }
+
+/* —— v1.5.0 : Message lunaire —— */
+.phone .moon-gestures { margin: 8px 0 4px; padding-left: 1.2em; color: #1A1A1A; }
+.phone .moon-gestures li { margin: 4px 0; font-size: 14px; }
+.phone .moon-q-msg { margin-top: 6px; color: #1A1A1A; line-height: 1.35; }
+.phone #moonSignLine, .phone #astroMoonMeta { color: #7A5A14; }
+.phone #moonMonthGrid .card { min-height: 0; }
+.phone #secLunaire .planetary-list { margin-top: 8px; }

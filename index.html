@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Cycle & Astro · v1.4.0 · King Daveblessing</title>
-  <meta name="description" content="Cycle & Astro v1.4.0 — bien-être cycle et astrologie, King Daveblessing. Pas un avis médical." />
-  <meta name="version" content="1.4.0" />
+  <title>Cycle & Astro · v1.5.0 · King Daveblessing</title>
+  <meta name="description" content="Cycle & Astro v1.5.0 — bien-être cycle et astrologie, King Daveblessing. Pas un avis médical." />
+  <meta name="version" content="1.5.0" />
   <meta name="theme-color" content="#F9F6F0" />
-  <link rel="manifest" href="manifest.webmanifest?v=1.4.0" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.5.0" />
   <link rel="icon" type="image/png" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="styles.css?v=1.4.0" />
+  <link rel="stylesheet" href="styles.css?v=1.5.0" />
 </head>
 <body>
-  <p class="page-label">Cycle & Astro · v1.4.0</p>
+  <p class="page-label">Cycle & Astro · v1.5.0</p>
   <p class="page-hint">Deux ambiances séparées · Mes règles (clair) · Mon ciel (sombre) · démo FR.</p>
   <div class="screen-picker" id="screenPicker" aria-label="Sélecteur d’écrans"></div>
 
@@ -143,8 +143,8 @@
             <button class="pillar-card pillar-cta" data-go="moon" type="button">
               <span class="label">Lune</span>
               <span class="glyph" aria-hidden="true">☾</span>
-              <span class="value">Premier croissant</span>
-              <span class="sub">Laisse aller en douceur</span>
+              <span class="value" id="hubMoonPhase">Premier croissant</span>
+              <span class="sub" id="hubMoonSub">Laisse aller en douceur</span>
             </button>
             <button class="pillar-card pillar-cta" data-go="astro" type="button">
               <span class="label">Astro</span>
@@ -291,47 +291,40 @@
           </div>
 
           <div class="moon-hero">
-            <div class="moon-visual waxing" aria-hidden="true" title="Gibbeuse croissante"></div>
-            <p class="h-serif h1">Gibbeuse croissante</p>
-            <p class="italic" style="margin-top:6px;">14 octobre 2026 · illumination ~14 %</p>
+            <div class="moon-visual" id="moonVisual" aria-hidden="true"></div>
+            <p class="h-serif h1" id="moonPhaseName">—</p>
+            <p class="italic" id="moonPhaseMeta" style="margin-top:6px;">—</p>
+            <p class="tiny" id="moonSignLine">—</p>
+          </div>
+
+          <div class="card" id="moonMsgCard">
+            <h3 class="h-serif h3">Message lunaire du jour</h3>
+            <p class="body" id="moonMsgText">—</p>
+            <ul class="moon-gestures" id="moonMsgGestures"></ul>
+            <p class="tiny">Lecture symbolique. Une piste, pas une sentence. Pas un avis médical.</p>
           </div>
 
           <div class="card">
-            <h3 class="h-serif h3">Énergie du jour</h3>
-            <p class="body">Une piste pour nourrir ce qui grandit. La Lune croissante invite à préparer et rassembler — sans obligation, juste une invitation.</p>
+            <h3 class="h-serif h3">Prochaines phases</h3>
+            <div class="planetary-list" id="moonNextList"></div>
           </div>
 
           <div class="card">
             <h3 class="h-serif h3">Phases du mois</h3>
-            <div class="grid-2" style="margin-bottom:0;">
-              <div class="card" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">○</div>
-                <div class="h-serif" style="font-size:10px;">Nouvelle</div>
-                <div class="tiny">11 septembre</div>
-              </div>
-              <div class="card" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◐</div>
-                <div class="h-serif" style="font-size:10px;" data-i18n-html="q1">1<sup>er</sup> quartier</div>
-                <div class="tiny">18 septembre</div>
-              </div>
-              <div class="card selected" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--gold-soft);margin-bottom:4px;" aria-hidden="true">●</div>
-                <div class="h-serif" style="font-size:10px;">Pleine</div>
-                <div class="tiny">26 septembre</div>
-              </div>
-              <div class="card" style="padding:12px;margin:0;">
-                <div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">◑</div>
-                <div class="h-serif" style="font-size:10px;">Dernier q.</div>
-                <div class="tiny">3 octobre</div>
-              </div>
+            <div class="cal-head" style="margin-bottom:8px;">
+              <button class="cal-nav" type="button" data-moon-dir="prev" aria-label="Mois précédent">‹</button>
+              <span class="month" id="moonMonthLabel">—</span>
+              <button class="cal-nav" type="button" data-moon-dir="next" aria-label="Mois suivant">›</button>
             </div>
+            <div class="grid-2" id="moonMonthGrid" style="margin-bottom:0;"></div>
+            <p class="tiny">Jusqu’à décembre 2028 · calculées en direct (astronomy-engine).</p>
           </div>
 
           <div class="card">
             <div class="cal-head">
-              <button class="cal-nav" type="button" aria-label="Mois précédent">‹</button>
-              <span class="month">Calendrier lunaire</span>
-              <button class="cal-nav" type="button" aria-label="Mois suivant">›</button>
+              <button class="cal-nav" type="button" data-moon-cal-dir="prev" aria-label="Mois précédent">‹</button>
+              <span class="month" id="moonCalMonthLabel">Calendrier lunaire</span>
+              <button class="cal-nav" type="button" data-moon-cal-dir="next" aria-label="Mois suivant">›</button>
             </div>
             <div class="cal-grid" id="moonCalendar" aria-label="Calendrier lunaire"></div>
           </div>
@@ -366,6 +359,7 @@
             <button type="button" class="hub-chip" data-jump="secTarot">Tarot</button>
             <button type="button" class="hub-chip" data-jump="secMeditMoon">Méditer</button>
             <button type="button" class="hub-chip" data-jump="secNatal">Thème natal</button>
+            <button type="button" class="hub-chip" data-jump="secLunaire">Lunaire</button>
             <button type="button" class="hub-chip" data-jump="secHoroscope">Horoscope</button>
             <button type="button" class="hub-chip" data-jump="secCompat">Compatibilité</button>
           </nav>
@@ -379,7 +373,16 @@
               <div class="natal-badge sun" aria-hidden="true">♍</div>
             </div>
             <h3 class="h-serif h3">Message du jour</h3>
-            <p class="body">Harmonie, écoute et juste mesure seront tes atouts. L’énergie du 23 septembre invite à l’équilibre — une piste, pas une sentence.</p>
+            <p class="body" id="astroDayMsg">—</p>
+          </div>
+
+          <div class="card" id="secLunaire">
+            <h3 class="h-serif h3">Message lunaire du jour</h3>
+            <p class="tiny" id="astroMoonMeta">—</p>
+            <p class="body" id="astroMoonMsg">—</p>
+            <ul class="moon-gestures" id="astroMoonGestures"></ul>
+            <div class="planetary-list" id="astroMoonNext" style="margin-top:10px;"></div>
+            <p class="tiny">Les messages lunaires que nous apportent les astres en temps lunaire. Lecture symbolique, pas une prédiction.</p>
           </div>
 
           <div class="star-sep" aria-hidden="true"><span>✦</span></div>
@@ -428,7 +431,7 @@
           <div class="card">
             <h3 class="h-serif h3">Phase lunaire</h3>
             <div class="card-row">
-              <span class="body">Gibbeuse croissante</span>
+              <span class="body" id="astroPhaseLine">—</span>
               <span class="moon-glyph" aria-hidden="true">☾</span>
             </div>
           </div>
@@ -449,7 +452,7 @@
             <h3 class="h-serif h3">Positions (aperçu)</h3>
             <div class="planetary-list" id="positionsList">
               <span class="k">Soleil</span><span class="v">en Balance</span>
-              <span class="k">Lune</span><span class="v">en Verseau</span>
+              <span class="k">Lune</span><span class="v" id="posMoon">—</span>
               <span class="k">Mercure</span><span class="v">en Vierge</span>
               <span class="k">Vénus</span><span class="v">en Scorpion</span>
             </div>
@@ -460,12 +463,12 @@
             <h3 class="h-serif h3">Ciel du jour · voyage dans le temps</h3>
             <label class="field">
               <span class="field-label">Choisis une date</span>
-              <input type="date" id="skyDate" value="2026-09-23" min="1900-01-01" max="2100-12-31" />
+              <input type="date" id="skyDate" value="2026-10-14" min="1900-01-01" max="2028-12-31" />
               <span class="date-words" id="skyDateWords"></span>
             </label>
             <div class="planetary-list" id="skyList"></div>
             <p class="body" id="skyText" style="margin-top:10px;"></p>
-            <button type="button" class="link-silver" id="btnSkyToday">Revenir au 14 octobre 2026</button>
+            <button type="button" class="link-silver" id="btnSkyToday">Revenir à aujourd’hui</button>
             <p class="tiny" id="skyNote">Soleil et Lune calculés sur le téléphone (précision d’environ un degré). Les autres planètes ne sont pas calculées.</p>
           </div>
 
@@ -525,7 +528,7 @@
             <form class="simple-form natal-form" id="natalForm" novalidate>
               <label class="field">
                 <span class="field-label">Date de naissance</span>
-                <input type="date" id="natalDate" min="1900-01-01" max="2100-12-31" required />
+                <input type="date" id="natalDate" min="1900-01-01" max="2028-12-31" required />
                 <span class="date-words" id="natalDateWords"></span>
               </label>
               <label class="field">
@@ -759,7 +762,7 @@
           </div>
 
           <button class="btn btn-primary" type="button" data-market-back style="margin-top:8px;">← Retour au Market</button>
-          <p class="tiny app-version" style="text-align:center;margin-top:12px;"><span>Version</span> <span id="appVersion">1.4.0</span></p>
+          <p class="tiny app-version" style="text-align:center;margin-top:12px;"><span>Version</span> <span id="appVersion">1.5.0</span></p>
         </section>
 
 
@@ -1005,7 +1008,7 @@
 
         <!-- Forfaits / verrouillage -->
 
-        <!-- Historique (Cycle) — v1.4.0 -->
+        <!-- Historique (Cycle) — v1.5.0 -->
         <section class="view no-nav" id="view-historique" data-screen="historique" data-label="Historique" data-nav="cycle">
           <div class="ambiance-head">
             <button class="back" data-go="cycle" type="button">← Cycle</button>
@@ -1138,8 +1141,9 @@
   </div>
 
   <script src="assets/vendor/astronomy.browser.min.js?v=2.1.19"></script>
-  <script src="cycle-calc.js?v=1.4.0"></script>
-  <script src="i18n.js?v=1.4.0"></script>
-  <script src="app.js?v=1.4.0"></script>
+  <script src="cycle-calc.js?v=1.5.0"></script>
+  <script src="moon-calc.js?v=1.5.0"></script>
+  <script src="i18n.js?v=1.5.0"></script>
+  <script src="app.js?v=1.5.0"></script>
 </body>
 </html>

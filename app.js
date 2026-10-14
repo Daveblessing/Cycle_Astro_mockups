@@ -1,5 +1,5 @@
 /**
- * Cycle & Astro · v1.4.0
+ * Cycle & Astro · v1.5.0
  * Navigation hash légère + profil complet multi-personnes (pas de backend)
  * King Daveblessing · Abidjan · FR + EN/ES/PT/中文 · bien-être, pas un avis médical
  */
@@ -10,7 +10,7 @@
    * « Retour au Market » : aucune adresse codée en dur (v1.3.1).
    * Dans un cadre : message au parent seulement. Seule : ?market=, puis référent, puis historique, puis le hub.
    */
-  const APP_VERSION = '1.4.0';
+  const APP_VERSION = '1.5.0';
 
   /* Clés localStorage (tout reste sur le téléphone, aucun serveur). */
   const LANG_KEY = 'ca_lang_v1';
@@ -20,8 +20,10 @@
   const CYCLE_DATA_KEYS = ['ca_calc_v1', JOURNAL_KEY, 'ca_period_edits_v1', 'ca_periods_v1', CONSENT_KEY];
 
   const I18N = window.CA_I18N || null;
-  /* v1.4.0 : moteur de calcul pur, partagé avec tests/cycle-calc.test.js */
+  /* v1.5.0 : moteur de calcul pur, partagé avec tests/cycle-calc.test.js */
   const CC = window.CycleCalc;
+  const MC = window.MoonCalc || null;
+  const CAL_MAX = { year: 2028, month: 11 };
   let currentLang = 'fr';
 
   function getLang() {
@@ -264,6 +266,7 @@
     applyAmbiance(viewScreen === 'plans' ? 'gate' : viewScreen);
     if (viewScreen === 'historique') renderHistory();
     if (viewScreen === 'cycle') { buildCycleCalendar(document.getElementById('cycleCalendar')); renderCycleV12(); }
+    if (viewScreen === 'astro' || viewScreen === 'moon' || viewScreen === 'today') renderLunarSurfaces();
     applyI18n();
   }
 
@@ -332,7 +335,7 @@
       el.textContent = d;
       container.appendChild(el);
     });
-    // v1.4.0 : grille calculée pour le mois affiché (‹ › fonctionnent), couleurs = moteur D0/P/C
+    // v1.5.0 : grille calculée pour le mois affiché (‹ › fonctionnent), couleurs = moteur D0/P/C
     // (même entrées que le calculateur) ; après le jour C, un nouveau cycle recommence.
     const Y = calMonth.year, M = calMonth.month;
     const g = CC.monthGrid(Y, M);
@@ -375,7 +378,10 @@
   function bindCycleCalendarNav() {
     document.querySelectorAll('#view-cycle .cal-nav').forEach((b, i) => {
       b.addEventListener('click', () => {
-        calMonth = CC.shiftMonth(calMonth.year, calMonth.month, b.dataset.dir === 'prev' || (!b.dataset.dir && i === 0) ? -1 : 1);
+        const next = CC.shiftMonth(calMonth.year, calMonth.month, b.dataset.dir === 'prev' || (!b.dataset.dir && i === 0) ? -1 : 1);
+        if (next.year > CAL_MAX.year || (next.year === CAL_MAX.year && next.month > CAL_MAX.month)) return;
+        if (next.year < 2020) return;
+        calMonth = next;
         buildCycleCalendar(document.getElementById('cycleCalendar'));
       });
     });
@@ -391,17 +397,36 @@
       el.textContent = d;
       container.appendChild(el);
     });
-    // v1.4.0 : mois du jour produit (octobre 2026), phases principales calculées
+    // v1.5.0 : mois navigable jusqu’à déc. 2028 ; phases principales via astronomy-engine
+    if (typeof moonCalMonth === 'undefined' || !moonCalMonth) {
+      const t0 = productToday();
+      moonCalMonth = { year: t0.getFullYear(), month: t0.getMonth() };
+    }
+    const Y = moonCalMonth.year, M = moonCalMonth.month;
+    const g = CC.monthGrid(Y, M);
     const td = productToday();
-    const g = CC.monthGrid(td.getFullYear(), td.getMonth());
-    const today = td.getDate();
+    const label = document.getElementById('moonCalMonthLabel');
+    if (label) {
+      const mn = I18N ? I18N.MONTHS[currentLang][M] : FR_MONTHS[M];
+      label.textContent = currentLang === 'zh' ? Y + '年' + mn : mn.charAt(0).toUpperCase() + mn.slice(1) + ' ' + Y;
+    }
     const phases = {};
     const cls = { new: 'new', fq: 'half', full: 'full', lq: 'lq' };
-    for (let d = 1; d <= g.daysInMonth; d++) {
-      const m = majorMoonOn(new Date(td.getFullYear(), td.getMonth(), d, 12));
-      if (m) phases[d] = cls[m];
+    if (MC) {
+      MC.monthQuarters(Y, M).forEach((q) => {
+        const local = new Date(q.date.getFullYear(), q.date.getMonth(), q.date.getDate());
+        if (local.getFullYear() === Y && local.getMonth() === M) {
+          phases[local.getDate()] = cls[['new', 'fq', 'full', 'lq'][q.quarter]];
+        }
+      });
+    } else {
+      for (let d = 1; d <= g.daysInMonth; d++) {
+        const m = majorMoonOn(new Date(Y, M, d, 12));
+        if (m) phases[d] = cls[m];
+      }
     }
-    if (!phases[today]) phases[today] = 'gib';
+    const isThisMonth = td.getFullYear() === Y && td.getMonth() === M;
+    if (isThisMonth && !phases[td.getDate()]) phases[td.getDate()] = 'gib';
     for (let i = 0; i < g.offset; i++) {
       const blank = document.createElement('div');
       blank.className = 'cal-day muted';
@@ -411,7 +436,7 @@
     for (let d = 1; d <= g.daysInMonth; d++) {
       const cell = document.createElement('div');
       cell.className = 'cal-day';
-      if (d === today) cell.classList.add('today');
+      if (isThisMonth && d === td.getDate()) cell.classList.add('today');
       const moon = phases[d];
       cell.innerHTML = '<span>' + d + '</span>' + (moon ? '<span class="moon-dot ' + moon + '" aria-hidden="true"></span>' : '');
       container.appendChild(cell);
@@ -1899,7 +1924,7 @@
   function clampPeriod(n) { return CC.clampPeriod(n); }
 
   function productToday() {
-    // v1.4.0 : date locale réelle si elle tombe dans la fenêtre démo (oct. 2026), sinon DEMO.today.
+    // v1.5.0 : date locale réelle si elle tombe dans la fenêtre démo (oct. 2026), sinon DEMO.today.
     const now = new Date();
     const local = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
     if (local.getFullYear() === 2026 && local.getMonth() === 9) return local;
@@ -1907,7 +1932,7 @@
   }
 
   function computeCalc(lastStart, periodLen, cycleLen, today) {
-    // v1.4.0 : D0 dans le futur → res.future (jour et phase non calculés)
+    // v1.5.0 : D0 dans le futur → res.future (jour et phase non calculés)
     return CC.computeCalc(lastStart, periodLen, cycleLen, today || productToday());
   }
 
@@ -2016,7 +2041,7 @@
         return;
       }
       if (res.future) {
-        // v1.4.0 : une date de début future est refusée (rien n’est enregistré).
+        // v1.5.0 : une date de début future est refusée (rien n’est enregistré).
         renderCalcResults(res);
         toast('Le début des dernières règles ne peut pas être dans le futur');
         return;
@@ -2027,7 +2052,7 @@
       guidePhase = null;
       renderPhaseGuide();
       renderTrends();
-      // v1.4.0 : calendrier, hub et écran Cycle suivent les nouvelles entrées
+      // v1.5.0 : calendrier, hub et écran Cycle suivent les nouvelles entrées
       buildCycleCalendar(document.getElementById('cycleCalendar'));
       renderProductSurfaces();
       renderCycleV12();
@@ -2150,7 +2175,7 @@
 
 
   function renderProductSurfaces() {
-    // v1.4.0 : tout le hub et l’en-tête Cycle viennent du même moteur (avant : valeurs écrites en dur, anneau faux).
+    // v1.5.0 : tout le hub et l’en-tête Cycle viennent du même moteur (avant : valeurs écrites en dur, anneau faux).
     const inp = activeCalcInputs();
     let res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
     if (!res || res.future) res = computeCalc(DEMO.cycle.lastPeriodStart, DEMO.cycle.avgPeriod, DEMO.cycle.avgCycle);
@@ -2341,7 +2366,7 @@
       });
     }
 
-    // Period edit : v1.4.0 → écran Historique (#/historique)
+    // Period edit : v1.5.0 → écran Historique (#/historique)
 
     // Forfaits : « Choisir » n’active rien (paiement plus tard)
     document.querySelectorAll('[data-plan-choose]').forEach((btn) => {
@@ -2866,7 +2891,7 @@
   }
 
   function phaseOfDate(date) {
-    // v1.4.0 : historique enregistré d’abord (cycle réellement vécu), sinon projection D0/P/C.
+    // v1.5.0 : historique enregistré d’abord (cycle réellement vécu), sinon projection D0/P/C.
     const inp = activeCalcInputs();
     const hist = currentPeriods();
     const r = hist.example ? CC.phaseOnDate(inp.lastStart, inp.periodLen, inp.cycleLen, date)
@@ -2949,6 +2974,17 @@
   ];
 
   function skyAt(utcMs) {
+    // v1.5.0 : astronomy-engine partout quand il est chargé (cohérence hub / Lune / Astro).
+    const AE = window.Astronomy;
+    if (AE) {
+      const d = new Date(utcMs);
+      const n = (x) => ((x % 360) + 360) % 360;
+      const moon = n(AE.EclipticGeoMoon(d).lon);
+      const sun = n(AE.SunPosition(d).elon);
+      const elong = n(AE.MoonPhase(d));
+      return { sunLon: sun, moonLon: moon, elong: elong, illum: AE.Illumination('Moon', d).phase_fraction,
+        sunSign: Math.floor(sun / 30), moonSign: Math.floor(moon / 30), phaseIdx: Math.floor(n(elong + 22.5) / 45) % 8 };
+    }
     const rad = Math.PI / 180;
     const n360 = (x) => ((x % 360) + 360) % 360;
     const d = utcMs / 86400000 + 2440587.5 - 2451545.0;
@@ -3000,6 +3036,175 @@
     if (elong < 157.5) return 'waxing';
     if (elong < 202.5) return 'full';
     return 'waning';
+  }
+
+  /* —— v1.5.0 : Message lunaire du jour (astronomy-engine via MoonCalc) —— */
+  let moonMonth = null; // {year, month} for « Phases du mois »
+  let moonCalMonth = null;
+  const MOON_VIS = ['new', 'waxing', 'half', 'waxing', 'full', 'waning', 'lq', 'waning'];
+
+  function moonNow(date) {
+    if (!MC) return null;
+    return MC.state(date || new Date());
+  }
+
+  function fmtMoonWhen(d) {
+    if (!d) return '—';
+    const local = new Date(d.getTime());
+    const hh = String(local.getHours()).padStart(2, '0');
+    const mm = String(local.getMinutes()).padStart(2, '0');
+    return fmtDate(local, { weekday: true, year: false }) + ' · ' + hh + 'h' + mm;
+  }
+
+  function fillGestures(ul, list) {
+    if (!ul) return;
+    ul.innerHTML = '';
+    (list || []).forEach((g) => {
+      const li = document.createElement('li');
+      li.textContent = t(g);
+      ul.appendChild(li);
+    });
+  }
+
+  function fillNextList(el, st) {
+    if (!el || !st) return;
+    const row = (k, v) => '<span class="k">' + escapeHtml(t(k)) + '</span><span class="v">' + escapeHtml(v) + '</span>';
+    el.innerHTML =
+      row('Prochaine phase', t(st.nextQuarter.name) + ' · ' + fmtMoonWhen(st.nextQuarter.date)) +
+      row('Prochaine nouvelle lune', fmtMoonWhen(st.nextNew)) +
+      row('Prochaine pleine lune', fmtMoonWhen(st.nextFull)) +
+      row('Lune change de signe', t(st.nextSignChange.signFr) + ' · ' + fmtMoonWhen(st.nextSignChange.date));
+  }
+
+  function applyMoonMessage(st, textId, gestId, metaId) {
+    if (!st || !MC) return;
+    const msg = MC.message(st);
+    const text = document.getElementById(textId);
+    if (text) text.textContent = t(msg.text);
+    fillGestures(document.getElementById(gestId), msg.gestures);
+    const meta = document.getElementById(metaId);
+    if (meta) {
+      meta.textContent = t(st.phase) + ' · ' + st.illumPct + ' % · ' +
+        t('âge {n} j', { n: Math.round(st.age * 10) / 10 }) + ' · ' +
+        t('Lune en {s}', { s: t(st.signFr) });
+    }
+  }
+
+  function renderHubMoon() {
+    const st = moonNow();
+    if (!st) return;
+    const phase = document.getElementById('hubMoonPhase');
+    if (phase) phase.textContent = t(st.phase);
+    const sub = document.getElementById('hubMoonSub');
+    if (sub) sub.textContent = t('Lune en {s}', { s: t(st.signFr) }) + ' · ' + st.illumPct + ' %';
+  }
+
+  function renderAstroDayMsg() {
+    const el = document.getElementById('astroDayMsg');
+    if (!el) return;
+    const today = productToday();
+    const st = moonNow();
+    const sun = st ? SIGNS[st.sunSign] : SIGNS[5];
+    el.textContent = t(
+      'Harmonie, écoute et juste mesure seront tes atouts. L’énergie du {d} invite à l’équilibre — une piste, pas une sentence.',
+      { d: fmtDate(today, { year: false }) }
+    ) + (sun ? ' ' + t('Soleil en {s}.', { s: t(sun.fr) }) : '');
+  }
+
+  function renderMoonHero(st) {
+    if (!st) return;
+    const vis = document.getElementById('moonVisual');
+    if (vis) {
+      vis.className = 'moon-visual ' + (MOON_VIS[st.phaseIdx] || 'waxing');
+      vis.title = t(st.phase);
+    }
+    const name = document.getElementById('moonPhaseName');
+    if (name) name.textContent = t(st.phase);
+    const meta = document.getElementById('moonPhaseMeta');
+    if (meta) meta.textContent = fmtDate(productToday()) + ' · ' + t('illumination ~{n} %', { n: st.illumPct });
+    const sign = document.getElementById('moonSignLine');
+    if (sign) sign.textContent = t('Lune en {s}', { s: t(st.signFr) }) + ' · ' + t('âge {n} j', { n: Math.round(st.age * 10) / 10 });
+    applyMoonMessage(st, 'moonMsgText', 'moonMsgGestures', null);
+    fillNextList(document.getElementById('moonNextList'), st);
+  }
+
+  function renderMoonMonthGrid() {
+    if (!MC) return;
+    if (!moonMonth) {
+      const t0 = productToday();
+      moonMonth = { year: t0.getFullYear(), month: t0.getMonth() };
+    }
+    const label = document.getElementById('moonMonthLabel');
+    const grid = document.getElementById('moonMonthGrid');
+    if (!grid) return;
+    const mn = I18N ? I18N.MONTHS[currentLang][moonMonth.month] : FR_MONTHS[moonMonth.month];
+    if (label) label.textContent = currentLang === 'zh' ? moonMonth.year + '年' + mn : mn.charAt(0).toUpperCase() + mn.slice(1) + ' ' + moonMonth.year;
+    const qs = MC.monthQuarters(moonMonth.year, moonMonth.month);
+    const icons = ['○', '◐', '●', '◑'];
+    const today = productToday();
+    grid.innerHTML = qs.map((q) => {
+      const same =
+        q.date.getFullYear() === today.getFullYear() &&
+        q.date.getMonth() === today.getMonth() &&
+        Math.abs(q.date.getDate() - today.getDate()) <= 2 &&
+        Math.abs((q.date - today) / 86400000) < 4;
+      return (
+        '<div class="card' + (same ? ' selected' : '') + '" style="padding:12px;margin:0;">' +
+        '<div style="font-size:20px;color:var(--silver);margin-bottom:4px;" aria-hidden="true">' + icons[q.quarter] + '</div>' +
+        '<div class="h-serif" style="font-size:10px;">' + escapeHtml(t(q.name)) + '</div>' +
+        '<div class="tiny">' + escapeHtml(fmtMoonWhen(q.date)) + '</div>' +
+        '<div class="tiny">' + escapeHtml(t('Lune en {s}', { s: t(q.signFr) })) + '</div>' +
+        '<p class="tiny moon-q-msg">' + escapeHtml(t(q.text)) + '</p></div>'
+      );
+    }).join('');
+  }
+
+  function renderLunarSurfaces() {
+    if (!MC) return;
+    const st = moonNow();
+    renderHubMoon();
+    renderAstroDayMsg();
+    if (st) {
+      applyMoonMessage(st, 'astroMoonMsg', 'astroMoonGestures', 'astroMoonMeta');
+      fillNextList(document.getElementById('astroMoonNext'), st);
+      const line = document.getElementById('astroPhaseLine');
+      if (line) line.textContent = t(st.phase) + ' · ' + st.illumPct + ' % · ' + t('Lune en {s}', { s: t(st.signFr) });
+      const pos = document.getElementById('posMoon');
+      if (pos) pos.textContent = t('en {s}', { s: t(st.signFr) });
+      renderMoonHero(st);
+    }
+    renderMoonMonthGrid();
+    buildMoonCalendar(document.getElementById('moonCalendar'));
+    // Ciel du jour : date = aujourd’hui si encore sur l’ancienne valeur
+    const sky = document.getElementById('skyDate');
+    if (sky && (sky.value === '2026-09-23' || !sky.value)) sky.value = toYMD(productToday());
+    renderSky();
+  }
+
+  function bindMoonV15() {
+    document.querySelectorAll('[data-moon-dir]').forEach((b) => {
+      b.addEventListener('click', () => {
+        if (!moonMonth) moonMonth = { year: productToday().getFullYear(), month: productToday().getMonth() };
+        const next = CC.shiftMonth(moonMonth.year, moonMonth.month, b.dataset.moonDir === 'prev' ? -1 : 1);
+        if (next.year > CAL_MAX.year || (next.year === CAL_MAX.year && next.month > CAL_MAX.month)) return;
+        if (next.year < 2020) return;
+        moonMonth = next;
+        renderMoonMonthGrid();
+      });
+    });
+    document.querySelectorAll('[data-moon-cal-dir]').forEach((b) => {
+      b.addEventListener('click', () => {
+        if (!moonCalMonth) {
+          const t0 = productToday();
+          moonCalMonth = { year: t0.getFullYear(), month: t0.getMonth() };
+        }
+        const next = CC.shiftMonth(moonCalMonth.year, moonCalMonth.month, b.dataset.moonCalDir === 'prev' ? -1 : 1);
+        if (next.year > CAL_MAX.year || (next.year === CAL_MAX.year && next.month > CAL_MAX.month)) return;
+        if (next.year < 2020) return;
+        moonCalMonth = next;
+        buildMoonCalendar(document.getElementById('moonCalendar'));
+      });
+    });
   }
 
   /* —— Conseils par phase (bien-être, inspiré de Clue / Stardust) —— */
@@ -3088,7 +3293,7 @@
   ];
 
   function loadPeriods() {
-    // v1.4.0 : entrées {start, end} ; l’ancien format v1.2 {start, len} est converti à la lecture.
+    // v1.5.0 : entrées {start, end} ; l’ancien format v1.2 {start, len} est converti à la lecture.
     try {
       const raw = localStorage.getItem(PERIODS_KEY);
       const list = raw ? JSON.parse(raw) : null;
@@ -3114,7 +3319,7 @@
     return currentLang === 'fr' || currentLang === 'es' || currentLang === 'pt' ? s.replace('.', ',') : s;
   }
 
-  /* —— v1.4.0 : écran « Historique » (#/historique) — remplace la carte historique v1.2 du Cycle —— */
+  /* —— v1.5.0 : écran « Historique » (#/historique) — remplace la carte historique v1.2 du Cycle —— */
   let histEditing = null; // date de début de l’entrée en cours de modification
 
   function histPhaseBar(len, C, current) {
@@ -3391,7 +3596,7 @@
     return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
   }
   function icsFold(line) {
-    // v1.4.0 : pliage RFC 5545 à 75 octets UTF-8 (avant : 60 caractères, trop long avec accents/chinois).
+    // v1.5.0 : pliage RFC 5545 à 75 octets UTF-8 (avant : 60 caractères, trop long avec accents/chinois).
     const enc = (s) => unescape(encodeURIComponent(s)).length;
     const out = [];
     let cur = '';
@@ -3649,7 +3854,7 @@
     const txt = document.getElementById('skyText');
     const words = document.getElementById('skyDateWords');
     if (!el || !list) return;
-    if (!el.value) el.value = DEMO.today;
+    if (!el.value) el.value = toYMD(productToday());
     const d = parseYMD(el.value) || productToday();
     const k = skyAt(noonUtc(d));
     const pd = PLANET_DAY[d.getDay()];
@@ -3692,7 +3897,8 @@
     const sd = document.getElementById('skyDate');
     if (sd) sd.addEventListener('change', renderSky);
     const reset = document.getElementById('btnSkyToday');
-    if (reset && sd) reset.addEventListener('click', () => { sd.value = DEMO.today; renderSky(); });
+    if (sd) { sd.max = '2028-12-31'; sd.value = toYMD(productToday()); }
+    if (reset && sd) reset.addEventListener('click', () => { sd.value = toYMD(productToday()); renderSky(); });
     const btn = document.getElementById('btnCompat');
     if (btn) btn.addEventListener('click', () => renderCompat(true));
     ['compatA', 'compatB'].forEach((id) => {
@@ -3706,7 +3912,7 @@
 
   /* —— Écran Cycle : frise, liste, sauts de section —— */
   function renderCycleV12() {
-    // v1.4.0 : mêmes entrées que le calculateur et les conseils (avant : valeurs démo figées),
+    // v1.5.0 : mêmes entrées que le calculateur et les conseils (avant : valeurs démo figées),
     // et la liste part du début du cycle EN COURS (avant : D0, faux dès le 2e cycle).
     const inp = activeCalcInputs();
     const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
@@ -4945,7 +5151,10 @@
     bindCycleV12();
     bindJournalV12();
     bindAstroV12();
+    bindMoonV15();
     bindV13();
+    renderLunarSurfaces();
+    setInterval(renderLunarSurfaces, 10 * 60 * 1000);
     const skyD = document.getElementById('skyDate');
     if (skyD) skyD.addEventListener('change', renderPositionsV13);
     const skyT = document.getElementById('btnSkyToday');

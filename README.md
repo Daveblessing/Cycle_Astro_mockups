@@ -1,4 +1,11 @@
-# Cycle & Astro — v1.4.0
+# Cycle & Astro — v1.5.0
+
+## v1.5.0 (14 octobre 2026) — Message lunaire en temps réel, jusqu’en 2028
+
+- **Message lunaire du jour** (#/astro, #/moon, carte Lune du hub) : phase (8), illumination, âge, signe de la Lune (tropical), prochaine phase, prochaines nouvelle et pleine lune, prochain changement de signe, aspect Lune-Soleil. Message FR par phase (8) et par signe (12), plus 3 gestes. Recalcul au chargement et toutes les 10 minutes. Moteur `moon-calc.js` (astronomy-engine, aucune table) + `tests/moon-calc.test.js`.
+- **Jusqu’au 31 décembre 2028** : « Phases du mois » (dates, heures, signe, message) et calendrier lunaire navigables ‹ › jusqu’à décembre 2028 ; calendrier du cycle aussi ; « Ciel du jour » jusqu’au 31/12/2028.
+- Corrections : « L’énergie du 23 septembre » → date du jour ; « Ciel du jour » ouvrait le 23/09/2026 → aujourd’hui ; écran Lune figé « Gibbeuse croissante » et phases de septembre → calcul en direct ; Lune « en Verseau » figée dans Positions ; approximation maison de la Lune remplacée par astronomy-engine partout.
+- **Version figée** : `releases/v1.5.0/` + tag `v1.5.0`.
 
 ## v1.4.0 (14 octobre 2026) — calculs du cycle corrigés + Historique
 
