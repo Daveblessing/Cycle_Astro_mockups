@@ -4686,3 +4686,20 @@ html[data-lang="zh"] .phone .plans-badge {
 .phone .nl-mean { font-size: 13px; line-height: 1.45; color: #1A1A1A; }
 .phone .v13-jump { margin-top: 8px; }
 .phone .v12-card, .phone .v13-card, .phone #promptCard, .phone .card { scroll-margin-top: 14px; }
+
+/* —— v1.4.0 : Historique —— */
+.phone .hx-list { list-style: none; padding: 0; margin: 8px 0 12px; }
+.phone .hx-item { padding: 10px 0; border-bottom: 1px solid rgba(122, 90, 20, 0.18); }
+.phone .hx-top { display: flex; gap: 10px; align-items: flex-start; }
+.phone .hx-item .pl-txt strong { color: #1A1A1A; }
+.phone .hx-bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; margin: 8px 0 2px 22px; gap: 1px; }
+.phone .hx-seg { display: block; min-width: 2px; }
+.phone .hx-bar-note { display: block; margin-left: 22px; font-size: 11px; color: #1A1A1A; opacity: .75; }
+.phone .hx-actions { display: flex; gap: 14px; margin: 6px 0 0 22px; }
+.phone .hx-day { padding: 8px 0; border-bottom: 1px solid rgba(122, 90, 20, 0.18); }
+.phone .hx-day-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: #1A1A1A; margin: 0 0 4px; }
+.phone .hx-day-head .phase-chip { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+.phone .hx-ck { color: #1A1A1A; font-size: 13px; margin: 2px 0 6px; }
+.phone #view-historique .hist-stats { grid-template-columns: repeat(3, 1fr); }
+.phone #histNext { color: #7A5A14; }
+.phone #view-historique [hidden] { display: none !important; }

@@ -1,5 +1,5 @@
 /**
- * Cycle & Astro · v1.3.1
+ * Cycle & Astro · v1.4.0
  * Navigation hash légère + profil complet multi-personnes (pas de backend)
  * King Daveblessing · Abidjan · FR + EN/ES/PT/中文 · bien-être, pas un avis médical
  */
@@ -10,7 +10,7 @@
    * « Retour au Market » : aucune adresse codée en dur (v1.3.1).
    * Dans un cadre : message au parent seulement. Seule : ?market=, puis référent, puis historique, puis le hub.
    */
-  const APP_VERSION = '1.3.1';
+  const APP_VERSION = '1.4.0';
 
   /* Clés localStorage (tout reste sur le téléphone, aucun serveur). */
   const LANG_KEY = 'ca_lang_v1';
@@ -20,6 +20,8 @@
   const CYCLE_DATA_KEYS = ['ca_calc_v1', JOURNAL_KEY, 'ca_period_edits_v1', 'ca_periods_v1', CONSENT_KEY];
 
   const I18N = window.CA_I18N || null;
+  /* v1.4.0 : moteur de calcul pur, partagé avec tests/cycle-calc.test.js */
+  const CC = window.CycleCalc;
   let currentLang = 'fr';
 
   function getLang() {
@@ -47,11 +49,11 @@
 
   function fmtDate(d, opts) {
     if (I18N) return I18N.formatDate(d, currentLang, opts);
-    return d.getDate() + ' ' + d.getMonth() + ' ' + d.getFullYear();
+    return d.getDate() + ' ' + ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][d.getMonth()] + ' ' + d.getFullYear();
   }
 
-  /** Mois de référence démo forcé : septembre 2026 (même si Date() réelle dérive). */
-  const DEMO_REF_MONTH = { year: 2026, month: 8, label: 'Septembre 2026' }; // month 0-index
+  /** Mois de référence : mois de « aujourd’hui » produit (octobre 2026). Le calendrier s’ouvre sur ce mois. */
+  const DEMO_REF_MONTH = { year: 2026, month: 9, label: 'Octobre 2026' }; // month 0-index
 
   const DEMO = {
     displayName: 'Aïcha',
@@ -68,18 +70,18 @@
     cycle: {
       phase: 'lutéale',
       phaseLabel: 'Ralentir et ressentir',
-      dayInCycle: 23,
+      dayInCycle: 16,
       avgCycle: 28,
       avgPeriod: 5,
       lastPeriodStart: '2026-09-01',
       lastPeriodEnd: '2026-09-05',
-      nextPeriodEst: '2026-09-29',
+      nextPeriodEst: '2026-10-27',
     },
     moon: {
-      phase: 'Gibbeuse croissante', // calculée : 23 sept. 2026, Lune en Verseau
-      illumination: 89,
+      phase: 'Premier croissant', // calculée : 14 oct. 2026
+      illumination: 14,
     },
-    today: '2026-09-23',
+    today: '2026-10-14',
   };
 
   /* —— Forfaits (paiement branché plus tard par le Market) ——
@@ -93,7 +95,7 @@
   let lockIntent = 'astro'; // 'astro' | 'cycle' — domaine demandé quand verrouillé
 
   const ASTRO_SCREENS = ['astro', 'path', 'reading'];
-  const CYCLE_SCREENS = ['cycle', 'calculator', 'journal'];
+  const CYCLE_SCREENS = ['cycle', 'calculator', 'journal', 'historique'];
 
   function getPlan() {
     try {
@@ -183,10 +185,12 @@
     'profile',
     'calculator',
     'plans',
+    'historique',
   ];
 
   const SCREEN_ALIASES = {
     calc: 'calculator',
+    history: 'historique',
     'profil-complet': 'reading',
     profil: 'reading',
   };
@@ -202,6 +206,7 @@
     profile: 'profile',
     calculator: 'profile',
     plans: 'splash',
+    historique: 'cycle',
   };
 
   const views = document.getElementById('views');
@@ -257,6 +262,8 @@
     });
 
     applyAmbiance(viewScreen === 'plans' ? 'gate' : viewScreen);
+    if (viewScreen === 'historique') renderHistory();
+    if (viewScreen === 'cycle') { buildCycleCalendar(document.getElementById('cycleCalendar')); renderCycleV12(); }
     applyI18n();
   }
 
@@ -266,6 +273,7 @@
     cycle: 'cycle',
     calculator: 'cycle',
     journal: 'cycle',
+    historique: 'cycle',
     astro: 'astro',
     reading: 'astro',
     moon: 'astro',
@@ -309,6 +317,11 @@
   }
 
   /* —— Calendars —— */
+  function defaultCalMonth() {
+    const t = productToday();
+    return { year: t.getFullYear(), month: t.getMonth() };
+  }
+  let calMonth = defaultCalMonth();
   function buildCycleCalendar(container) {
     if (!container) return;
     const dows = I18N ? I18N.DOWS[currentLang] : ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
@@ -319,41 +332,53 @@
       el.textContent = d;
       container.appendChild(el);
     });
-
-    // Sept 2026 starts Tuesday → offset 1 (Mon=0)
-    const offset = 1;
-    const daysInMonth = 30;
-    const today = 23;
-
-    for (let i = 0; i < offset; i++) {
+    // v1.4.0 : grille calculée pour le mois affiché (‹ › fonctionnent), couleurs = moteur D0/P/C
+    // (même entrées que le calculateur) ; après le jour C, un nouveau cycle recommence.
+    const Y = calMonth.year, M = calMonth.month;
+    const g = CC.monthGrid(Y, M);
+    const todayD = productToday();
+    const inp = activeCalcInputs();
+    const label = document.getElementById('cycleCalMonth');
+    if (label) {
+      const mn = I18N ? I18N.MONTHS[currentLang][M] : FR_MONTHS[M];
+      label.textContent = currentLang === 'zh' ? Y + '年' + mn : mn.charAt(0).toUpperCase() + mn.slice(1) + ' ' + Y;
+    }
+    for (let i = 0; i < g.offset; i++) {
       const blank = document.createElement('div');
       blank.className = 'cal-day muted';
-      blank.textContent = String(31 - offset + 1 + i);
+      blank.textContent = String(g.prevDays - g.offset + 1 + i);
       container.appendChild(blank);
     }
-
-    // v1.2.0 : chaque jour prend la couleur foncée de sa phase (moteur D0, P, C),
-    // + repère « aujourd’hui » + phases principales de la Lune (calculées).
-    for (let d = 1; d <= daysInMonth; d++) {
-      const date = parseYMD('2026-09-' + String(d).padStart(2, '0'));
-      const snap = computeCalc(DEMO.cycle.lastPeriodStart, DEMO.cycle.avgPeriod, DEMO.cycle.avgCycle, date);
-      const key = snap ? snap.phase.key : 'luteale';
+    for (let d = 1; d <= g.daysInMonth; d++) {
+      const date = new Date(Y, M, d, 12);
+      const snap = CC.phaseOnDate(inp.lastStart, inp.periodLen, inp.cycleLen, date);
+      const key = snap ? snap.key : 'luteale';
+      const isToday = CC.daysBetween(date, todayD) === 0;
       const cell = document.createElement('div');
       cell.className = 'cal-day ph-day ph-' + key;
-      if (d === today) cell.classList.add('today');
+      if (isToday) cell.classList.add('today');
       const moon = majorMoonOn(date);
       cell.innerHTML =
         '<span class="cd-num">' + d + '</span>' +
-        (d === today ? '<span class="cd-today" aria-hidden="true">' + escapeHtml(t('auj.')) + '</span>' : '') +
+        (isToday ? '<span class="cd-today" aria-hidden="true">' + escapeHtml(t('auj.')) + '</span>' : '') +
         (moon ? '<span class="moon-mini ' + moon + '" aria-hidden="true"></span>' : '');
-      const label = [fmtDate(date, { year: false }), t(PHASE_META[key].full)];
-      if (d === today) label.push(t('Aujourd’hui'));
-      if (moon) label.push(t(MAJOR_MOON_FR[moon]));
-      cell.title = label.join(' · ');
-      cell.setAttribute('aria-label', label.join(' · '));
+      const lab = [fmtDate(date, { year: false }), t(PHASE_META[key].full)];
+      if (snap) lab.push(t('jour {a}', { a: snap.day }));
+      if (isToday) lab.push(t('Aujourd’hui'));
+      if (moon) lab.push(t(MAJOR_MOON_FR[moon]));
+      cell.title = lab.join(' · ');
+      cell.setAttribute('aria-label', lab.join(' · '));
       cell.setAttribute('role', 'gridcell');
       container.appendChild(cell);
     }
+  }
+  function bindCycleCalendarNav() {
+    document.querySelectorAll('#view-cycle .cal-nav').forEach((b, i) => {
+      b.addEventListener('click', () => {
+        calMonth = CC.shiftMonth(calMonth.year, calMonth.month, b.dataset.dir === 'prev' || (!b.dataset.dir && i === 0) ? -1 : 1);
+        buildCycleCalendar(document.getElementById('cycleCalendar'));
+      });
+    });
   }
 
   function buildMoonCalendar(container) {
@@ -366,35 +391,29 @@
       el.textContent = d;
       container.appendChild(el);
     });
-
-    const offset = 1;
-    const daysInMonth = 30;
-    const today = 23;
-    // v1.2.0 : phases principales calculées (Soleil + Lune), septembre 2026
+    // v1.4.0 : mois du jour produit (octobre 2026), phases principales calculées
+    const td = productToday();
+    const g = CC.monthGrid(td.getFullYear(), td.getMonth());
+    const today = td.getDate();
     const phases = {};
     const cls = { new: 'new', fq: 'half', full: 'full', lq: 'lq' };
-    for (let d = 1; d <= daysInMonth; d++) {
-      const m = majorMoonOn(new Date(2026, 8, d));
+    for (let d = 1; d <= g.daysInMonth; d++) {
+      const m = majorMoonOn(new Date(td.getFullYear(), td.getMonth(), d, 12));
       if (m) phases[d] = cls[m];
     }
     if (!phases[today]) phases[today] = 'gib';
-
-    for (let i = 0; i < offset; i++) {
+    for (let i = 0; i < g.offset; i++) {
       const blank = document.createElement('div');
       blank.className = 'cal-day muted';
       blank.innerHTML = '<span></span>';
       container.appendChild(blank);
     }
-
-    for (let d = 1; d <= daysInMonth; d++) {
+    for (let d = 1; d <= g.daysInMonth; d++) {
       const cell = document.createElement('div');
       cell.className = 'cal-day';
       if (d === today) cell.classList.add('today');
       const moon = phases[d];
-      const moonHtml = moon
-        ? `<span class="moon-dot ${moon}" aria-hidden="true"></span>`
-        : '';
-      cell.innerHTML = `<span>${d}</span>${moonHtml}`;
+      cell.innerHTML = '<span>' + d + '</span>' + (moon ? '<span class="moon-dot ' + moon + '" aria-hidden="true"></span>' : '');
       container.appendChild(cell);
     }
   }
@@ -1811,26 +1830,11 @@
     'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
   ];
 
-  function parseYMD(str) {
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str || '');
-    if (!m) return null;
-    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
+  function parseYMD(str) { return CC.parseYMD(str); }
 
-  function toYMD(d) {
-    const y = d.getFullYear();
-    const mo = String(d.getMonth() + 1).padStart(2, '0');
-    const da = String(d.getDate()).padStart(2, '0');
-    return y + '-' + mo + '-' + da;
-  }
+  function toYMD(d) { return CC.toYMD(d); }
 
-  function addDays(d, n) {
-    const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    x.setDate(x.getDate() + n);
-    return x;
-  }
+  function addDays(d, n) { return CC.addDays(d, n); }
 
   function formatFR(d) {
     return d.getDate() + ' ' + FR_MONTHS[d.getMonth()] + ' ' + d.getFullYear();
@@ -1853,10 +1857,7 @@
     words.textContent = d ? fmtDate(d) : '';
   }
 
-  function daysBetween(a, b) {
-    const ms = 24 * 60 * 60 * 1000;
-    return Math.round((b.getTime() - a.getTime()) / ms);
-  }
+  function daysBetween(a, b) { return CC.daysBetween(a, b); }
 
   /**
    * Phase bien-être, à partir du jour affiché 1..C (pas un diagnostic).
@@ -1864,23 +1865,7 @@
    * À l'écran : « Règles », « Avant le milieu », « Milieu de cycle », « Après le milieu ».
    * Le milieu n'est jamais libellé fertile.
    */
-  function softPhase(dayInCycle, periodLen, cycleLen) {
-    const P = periodLen;
-    const C = cycleLen;
-    const center = C - 14; // autour de C−14
-    const winStart = center - 1; // fenêtre ±1
-    const winEnd = center + 1;
-    if (dayInCycle >= 1 && dayInCycle <= P) {
-      return { key: 'menstruelle', label: 'Règles' }; // libellés traduits à l’affichage
-    }
-    if (dayInCycle >= winStart && dayInCycle <= winEnd) {
-      return { key: 'ovulatoire', label: 'Milieu de cycle' };
-    }
-    if (dayInCycle > P && dayInCycle < winStart) {
-      return { key: 'folliculaire', label: 'Avant le milieu' };
-    }
-    return { key: 'luteale', label: 'Après le milieu' };
-  }
+  function softPhase(dayInCycle, periodLen, cycleLen) { return CC.softPhase(dayInCycle, periodLen, cycleLen); }
 
   function loadCalcInputs() {
     try {
@@ -1905,78 +1890,25 @@
    * C = cycleLength, jours, défaut 28, borné 21–35.
    * P = periodLength, défaut 5, borné 2–8.
    * D0 = lastStart (date des dernières règles).
-   * Aujourd'hui produit forcé : mercredi 23 septembre 2026 (DEMO.today),
-   * même si le calendrier réel a avancé. Jamais new Date() pour ce calcul.
-   *
-   * delta = (today − D0) en jours (peut être négatif).
-   * k = floor(delta / C)
-   * dayInCycle0 = delta mod C ; si négatif, on ajoute C → [0, C−1].
-   * Jour affiché (1..C) = dayInCycle0 + 1
-   *   (D0 est le jour 1. Ex. D0 = 1er sept. 2026, today = 23 sept. → jour 23.)
-   * nextStart = D0 + C × (k + 1)
-   *   (C = 28 et D0 = 2026-09-01 → k = floor(22/28) = 0 → 29 septembre 2026.)
-   * Prochaine date = dernières règles + longueur du cycle (répétée k+1 fois).
+   * Aujourd’hui produit : DEMO.today (mercredi 14 octobre 2026), aligné sur la date locale.
+   * D0 = 1er sept. 2026, C = 28 → le 14 oct. : cycleStart = 29 sept., jour 16 lutéale, next = 27 oct.
+   * nextStart = D0 + C × (k + 1) ; k = floor(delta / C).
    */
-  function clampCycle(n) {
-    const v = Number(n);
-    if (!v || Number.isNaN(v)) return 28;
-    return Math.min(35, Math.max(21, Math.round(v)));
-  }
+  function clampCycle(n) { return CC.clampCycle(n); }
 
-  function clampPeriod(n) {
-    const v = Number(n);
-    if (!v || Number.isNaN(v)) return 5;
-    return Math.min(8, Math.max(2, Math.round(v)));
-  }
+  function clampPeriod(n) { return CC.clampPeriod(n); }
 
   function productToday() {
-    const d = parseYMD(DEMO.today);
-    d.setHours(0, 0, 0, 0);
-    return d;
+    // v1.4.0 : date locale réelle si elle tombe dans la fenêtre démo (oct. 2026), sinon DEMO.today.
+    const now = new Date();
+    const local = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+    if (local.getFullYear() === 2026 && local.getMonth() === 9) return local;
+    return parseYMD(DEMO.today);
   }
 
   function computeCalc(lastStart, periodLen, cycleLen, today) {
-    const start = parseYMD(lastStart); // D0
-    if (!start) return null;
-    const P = clampPeriod(periodLen);
-    const C = clampCycle(cycleLen);
-    const todayD = today ? new Date(today.getFullYear(), today.getMonth(), today.getDate()) : productToday();
-    todayD.setHours(0, 0, 0, 0);
-
-    const delta = daysBetween(start, todayD); // (today − D0) en jours
-    const k = Math.floor(delta / C);
-    // mod algébrique : si négatif, ajouter C
-    let dayInCycle0 = delta % C;
-    if (dayInCycle0 < 0) dayInCycle0 += C;
-    const dayInCycle = dayInCycle0 + 1; // 1..C
-    const phase = softPhase(dayInCycle, P, C);
-
-    // nextStart = D0 + C * (k+1)
-    const nextStart = addDays(start, C * (k + 1));
-    const nextEnd = addDays(nextStart, P - 1);
-
-    const periods = [];
-    let cursor = nextStart;
-    for (let i = 0; i < 3; i++) {
-      periods.push({
-        start: new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate()),
-        end: addDays(cursor, P - 1),
-      });
-      cursor = addDays(cursor, C);
-    }
-
-    return {
-      periodLen: P,
-      cycleLen: C,
-      delta: delta,
-      k: k,
-      dayInCycle0: dayInCycle0,
-      nextStart: nextStart,
-      nextEnd: nextEnd,
-      dayInCycle: dayInCycle,
-      phase: phase,
-      periods: periods,
-    };
+    // v1.4.0 : D0 dans le futur → res.future (jour et phase non calculés)
+    return CC.computeCalc(lastStart, periodLen, cycleLen, today || productToday());
   }
 
   function renderCalcResults(res) {
@@ -2005,13 +1937,14 @@
     if (res.dayInCycle != null) {
       if (dayNum) dayNum.textContent = String(res.dayInCycle);
       if (dayLine) {
-        dayLine.textContent = t('Jour {n} sur {c}', { n: res.dayInCycle, c: res.cycleLen });
+        dayLine.textContent = t('Jour {n} sur {c}', { n: res.dayInCycle, c: res.cycleLen }) + ' · ' +
+          (res.daysUntil === 1 ? t('prochaines règles demain') : t('prochaines règles dans {n} jours', { n: res.daysUntil }));
       }
       if (phaseLabel) {
         phaseLabel.textContent = t(PHASE_META[res.phase.key].full);
         phaseLabel.className = 'calc-phase phase-chip ph-' + res.phase.key;
       }
-      const start = res.nextStart ? addDays(res.nextStart, -res.cycleLen) : null;
+      const start = res.cycleStart;
       renderPhaseTimeline(document.getElementById('calcTimeline'), res);
       if (start) renderPhaseList(document.getElementById('calcPhaseList'), res, start);
       if (ring) {
@@ -2027,7 +1960,8 @@
       if (dayLine) {
         dayLine.textContent = t('Date de début dans le futur — jour non calculé');
       }
-      if (phaseLabel) phaseLabel.textContent = '—';
+      if (phaseLabel) { phaseLabel.textContent = '—'; phaseLabel.className = 'calc-phase phase-chip'; }
+      ['calcTimeline', 'calcPhaseList'].forEach((id) => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
       if (ring) ring.setAttribute('stroke-dasharray', '0 188.5');
     }
 
@@ -2058,6 +1992,7 @@
     if (lastEl && saved.lastStart) lastEl.value = saved.lastStart;
     if (perEl && saved.periodLen) perEl.value = saved.periodLen;
     if (cycEl && saved.cycleLen) cycEl.value = saved.cycleLen;
+    if (lastEl) lastEl.max = DEMO.today;
     syncCalcWords();
     if (lastEl) lastEl.addEventListener('change', syncCalcWords);
 
@@ -2080,12 +2015,22 @@
         toast('Date invalide');
         return;
       }
+      if (res.future) {
+        // v1.4.0 : une date de début future est refusée (rien n’est enregistré).
+        renderCalcResults(res);
+        toast('Le début des dernières règles ne peut pas être dans le futur');
+        return;
+      }
       lastCalcRes = res;
       sessionCalcInputs = data;
       renderCalcResults(res);
       guidePhase = null;
       renderPhaseGuide();
       renderTrends();
+      // v1.4.0 : calendrier, hub et écran Cycle suivent les nouvelles entrées
+      buildCycleCalendar(document.getElementById('cycleCalendar'));
+      renderProductSurfaces();
+      renderCycleV12();
       const results = document.getElementById('calcResults');
       if (results) results.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
       // Enregistrer seulement avec consentement explicite (sinon : session uniquement).
@@ -2155,7 +2100,7 @@
     const last = document.getElementById('calcLastStart');
     const period = document.getElementById('calcPeriodLen');
     const cycle = document.getElementById('calcCycleLen');
-    // Défaut cohérent septembre 2026 (prêt à recalculer, écran résultats vidé)
+    // Défaut cohérent : D0 1er sept. 2026, C=28, P=5
     if (last) last.value = DEMO.cycle.lastPeriodStart;
     if (period) period.value = String(DEMO.cycle.avgPeriod);
     if (cycle) cycle.value = String(DEMO.cycle.avgCycle);
@@ -2194,7 +2139,7 @@
     const pname = document.getElementById('profileName');
     if (pname) pname.textContent = 'Nouvelle personne';
     const ptags = document.getElementById('profileTags');
-    if (ptags) ptags.textContent = 'Profil prêt à saisir · septembre 2026';
+    if (ptags) ptags.textContent = 'Profil prêt à saisir · octobre 2026';
 
     toast('Remise à zéro · prêt pour une nouvelle personne');
     go('reading');
@@ -2205,26 +2150,39 @@
 
 
   function renderProductSurfaces() {
-    const res = computeCalc(
-      DEMO.cycle.lastPeriodStart,
-      DEMO.cycle.avgPeriod,
-      DEMO.cycle.avgCycle
-    );
+    // v1.4.0 : tout le hub et l’en-tête Cycle viennent du même moteur (avant : valeurs écrites en dur, anneau faux).
+    const inp = activeCalcInputs();
+    let res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
+    if (!res || res.future) res = computeCalc(DEMO.cycle.lastPeriodStart, DEMO.cycle.avgPeriod, DEMO.cycle.avgCycle);
     if (!res) return;
+    const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     const msg = document.getElementById('hubMessage');
     if (msg) {
-      const d = res.nextStart;
-      msg.textContent = t('Prochaines règles · vers le {d}', { d: fmtDate(d, { year: false }) });
+      msg.textContent = t('Prochaines règles · vers le {d}', { d: fmtDate(res.nextStart, { year: false }) });
+    }
+    setTxt('hubDayNum', String(res.dayInCycle));
+    setTxt('hubNextNum', String(res.nextStart.getDate()));
+    if (I18N) setTxt('hubMonth', I18N.MONTHS[currentLang][res.nextStart.getMonth()]);
+    setTxt('hubPhaseBadge', t(PHASE_META[res.phase.key].full));
+    setTxt('hubCycleDay', t('Jour {n}', { n: res.dayInCycle }));
+    const ring = document.getElementById('hubRingProgress');
+    if (ring) {
+      const circ = 2 * Math.PI * 48;
+      const arc = circ * (res.dayInCycle / res.cycleLen);
+      ring.setAttribute('stroke-dasharray', arc.toFixed(1) + ' ' + (circ - arc).toFixed(1));
+      ring.setAttribute('stroke-dashoffset', '0');
     }
     const today = productToday();
-    const start = parseYMD(DEMO.cycle.lastPeriodStart);
+    const start = parseYMD(inp.lastStart) || parseYMD(DEMO.cycle.lastPeriodStart);
     const cycleLine = document.getElementById('cycleTodayLine');
     if (cycleLine) {
-      cycleLine.textContent = t('Aujourd’hui · {d}', { d: fmtDate(today, { weekday: true }) });
+      cycleLine.textContent = t('Aujourd’hui · {d}', { d: fmtDate(today, { weekday: true }) }) + ' · ' +
+        t('jour {a}', { a: res.dayInCycle }) + ' · ' + t(PHASE_META[res.phase.key].full);
     }
     const cycleNext = document.getElementById('cycleNextLine');
     if (cycleNext) {
-      cycleNext.textContent = t('Prochaine date · {d}', { d: fmtDate(res.nextStart) });
+      cycleNext.textContent = t('Prochaine date · {d}', { d: fmtDate(res.nextStart, { weekday: true }) }) + ' · ' +
+        (res.daysUntil === 1 ? t('demain') : t('dans {n} jours', { n: res.daysUntil }));
     }
     const d0 = document.getElementById('cycleD0Line');
     if (d0 && start) {
@@ -2383,18 +2341,7 @@
       });
     }
 
-    // Period edit stub
-    const editPeriod = document.getElementById('btnEditPeriod');
-    if (editPeriod) {
-      editPeriod.addEventListener('click', () => {
-        // Correction de période : rien n’est enregistré sans consentement.
-        // v1.2.0 : ouvre « Mon historique de règles » (rien n’est enregistré sans consentement).
-        const sec = document.getElementById('secHistory');
-        if (sec) sec.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-        const f = document.getElementById('histStart');
-        if (f) setTimeout(() => f.focus({ preventScroll: true }), 350);
-      });
-    }
+    // Period edit : v1.4.0 → écran Historique (#/historique)
 
     // Forfaits : « Choisir » n’active rien (paiement plus tard)
     document.querySelectorAll('[data-plan-choose]').forEach((btn) => {
@@ -2905,16 +2852,7 @@
   };
 
   /** Segments du cycle (jours 1..C groupés par phase, même moteur que softPhase). */
-  function phaseSegments(P, C) {
-    const segs = [];
-    for (let d = 1; d <= C; d++) {
-      const key = softPhase(d, P, C).key;
-      const last = segs[segs.length - 1];
-      if (last && last.key === key) last.end = d;
-      else segs.push({ key: key, start: d, end: d });
-    }
-    return segs;
-  }
+  function phaseSegments(P, C) { return CC.phaseSegments(P, C); }
 
   /** Entrées actives du calculateur : session > enregistrées > démo. */
   let sessionCalcInputs = null;
@@ -2928,9 +2866,12 @@
   }
 
   function phaseOfDate(date) {
+    // v1.4.0 : historique enregistré d’abord (cycle réellement vécu), sinon projection D0/P/C.
     const inp = activeCalcInputs();
-    const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen, date);
-    return res ? res.phase.key : null;
+    const hist = currentPeriods();
+    const r = hist.example ? CC.phaseOnDate(inp.lastStart, inp.periodLen, inp.cycleLen, date)
+      : CC.phaseFromHistory(hist.list, date, inp);
+    return r ? r.key : null;
   }
 
   /** Frise des 4 phases + repère « aujourd’hui ». */
@@ -3141,16 +3082,17 @@
   /* —— Historique des règles + moyennes (Flo, Clue, Natural Cycles) —— */
   const PERIODS_KEY = 'ca_periods_v1';
   const DEMO_PERIODS = [
-    { start: '2026-07-07', len: 5 },
-    { start: '2026-08-04', len: 5 },
-    { start: '2026-09-01', len: 5 },
+    { start: '2026-07-07', end: '2026-07-11', len: 5 },
+    { start: '2026-08-04', end: '2026-08-08', len: 5 },
+    { start: '2026-09-01', end: '2026-09-05', len: 5 },
   ];
 
   function loadPeriods() {
+    // v1.4.0 : entrées {start, end} ; l’ancien format v1.2 {start, len} est converti à la lecture.
     try {
       const raw = localStorage.getItem(PERIODS_KEY);
       const list = raw ? JSON.parse(raw) : null;
-      if (Array.isArray(list)) return list.filter((p) => p && parseYMD(p.start));
+      if (Array.isArray(list)) return list.map(CC.normPeriod).filter(Boolean);
     } catch (_) { /* ignore */ }
     return null;
   }
@@ -3163,23 +3105,7 @@
     return { list: DEMO_PERIODS.slice(), example: true };
   }
 
-  function periodStats(list) {
-    const sorted = list.slice().sort((a, b) => (a.start < b.start ? -1 : 1));
-    const cycles = [];
-    for (let i = 1; i < sorted.length; i++) {
-      cycles.push(daysBetween(parseYMD(sorted[i - 1].start), parseYMD(sorted[i].start)));
-    }
-    const lens = sorted.map((p) => Number(p.len) || 0).filter((n) => n > 0);
-    const avg = (arr) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null);
-    return {
-      sorted: sorted,
-      cycles: cycles,
-      avgCycle: avg(cycles),
-      avgPeriod: avg(lens),
-      minCycle: cycles.length ? Math.min.apply(null, cycles) : null,
-      maxCycle: cycles.length ? Math.max.apply(null, cycles) : null,
-    };
-  }
+  function periodStats(list) { return CC.periodStats(list); }
 
   function fmtNum(x) {
     if (x == null) return '—';
@@ -3188,45 +3114,115 @@
     return currentLang === 'fr' || currentLang === 'es' || currentLang === 'pt' ? s.replace('.', ',') : s;
   }
 
+  /* —— v1.4.0 : écran « Historique » (#/historique) — remplace la carte historique v1.2 du Cycle —— */
+  let histEditing = null; // date de début de l’entrée en cours de modification
+
+  function histPhaseBar(len, C, current) {
+    const segs = CC.phaseSegments(Math.max(1, Math.min(len, C)), C);
+    return '<span class="hx-bar" role="img" aria-label="' + escapeHtml(segs.map((s) => t(PHASE_META[s.key].name) + ' ' + s.start + '–' + s.end).join(', ')) + '">' +
+      segs.map((s) => '<span class="hx-seg ph-' + s.key + '" style="flex:' + (s.end - s.start + 1) + ' 1 0"></span>').join('') +
+      '</span>' + (current ? '<span class="hx-bar-note">' + escapeHtml(t('cycle en cours (estimé)')) + '</span>' : '');
+  }
+
   function renderHistory() {
-    const list = document.getElementById('histList');
+    // Carte résumé sur l’écran Cycle
+    const mini = document.getElementById('histMini');
+    const consent = !!getConsent();
+    const stored = consent ? (loadPeriods() || []) : [];
+    const st = periodStats(stored);
+    const inp = activeCalcInputs();
+    if (mini) {
+      mini.textContent = st.count
+        ? t('{n} règles notées · cycle moyen {c}', { n: st.count, c: st.avgCycle == null ? '—' : t('{n} j', { n: fmtNum(st.avgCycle) }) })
+        : t('Note tes règles passées pour suivre tes moyennes.');
+    }
+    const view = document.getElementById('view-historique');
+    if (!view) return;
+    const gate = document.getElementById('histConsent');
+    const body = document.getElementById('histBody');
+    if (gate) gate.hidden = consent;
+    if (body) body.hidden = !consent;
+    if (!consent) return;
+
     const stats = document.getElementById('histStats');
-    const note = document.getElementById('histExampleNote');
-    if (!list || !stats) return;
-    const cur = currentPeriods();
-    const st = periodStats(cur.list);
-    stats.innerHTML =
-      '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t('Cycle moyen')) + '</span><strong>' +
-      escapeHtml(st.avgCycle == null ? '—' : t('{n} j', { n: fmtNum(st.avgCycle) })) + '</strong></div>' +
-      '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t('Règles moyennes')) + '</span><strong>' +
-      escapeHtml(st.avgPeriod == null ? '—' : t('{n} j', { n: fmtNum(st.avgPeriod) })) + '</strong></div>' +
-      '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t('Cycles min–max')) + '</span><strong>' +
-      escapeHtml(st.minCycle == null ? '—' : (st.minCycle === st.maxCycle ? t('{n} j', { n: st.minCycle }) : st.minCycle + '–' + t('{n} j', { n: st.maxCycle }))) + '</strong></div>';
-    list.innerHTML = '';
-    st.sorted.slice().reverse().forEach((p, idxRev) => {
-      const i = st.sorted.length - 1 - idxRev;
-      const li = document.createElement('li');
-      li.className = 'hist-item';
-      const d = parseYMD(p.start);
-      const cyc = i < st.cycles.length ? st.cycles[i] : null;
-      const parts = [t('{n} j de règles', { n: p.len })];
-      if (cyc != null) parts.push(t('cycle de {n} j', { n: cyc }));
-      li.innerHTML =
-        '<span class="pl-sw ph-menstruelle" aria-hidden="true"></span>' +
-        '<span class="pl-txt"><strong>' + escapeHtml(fmtDate(d)) + '</strong><span class="pl-sub">' +
-        escapeHtml(parts.join(' · ')) + '</span></span>' +
-        (cur.example ? '' : '<button type="button" class="hist-del" data-del="' + escapeHtml(p.start) + '" aria-label="' +
-          escapeHtml(t('Supprimer cette période')) + '">×</button>');
-      list.appendChild(li);
-    });
-    if (note) note.hidden = !cur.example;
+    const tile = (k, v) => '<div class="hs-tile"><span class="hs-k">' + escapeHtml(t(k)) + '</span><strong>' + escapeHtml(v) + '</strong></div>';
+    const days = (x) => (x == null ? '—' : t('{n} j', { n: fmtNum(x) }));
+    if (stats) {
+      stats.innerHTML =
+        tile('Cycle moyen', days(st.avgCycle)) +
+        tile('Règles moyennes', days(st.avgPeriod)) +
+        tile('Cycle le plus court', days(st.minCycle)) +
+        tile('Cycle le plus long', days(st.maxCycle)) +
+        tile('Cycles complets', String(st.cycleCount)) +
+        tile('Règles notées', String(st.count));
+    }
+    const next = document.getElementById('histNext');
+    if (next) {
+      const pr = CC.predictNext(stored, inp, productToday());
+      next.textContent = pr
+        ? t('Prochaines règles estimées · {d}', { d: fmtDate(pr.date, { weekday: true }) }) + ' · ' +
+          (pr.source === 'history' ? t('d’après tes moyennes') : t('d’après tes réglages (moins de 2 règles notées)'))
+        : '';
+    }
+    const use = document.getElementById('btnUseAverages');
+    if (use) use.disabled = st.count === 0;
+
+    const list = document.getElementById('histList');
+    const empty = document.getElementById('histEmpty');
+    if (empty) empty.hidden = st.count > 0;
+    if (list) {
+      list.innerHTML = '';
+      st.rows.forEach((p, i) => {
+        const li = document.createElement('li');
+        li.className = 'hx-item';
+        const s = parseYMD(p.start), e = parseYMD(p.end);
+        const cyc = p.cycleLen != null ? p.cycleLen : null;
+        const barC = cyc != null ? cyc : inp.cycleLen;
+        li.innerHTML =
+          '<div class="hx-top"><span class="pl-sw ph-menstruelle" aria-hidden="true"></span>' +
+          '<span class="pl-txt"><strong>' + escapeHtml(fmtDate(s)) + ' → ' + escapeHtml(fmtDate(e)) + '</strong>' +
+          '<span class="pl-sub">' + escapeHtml(t('{n} j de règles', { n: p.len })) + ' · ' +
+          escapeHtml(cyc != null ? t('cycle de {n} j', { n: cyc }) : t('cycle en cours')) + '</span></span></div>' +
+          histPhaseBar(p.len, barC, cyc == null) +
+          '<div class="hx-actions"><button type="button" class="link-silver" data-hedit="' + escapeHtml(p.start) + '">' + escapeHtml(t('Modifier')) + '</button>' +
+          '<button type="button" class="link-silver" data-hdel="' + escapeHtml(p.start) + '">' + escapeHtml(t('Supprimer')) + '</button></div>';
+        list.appendChild(li);
+      });
+    }
+
+    // Check-ins groupés par date (plus récent d’abord)
+    const box = document.getElementById('histCheckins');
+    const cEmpty = document.getElementById('histCheckinsEmpty');
+    const entries = loadJournal().filter((x) => parseYMD(x.date)).sort((a, b) => (a.date < b.date ? 1 : -1));
+    if (cEmpty) cEmpty.hidden = entries.length > 0;
+    if (box) {
+      const groups = {};
+      entries.forEach((x) => { (groups[x.date] = groups[x.date] || []).push(x); });
+      box.innerHTML = Object.keys(groups).sort().reverse().map((date) => {
+        const d = parseYMD(date);
+        const ph = phaseOfDate(d) || 'luteale';
+        return '<div class="hx-day"><p class="hx-day-head"><strong>' + escapeHtml(fmtDate(d, { weekday: true })) + '</strong>' +
+          '<span class="phase-chip ph-' + ph + '">' + escapeHtml(t(PHASE_META[ph].name)) + '</span></p>' +
+          groups[date].map((x) => {
+            const parts = [];
+            if (x.mood && MOOD_FR[x.mood]) parts.push(t('Humeur : {m}', { m: t(MOOD_FR[x.mood]) }));
+            if (x.symptoms && x.symptoms.length) parts.push(t('Sensations : {s}', { s: x.symptoms.map((y) => t(y)).join(', ') }));
+            parts.push(t('Énergie') + ' : ' + (x.energy ? x.energy + ' / 5' : '—'));
+            return '<p class="hx-ck">' + parts.map(escapeHtml).join('<br>') +
+              (x.note ? '<br><em>« ' + escapeHtml(x.note) + ' »</em>' : '') +
+              '<br><button type="button" class="link-silver" data-cdel="' + escapeHtml(date) + '">' + escapeHtml(t('Supprimer')) + '</button></p>';
+          }).join('') + '</div>';
+      }).join('');
+    }
+    applyI18n();
   }
 
   function savePeriods(list, persist) {
-    const clean = list
-      .filter((p) => parseYMD(p.start))
+    const seen = {};
+    const clean = list.map(CC.normPeriod).filter((p) => p && !seen[p.start] && (seen[p.start] = 1))
       .sort((a, b) => (a.start < b.start ? -1 : 1))
-      .slice(-24);
+      .slice(-36)
+      .map((p) => ({ start: p.start, end: p.end, len: p.len }));
     if (persist) {
       try { localStorage.setItem(PERIODS_KEY, JSON.stringify(clean)); } catch (_) { /* ignore */ }
     } else {
@@ -3237,50 +3233,93 @@
   function bindHistory() {
     const form = document.getElementById('histForm');
     const startEl = document.getElementById('histStart');
-    const lenEl = document.getElementById('histLen');
+    const endEl = document.getElementById('histEnd');
+    const submitBtn = document.getElementById('histSubmit');
+    const cancelBtn = document.getElementById('histCancel');
+    const resetForm = () => {
+      histEditing = null;
+      if (submitBtn) submitBtn.textContent = t('Ajouter ces règles passées');
+      if (cancelBtn) cancelBtn.hidden = true;
+    };
+    if (startEl) startEl.max = DEMO.today;
+    if (cancelBtn) cancelBtn.addEventListener('click', resetForm);
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const start = startEl && startEl.value;
-        const d = parseYMD(start);
-        if (!d) { toast('Date invalide'); return; }
-        if (d > productToday()) { toast('Choisis une date passée'); return; }
-        const len = Math.min(10, Math.max(1, Math.round(Number(lenEl && lenEl.value) || 5)));
-        const cur = currentPeriods();
-        const base = cur.example ? [] : cur.list.filter((p) => p.start !== start);
-        base.push({ start: start, len: len });
-        requireCycleConsent((ok) => {
-          savePeriods(base, ok);
-          renderHistory();
-          toast(ok ? 'Période ajoutée ✦' : 'Période notée pour cette session · non enregistrée');
-        });
+        if (!getConsent()) { renderHistory(); return; }
+        const s = parseYMD(startEl && startEl.value);
+        const en = parseYMD(endEl && endEl.value);
+        if (!s || !en) { toast('Date invalide'); return; }
+        if (daysBetween(s, productToday()) < 0) { toast('Choisis une date passée'); return; }
+        const len = daysBetween(s, en) + 1;
+        if (len < 1) { toast('La fin doit être après le début'); return; }
+        if (len > 15) { toast('Durée trop longue (15 jours au plus)'); return; }
+        const base = (loadPeriods() || []).filter((p) => p.start !== histEditing && p.start !== toYMD(s));
+        base.push({ start: toYMD(s), end: toYMD(en) });
+        const wasEdit = !!histEditing;
+        savePeriods(base, true);
+        resetForm();
+        renderHistory();
+        renderTrends();
+        toast(wasEdit ? 'Période modifiée ✦' : 'Période ajoutée ✦');
       });
     }
     const list = document.getElementById('histList');
     if (list) {
       list.addEventListener('click', (e) => {
-        const b = e.target.closest('[data-del]');
+        const ed = e.target.closest('[data-hedit]');
+        if (ed) {
+          const p = (loadPeriods() || []).find((x) => x.start === ed.dataset.hedit);
+          if (!p) return;
+          histEditing = p.start;
+          if (startEl) startEl.value = p.start;
+          if (endEl) endEl.value = p.end;
+          if (submitBtn) submitBtn.textContent = t('Enregistrer la modification');
+          if (cancelBtn) cancelBtn.hidden = false;
+          if (form) form.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+          return;
+        }
+        const b = e.target.closest('[data-hdel]');
         if (!b) return;
-        const start = b.dataset.del;
-        const stored = loadPeriods();
-        if (stored) savePeriods(stored.filter((p) => p.start !== start), true);
-        if (sessionPeriods) sessionPeriods = sessionPeriods.filter((p) => p.start !== start);
+        if (!window.confirm(t('Supprimer cette période ?'))) return;
+        savePeriods((loadPeriods() || []).filter((p) => p.start !== b.dataset.hdel), true);
         renderHistory();
+        renderTrends();
         toast('Période supprimée');
       });
     }
+    const ck = document.getElementById('histCheckins');
+    if (ck) {
+      ck.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-cdel]');
+        if (!b) return;
+        if (!window.confirm(t('Supprimer ce check-in ?'))) return;
+        try {
+          localStorage.setItem(JOURNAL_KEY, JSON.stringify(loadJournal().filter((x) => x.date !== b.dataset.cdel)));
+        } catch (_) { /* ignore */ }
+        renderHistory();
+        renderJournalHistory();
+        renderTrends();
+        toast('Check-in supprimé');
+      });
+    }
+    const gateBtn = document.getElementById('btnHistConsent');
+    if (gateBtn) gateBtn.addEventListener('click', () => {
+      consentRefusedThisSession = false;
+      openConsentSheet(() => renderHistory());
+    });
     const use = document.getElementById('btnUseAverages');
     if (use) {
       use.addEventListener('click', () => {
-        const cur = currentPeriods();
-        const st = periodStats(cur.list);
+        const st = periodStats(loadPeriods() || []);
         const last = st.sorted[st.sorted.length - 1];
+        if (!last) return;
         const cEl = document.getElementById('calcCycleLen');
         const pEl = document.getElementById('calcPeriodLen');
         const lEl = document.getElementById('calcLastStart');
         if (cEl && st.avgCycle != null) cEl.value = String(clampCycle(st.avgCycle));
         if (pEl && st.avgPeriod != null) pEl.value = String(clampPeriod(st.avgPeriod));
-        if (lEl && last) lEl.value = last.start;
+        if (lEl) lEl.value = last.start;
         syncCalcWords();
         go('calculator');
         toast('Moyennes reprises · appuie sur « Voir ma date »');
@@ -3352,11 +3391,14 @@
     return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
   }
   function icsFold(line) {
+    // v1.4.0 : pliage RFC 5545 à 75 octets UTF-8 (avant : 60 caractères, trop long avec accents/chinois).
+    const enc = (s) => unescape(encodeURIComponent(s)).length;
     const out = [];
-    let cur = line;
-    while (cur.length > 60) {
-      out.push(cur.slice(0, 60));
-      cur = ' ' + cur.slice(60);
+    let cur = '';
+    let limit = 75;
+    for (const ch of line) {
+      if (enc(cur + ch) > limit) { out.push(cur); cur = ' '; limit = 75; }
+      cur += ch;
     }
     out.push(cur);
     return out.join('\r\n');
@@ -3368,9 +3410,8 @@
   function buildIcs(includePhases) {
     const inp = activeCalcInputs();
     const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
-    if (!res) return null;
+    if (!res || res.future) return null;
     const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
-    const segs = phaseSegments(res.periodLen, res.cycleLen);
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -3398,22 +3439,20 @@
       }
       lines.push('END:VEVENT');
     };
-    res.periods.forEach((per, i) => {
-      const cycleStart = per.start;
-      segs.forEach((s) => {
-        const a = addDays(cycleStart, s.start - 1);
-        const bEx = addDays(cycleStart, s.end);
+    CC.icsRanges(res, includePhases).forEach((s) => {
+      {
+        const a = s.start;
+        const bEx = s.endExcl;
         const id = 'ca-' + s.key + '-' + icsDate(a);
         if (s.key === 'menstruelle') {
           ev(id, a, bEx, t('Règles prévues · Cycle & Astro'), disc, t('Règles prévues demain'));
-        } else if (includePhases) {
+        } else {
           const desc = s.key === 'ovulatoire'
             ? disc + ' ' + t('L’ovulation est une estimation. Ce n’est ni une contraception, ni un conseil de fertilité.')
             : disc;
           ev(id, a, bEx, t(PHASE_META[s.key].full) + ' · Cycle & Astro', desc, null);
         }
-      });
-      if (i === res.periods.length - 1) return;
+      }
     });
     lines.push('END:VCALENDAR');
     return lines.map(icsFold).join('\r\n') + '\r\n';
@@ -3667,16 +3706,21 @@
 
   /* —— Écran Cycle : frise, liste, sauts de section —— */
   function renderCycleV12() {
-    const inp = { lastStart: DEMO.cycle.lastPeriodStart, periodLen: DEMO.cycle.avgPeriod, cycleLen: DEMO.cycle.avgCycle };
+    // v1.4.0 : mêmes entrées que le calculateur et les conseils (avant : valeurs démo figées),
+    // et la liste part du début du cycle EN COURS (avant : D0, faux dès le 2e cycle).
+    const inp = activeCalcInputs();
     const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
-    renderPhaseTimeline(document.getElementById('cycleTimeline'), res);
-    renderPhaseList(document.getElementById('cyclePhaseList'), res, parseYMD(inp.lastStart));
+    if (res && !res.future) {
+      renderPhaseTimeline(document.getElementById('cycleTimeline'), res);
+      renderPhaseList(document.getElementById('cyclePhaseList'), res, res.cycleStart);
+    }
     renderPhaseGuide();
     renderHistory();
     renderTrends();
   }
 
   function bindCycleV12() {
+    bindCycleCalendarNav();
     document.querySelectorAll('[data-jump]').forEach((b) => {
       b.addEventListener('click', () => {
         const target = document.getElementById(b.dataset.jump);

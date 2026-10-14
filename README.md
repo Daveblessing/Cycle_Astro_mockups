@@ -1,4 +1,12 @@
-# Cycle & Astro — v1.3.1
+# Cycle & Astro — v1.4.0
+
+## v1.4.0 (14 octobre 2026) — calculs du cycle corrigés + Historique
+
+- **Aujourd’hui = mercredi 14 octobre 2026** (date locale, plus de septembre forcé). D0 = 1er septembre 2026, C = 28, P = 5 → début du cycle en cours 29 septembre, **jour 16, phase lutéale**, prochaines règles **mardi 27 octobre 2026 (dans 13 jours)**. Le calendrier s’ouvre sur octobre.
+- **Moteur unique** `cycle-calc.js` (pur, testé : `node tests/cycle-calc.test.js`, 20 tests) utilisé par le hub, l’écran Cycle, le calendrier, le calculateur, les phases, les conseils, les méditations, les tendances, l’agenda .ics et l’historique. Dates locales à midi (pas de décalage UTC / heure d’été).
+- Corrections : anneau du hub faux (220/302 + décalage → proportion jour/C exacte), valeurs du hub écrites en dur, calendrier figé sur un mois (‹ › inopérants, décalage et jours du mois précédent codés en dur), écran Cycle et calendrier sur les valeurs démo au lieu des entrées du calculateur, liste des phases ancrée sur D0 au lieu du cycle en cours, date de début future acceptée (jour et phase négatifs projetés), dates impossibles acceptées (29 février 2027), pliage .ics à 60 caractères au lieu de 75 octets, tendances des check-ins passés calculées sur la projection au lieu du cycle noté, repli `fmtDate` qui affichait le mois en chiffre (0–11).
+- **Historique** (`#/historique`, forfait Cycle) : règles notées (début, fin, durée, longueur du cycle, barre des 4 phases), résumé (moyennes, plus court/long, nombre de cycles, prochaine date d’après les moyennes dès 2 règles), check-ins par date avec phase, ajouter / modifier / supprimer (confirmation), « Utiliser ces moyennes dans le calculateur ». Remplace la carte historique v1.2 (même clé `ca_periods_v1`, ancien format `{start, len}` converti). Sans consentement : explication + bouton. Export / suppression incluent l’historique.
+- **Version figée** : `releases/v1.4.0/` + tag `v1.4.0`.
 
 ## Correctif v1.3.1 (7 octobre 2026)
 
