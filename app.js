@@ -10,7 +10,7 @@
    * « Retour au Market » : aucune adresse codée en dur (v1.3.1).
    * Dans un cadre : message au parent seulement. Seule : ?market=, puis référent, puis historique, puis le hub.
    */
-  const APP_VERSION = '1.6.0';
+  const APP_VERSION = '1.7.0';
 
   /* Clés localStorage (tout reste sur le téléphone, aucun serveur). */
   const LANG_KEY = 'ca_lang_v1';
@@ -897,55 +897,35 @@
         .reduce((a, d) => a + Number(d), 0);
       steps.push(String(n));
     }
-    return (
-      'Rappel du calcul : on additionne tous les chiffres de ta date (' +
-      digits.split('').join('+') +
-      ' = ' +
-      sum +
-      ')' +
-      (steps.length > 1 ? ' → ' + steps.slice(1).join(' → ') : '') +
-      '. En P0, on réduit toujours à 1–9 (pas de master numbers).'
-    );
+    return t('Rappel du calcul : on additionne tous les chiffres de ta date ({digits} = {sum}){steps}. En P0, on réduit toujours à 1–9 (pas de master numbers).', {
+      digits: digits.split('').join('+'),
+      sum: sum,
+      steps: steps.length > 1 ? ' → ' + steps.slice(1).join(' → ') : '',
+    });
   }
 
   function allianceDayPath(dayVibe, lifePath, pathTitle) {
     if (dayVibe === lifePath) {
-      return (
-        'Alliance avec ton chemin ' +
-        lifePath +
-        ' (« ' +
-        pathTitle +
-        ' ») : la vibration du jour et le chemin résonnent sur la même note — une cohérence forte. Invitation à incarner ce thème avec nuance, sans le forcer en identité figée.'
-      );
+      return t('Alliance avec ton chemin {n} (« {title} ») : la vibration du jour et le chemin résonnent sur la même note — une cohérence forte. Invitation à incarner ce thème avec nuance, sans le forcer en identité figée.', { n: lifePath, title: pathTitle });
     }
-    return (
-      'Alliance avec ton chemin ' +
-      lifePath +
-      ' (« ' +
-      pathTitle +
-      ' ») : la vibration ' +
-      dayVibe +
-      ' du jour colore et dialogue avec ton chemin. Ce n’est pas une contradiction : c’est une polyphonie. Tu peux laisser le jour nuancer le chemin — ou le chemin cadrer le jour — selon ce dont tu as besoin maintenant.'
-    );
+    return t('Alliance avec ton chemin {n} (« {title} ») : la vibration {v} du jour colore et dialogue avec ton chemin. Ce n’est pas une contradiction : c’est une polyphonie. Tu peux laisser le jour nuancer le chemin — ou le chemin cadrer le jour — selon ce dont tu as besoin maintenant.', { n: lifePath, title: pathTitle, v: dayVibe });
   }
 
   function alliancePathSign(lifePath, pathTitle, signMeta) {
     if (!signMeta) return '';
-    return (
-      'Alliance chemin ' +
-      lifePath +
-      ' (« ' +
-      pathTitle +
-      ' ») × ' +
-      'signe ' +
-      signMeta.element +
-      ' / ' +
-      signMeta.modality +
-      ' (gouverné·e traditionnellement par ' +
-      signMeta.planet +
-      ') : une signature où la boussole numérologique rencontre le climat solaire. Ce dialogue peut suggérer un style d’expression particulier — à explorer comme carte, pas comme contrat.'
-    );
+    return t('Alliance chemin {n} (« {title} ») × signe {element} / {modality} (gouverné·e traditionnellement par {planet}) : une signature où la boussole numérologique rencontre le climat solaire. Ce dialogue peut suggérer un style d’expression particulier — à explorer comme carte, pas comme contrat.', {
+      n: lifePath, title: pathTitle, element: t(signMeta.element), modality: t(signMeta.modality), planet: tPlanets(signMeta.planet),
+    });
   }
+
+  /** v1.7.0 : « Pluton / Mars », « Mercure & Vénus » → chaque planète traduite. */
+  function tPlanets(str) {
+    if (!str) return str;
+    const whole = t(str);
+    if (whole !== str || currentLang === 'fr') return whole;
+    return String(str).split(/(\s*[\/&]\s*)/).map((x) => (/[\/&]/.test(x) ? x : t(x))).join('');
+  }
+  function capFirst(x) { return x ? x.charAt(0).toUpperCase() + x.slice(1) : x; }
 
   function suggestDomains(path, signMeta) {
     const base = (path.domains || path.gifts || []).slice();
@@ -958,8 +938,8 @@
       seen.add(k);
       out.push(x);
     }
-    base.forEach(push);
-    boost.forEach((b) => push(b.charAt(0).toUpperCase() + b.slice(1)));
+    base.forEach((b) => push(t(b)));
+    boost.forEach((b) => push(capFirst(t(b))));
     // ensure 6–10
     const fillers = [
       'Accompagnement bienveillant (non médical)',
@@ -969,7 +949,7 @@
     ];
     for (const f of fillers) {
       if (out.length >= 10) break;
-      push(f);
+      push(t(f));
     }
     return out.slice(0, 10);
   }
@@ -1018,6 +998,8 @@
     },
   };
 
+  let lastReading = null;
+  let lastReadingArgs = null;
   const PROFILE_KEY = 'ca_profile_v1';
   const RECENT_KEY = 'ca_profiles_recent_v1';
   const RECENT_MAX = 5;
@@ -1227,7 +1209,7 @@
           escapeHtml((p.firstName || p.name || 'Profil') + (p.lastName ? ' ' + p.lastName : '')) +
           ' · ' +
           escapeHtml(p.birthIso || '') +
-          (p.lifePath ? ' · chemin ' + p.lifePath : '');
+          (p.lifePath ? ' ' + t('· chemin {n}', { n: p.lifePath }) : '');
         return (
           '<li><button type="button" class="recent-item" data-recent-index="' +
           i +
@@ -1261,6 +1243,7 @@
   }
 
   function buildReading(input, birthIso, place, giftsOverride, extraInvites) {
+    lastReadingArgs = Array.prototype.slice.call(arguments);
     // Compat: buildReading(name, ...) OR buildReading({ firstName, lastName, gender, birthTime, ... })
     let firstName = '';
     let lastName = '';
@@ -1291,37 +1274,33 @@
     const path = PATH_COPY[lp];
     const dayCopy = DAY_VIBE_COPY[dv.vibe] || { short: '', sense: '', concrete: '' };
     const signMeta = SIGN_COPY[ss.sign] || null;
-    const decanMeta = DECAN_NOTE[ss.decan] || { label: ss.decan + 'e décan', note: '' };
+    const decanMeta = DECAN_NOTE[ss.decan] || { label: '', note: '' };
+    const decanLabel = decanMeta.label ? t(decanMeta.label) : t('{n}e décan', { n: ss.decan });
     const ruler =
       (DECAN_RULERS[ss.sign] && DECAN_RULERS[ss.sign][ss.decan]) ||
       (signMeta && signMeta.planet) ||
       '—';
     const voice = genderVoice(gender);
-    const fullName = name || firstName || 'Lecteur·rice';
+    const fullName = name || firstName || t('Lecteur·rice');
 
-    const weekPlan = (path.weekPlan || path.invites || []).slice();
+    const weekPlan = (path.weekPlan || path.invites || []).map((x) => t(x));
     if (extraInvites && extraInvites.length) {
       extraInvites.forEach((x) => {
+        x = t(x);
         if (!weekPlan.includes(x)) weekPlan.push(x);
       });
     }
 
     const domains =
       giftsOverride && giftsOverride.length
-        ? giftsOverride
+        ? giftsOverride.map((x) => t(x))
         : suggestDomains(path, signMeta);
 
-    const signLine =
-      (signMeta ? signMeta.glyph + ' ' : '') +
-      ss.sign +
-      ' · ' +
-      (decanMeta.label || ss.decan + 'e décan') +
-      ' · ' +
-      (signMeta ? signMeta.element + ' · ' + signMeta.modality : '') +
-      ' · planète ' +
-      (signMeta ? signMeta.planet : '—') +
-      ' · décan : ' +
-      ruler;
+    const signLine = (signMeta ? signMeta.glyph + ' ' : '') + t('{sign} · {decan} · {element} · {modality} · planète {planet} · décan : {ruler}', {
+      sign: t(ss.sign), decan: decanLabel,
+      element: signMeta ? t(signMeta.element) : '—', modality: signMeta ? t(signMeta.modality) : '—',
+      planet: signMeta ? tPlanets(signMeta.planet) : '—', ruler: tPlanets(ruler),
+    });
 
     const expr = expressionNumber(fullName);
     const soul = soulNumber(fullName);
@@ -1329,41 +1308,42 @@
     const luckStyle = luckyStyle(lp, signMeta ? signMeta.element : '');
 
     const cultivate = (path.strengths || []).slice(0, 4).map((s) => {
-      return 'Cultiver : ' + s.replace(/\s*—\s*.*$/, '').trim();
+      return t('Cultiver : {s}', { s: t(s).replace(/\s*—+\s*.*$/, '').trim() });
     });
     if (!cultivate.length) {
-      cultivate.push('Cultiver la clarté de ton intention cette semaine.');
+      cultivate.push(t('Cultiver la clarté de ton intention cette semaine.'));
     }
 
     const attention = (path.shadows || []).slice(0, 4).map((s) => {
-      const parts = String(s).split('→');
-      if (parts.length > 1) return 'Attention : ' + parts[0].trim() + ' — piste : ' + parts[1].trim();
-      return 'Attention : ' + s;
+      const parts = String(t(s)).split('→');
+      if (parts.length > 1) return t('Attention : {a} — piste : {b}', { a: parts[0].trim(), b: parts[1].trim() });
+      return t('Attention : {a}', { a: t(s) });
     });
     if (!attention.length) {
-      attention.push('Attention : éviter de figer cette lecture comme un destin.');
+      attention.push(t('Attention : éviter de figer cette lecture comme un destin.'));
     }
 
     // Légères adaptations de ton selon le genre (phrases courtes)
-    const forceLead =
+    const forceLead = t(
       voice.key === 'femme'
         ? 'Elle peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.'
         : voice.key === 'homme'
           ? 'Il peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.'
-          : 'Iel peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.';
+          : 'Iel peut s’appuyer sur ses forces naturelles tout en restant libre de choisir.');
 
-    const whatCanDo =
+    const whatCanDo = t(
       voice.key === 'femme'
         ? 'Ce qu’elle peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.'
         : voice.key === 'homme'
           ? 'Ce qu’il peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.'
-          : 'Ce qu’iel peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.';
+          : 'Ce qu’iel peut faire : explorer les domaines suggérés comme des terrains de jeu, pas des obligations.');
 
     const ascNote = birthTime
-      ? 'Heure saisie : ' +
-        birthTime +
-        ' — l’ascendant précis nécessite aussi un lieu géolocalisé et une éphéméride ; non calculé dans cette maquette (signe solaire + décan seulement).'
-      : 'Ascendant non calculé sans heure de naissance — signe solaire et décan uniquement.';
+      ? t('Heure saisie : {time} — l’ascendant précis nécessite aussi un lieu géolocalisé et une éphéméride ; non calculé dans cette maquette (signe solaire + décan seulement).', { time: birthTime })
+      : t('Ascendant non calculé sans heure de naissance — signe solaire et décan uniquement.');
+    const tr = (x) => (x ? t(x) : x);
+    const trList = (a) => (a || []).map((x) => t(x));
+    const pathTitleT = t(path.title);
 
     return {
       firstName: firstName,
@@ -1372,52 +1352,54 @@
       gender: gender,
       voice: voice,
       birthIso: birthIso,
-      birthFr: formatBirthFr(birthIso),
+      birthFr: fmtDate(new Date(Number(birthIso.slice(0, 4)), Number(birthIso.slice(5, 7)) - 1, Number(birthIso.slice(8, 10)))),
       birthTime: birthTime,
       place: place || '',
       lifePath: lp,
-      pathTitle: path.title,
+      pathTitle: pathTitleT,
       pathCalc: lifePathCalcReminder(birthIso),
-      mission: path.mission || (path.paras && path.paras[0]) || '',
-      strengths: path.strengths || [],
-      shadows: path.shadows || [],
-      inRelations: path.inRelations || '',
-      inWork: path.inWork || '',
-      inEnergy: path.inEnergy || '',
-      pathParas: path.paras || [],
+      mission: tr(path.mission || (path.paras && path.paras[0]) || ''),
+      strengths: trList(path.strengths),
+      shadows: trList(path.shadows),
+      inRelations: tr(path.inRelations || ''),
+      inWork: tr(path.inWork || ''),
+      inEnergy: tr(path.inEnergy || ''),
+      pathParas: trList(path.paras),
       forceLead: forceLead,
       whatCanDo: whatCanDo,
       day: dv.day,
       dayVibe: dv.vibe,
-      dayVibeShort: typeof dayCopy === 'string' ? dayCopy : dayCopy.short || '',
-      dayVibeSense: typeof dayCopy === 'string' ? dayCopy : dayCopy.sense || '',
-      dayVibeConcrete: typeof dayCopy === 'string' ? '' : dayCopy.concrete || '',
-      dayPathAlliance: allianceDayPath(dv.vibe, lp, path.title),
+      dayVibeShort: tr(typeof dayCopy === 'string' ? dayCopy : dayCopy.short || ''),
+      dayVibeSense: tr(typeof dayCopy === 'string' ? dayCopy : dayCopy.sense || ''),
+      dayVibeConcrete: tr(typeof dayCopy === 'string' ? '' : dayCopy.concrete || ''),
+      dayPathAlliance: allianceDayPath(dv.vibe, lp, pathTitleT),
       sign: ss.sign,
       decan: ss.decan,
+      signLabel: t(ss.sign),
+      decanLabel: decanLabel,
       signGlyph: signMeta ? signMeta.glyph : '',
-      signElement: signMeta ? signMeta.element : '',
-      signModality: signMeta ? signMeta.modality : '',
-      signPlanet: signMeta ? signMeta.planet : '',
-      signIntro: signMeta ? signMeta.intro : '',
-      signRelational: signMeta ? signMeta.relational : '',
-      decanNote: decanMeta.note || '',
-      decanRuler: ruler,
+      signElement: signMeta ? t(signMeta.element) : '',
+      signModality: signMeta ? t(signMeta.modality) : '',
+      signPlanet: signMeta ? tPlanets(signMeta.planet) : '',
+      signIntro: signMeta ? t(signMeta.intro) : '',
+      signRelational: signMeta ? t(signMeta.relational) : '',
+      decanNote: tr(decanMeta.note || ''),
+      decanRuler: tPlanets(ruler),
       signLine: signLine,
-      pathSignAlliance: alliancePathSign(lp, path.title, signMeta),
+      pathSignAlliance: alliancePathSign(lp, pathTitleT, signMeta),
       ascNote: ascNote,
       expression: expr,
       soul: soul,
       luckyNumbers: luckNums,
-      luckyColors: luckStyle.colors,
-      luckyScents: luckStyle.scents,
+      luckyColors: trList(luckStyle.colors),
+      luckyScents: trList(luckStyle.scents),
       cultivate: cultivate,
       attention: attention,
       domains: domains,
       gifts: domains,
       weekPlan: weekPlan.slice(0, 7),
       invites: weekPlan.slice(0, 5),
-      mirrors: path.mirrors || [],
+      mirrors: trList(path.mirrors),
     };
   }
 
@@ -1434,13 +1416,15 @@
     if (!out || !body) return;
     out.hidden = false;
     setReadingMode('verbatim');
-    body.textContent = KRIZOUA_VERBATIM_TEXT;
+    body.textContent = t(KRIZOUA_VERBATIM_TEXT);
+    lastReading = { mode: 'verbatim' };
     out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  function renderReading(data) {
+  function renderReading(data, quiet) {
     const out = document.getElementById('readingOutput');
     if (!out || !data) return;
+    lastReading = { mode: 'structured', args: lastReadingArgs };
     out.hidden = false;
     setReadingMode('structured');
 
@@ -1455,30 +1439,29 @@
 
     const neo = (data.voice && data.voice.neo) || 'né·e';
     set('outName', data.name);
-    let meta = neo + ' le ' + data.birthFr;
-    if (data.place) meta += ' à ' + data.place;
+    let meta = t(neo + ' le {date}', { date: data.birthFr });
+    if (data.place) meta += ' ' + t('à {place}', { place: data.place });
     if (data.birthTime) meta += ' · ' + data.birthTime;
     set('outBirthPlace', meta);
 
     set('outLifePath', data.lifePath + ' · ' + data.pathTitle);
-    set('outDayVibe', data.day + ' → vibration ' + data.dayVibe);
+    set('outDayVibe', t('{d} → vibration {v}', { d: data.day, v: data.dayVibe }));
     set(
       'outSignDecan',
       (data.signGlyph ? data.signGlyph + ' ' : '') +
-        data.sign +
+        data.signLabel +
         ' · ' +
-        data.decan +
-        'e décan'
+        data.decanLabel
     );
     set('outElement', data.signElement || '—');
 
     const pills = document.getElementById('outSynthPills');
     if (pills) {
       const items = [
-        { k: 'Chemin', v: String(data.lifePath) },
-        { k: 'Signe', v: (data.signGlyph ? data.signGlyph + ' ' : '') + data.sign },
-        { k: 'Vib. jour', v: String(data.dayVibe) },
-        { k: 'Élément', v: data.signElement || '—' },
+        { k: t('Chemin'), v: String(data.lifePath) },
+        { k: t('Signe'), v: (data.signGlyph ? data.signGlyph + ' ' : '') + data.signLabel },
+        { k: t('Vib. jour'), v: String(data.dayVibe) },
+        { k: t('Élément'), v: data.signElement || '—' },
       ];
       pills.innerHTML = items
         .map(
@@ -1499,7 +1482,7 @@
     setHtml(
       'outPathBody',
       '<div class="read-sec">' +
-        '<h4 class="read-subh">Mission d’âme</h4>' +
+        '<h4 class="read-subh">' + escapeHtml(t('Mission d’âme')) + '</h4>' +
         '<p class="body">' +
         escapeHtml(data.mission) +
         '</p>' +
@@ -1508,11 +1491,11 @@
         '</p>' +
         '</div>' +
         '<div class="read-sec">' +
-        '<h4 class="read-subh">Forces</h4>' +
+        '<h4 class="read-subh">' + escapeHtml(t('Forces')) + '</h4>' +
         ulHtml(data.strengths, 'read-bullets') +
         '</div>' +
         '<div class="read-sec">' +
-        '<h4 class="read-subh">Défis / ombres — et comment les transformer</h4>' +
+        '<h4 class="read-subh">' + escapeHtml(t('Défis / ombres — et comment les transformer')) + '</h4>' +
         ulHtml(data.shadows, 'read-bullets') +
         '</div>' +
         '<div class="read-sec">' +
@@ -1521,28 +1504,28 @@
         '</p>' +
         '</div>' +
         '<div class="read-sec read-tri">' +
-        '<h4 class="read-subh">En relations</h4>' +
+        '<h4 class="read-subh">' + escapeHtml(t('En relations')) + '</h4>' +
         '<p class="body">' +
         escapeHtml(data.inRelations) +
         '</p>' +
-        '<h4 class="read-subh">En travail</h4>' +
+        '<h4 class="read-subh">' + escapeHtml(t('En travail')) + '</h4>' +
         '<p class="body">' +
         escapeHtml(data.inWork) +
         '</p>' +
-        '<h4 class="read-subh">En énergie personnelle</h4>' +
+        '<h4 class="read-subh">' + escapeHtml(t('En énergie personnelle')) + '</h4>' +
         '<p class="body">' +
         escapeHtml(data.inEnergy) +
         '</p>' +
         '</div>'
     );
 
-    set('outVibeNum', 'Jour ' + data.day + ' · vibration ' + data.dayVibe);
+    set('outVibeNum', t('Jour {d} · vibration {v}', { d: data.day, v: data.dayVibe }));
     setHtml(
       'outVibeText',
       '<p class="body" style="margin-bottom:10px;">' +
         escapeHtml(data.dayVibeSense) +
         '</p>' +
-        '<p class="body" style="margin-bottom:10px;"><strong class="gold-em">Alliance avec le chemin</strong> — ' +
+        '<p class="body" style="margin-bottom:10px;"><strong class="gold-em">' + escapeHtml(t('Alliance avec le chemin')) + '</strong> — ' +
         escapeHtml(data.dayPathAlliance) +
         '</p>' +
         '<p class="body">' +
@@ -1552,21 +1535,20 @@
 
     set('outNumPath', String(data.lifePath) + ' · ' + data.pathTitle);
     set('outNumDay', data.day + ' → ' + data.dayVibe);
-    set('outNumExpr', data.expression != null ? String(data.expression) : '— (nom requis)');
-    set('outNumSoul', data.soul != null ? String(data.soul) : '— (nom requis)');
+    set('outNumExpr', data.expression != null ? String(data.expression) : t('— (nom requis)'));
+    set('outNumSoul', data.soul != null ? String(data.soul) : t('— (nom requis)'));
 
-    set('outSignLine', data.signLine || data.sign + ' · ' + data.decan + 'e décan');
+    set('outSignLine', data.signLine || data.signLabel + ' · ' + data.decanLabel);
     setHtml(
       'outSignTraits',
       '<p class="body" style="margin-bottom:10px;">' +
         escapeHtml(data.signIntro) +
         '</p>' +
-        '<p class="body" style="margin-bottom:10px;"><strong class="gold-em">Décan</strong> — ' +
+        '<p class="body" style="margin-bottom:10px;"><strong class="gold-em">' + escapeHtml(t('Décan')) + '</strong> — ' +
         escapeHtml(data.decanNote) +
-        ' Influence traditionnelle du décan : ' +
-        escapeHtml(data.decanRuler) +
-        '.</p>' +
-        '<p class="body" style="margin-bottom:10px;"><strong class="gold-em">Alliance avec le chemin</strong> — ' +
+        ' ' + escapeHtml(t('Influence traditionnelle du décan : {r}.', { r: data.decanRuler })) +
+        '</p>' +
+        '<p class="body" style="margin-bottom:10px;"><strong class="gold-em">' + escapeHtml(t('Alliance avec le chemin')) + '</strong> — ' +
         escapeHtml(data.pathSignAlliance) +
         '</p>' +
         '<p class="body">' +
@@ -1637,8 +1619,22 @@
         .join('');
     }
 
+    if (quiet) return;
     saveLastProfile(data);
     out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /** v1.7.0 : re-rendu de la lecture affichée dans la nouvelle langue (pont kdb-lang / sélecteur). */
+  function rerenderReading() {
+    const out = document.getElementById('readingOutput');
+    if (!out || out.hidden || !lastReading) return;
+    if (lastReading.mode === 'verbatim') {
+      const body = document.getElementById('readVerbatimBody');
+      if (body) body.textContent = t(KRIZOUA_VERBATIM_TEXT);
+    } else if (lastReading.args) {
+      const data = buildReading.apply(null, lastReading.args);
+      if (data) renderReading(data, true);
+    }
   }
 
   function fillReadingForm(personaKey) {
@@ -2677,7 +2673,7 @@
       app: 'Cycle & Astro',
       version: APP_VERSION,
       exportedAt: new Date().toISOString(),
-      note: 'Données stockées uniquement sur ce téléphone (localStorage). Bien-être, pas un avis médical.',
+      note: t('Données stockées uniquement sur ce téléphone (localStorage). Bien-être, pas un avis médical.'),
       data: data,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -2729,9 +2725,9 @@
 
   /* —— Traductions ——
    * Le français du HTML est la source. Chaque nœud texte garde son original
-   * pour pouvoir revenir au français. Les lectures longues restent en français.
+   * pour pouvoir revenir au français. Depuis v1.7.0, tout est traduit (packs i18n/<code>.js).
    */
-  const I18N_SKIP = '#readingOutput, .verbatim-body, textarea, script, style, #recentProfilesList, .lang-select';
+  const I18N_SKIP = '.verbatim-body, textarea, script, style, #recentProfilesList, .lang-select';
   const textOrig = new WeakMap();
   const I18N_ATTRS = ['placeholder', 'aria-label', 'title'];
 
@@ -2766,6 +2762,13 @@
       const next = lead + tr + tail;
       if (cur !== next) n.nodeValue = next;
     }
+    // v1.7.0 : texte d’exemple du journal — traduit tant que l’utilisatrice ne l’a pas modifié.
+    const note = document.getElementById('noteField');
+    const NOTE_DEMO = 'Journée douce, un peu de fatigue en fin d’après-midi.';
+    if (note && I18N.DICT[NOTE_DEMO]) {
+      const variants = Object.values(I18N.DICT[NOTE_DEMO]);
+      if (variants.indexOf(note.value) >= 0) note.value = t(NOTE_DEMO);
+    }
     root.querySelectorAll('[data-i18n-html]').forEach((el) => {
       const key = el.getAttribute('data-i18n-html');
       const entry = I18N.HTML[key];
@@ -2785,8 +2788,6 @@
         if (el.getAttribute(attr) !== tr) el.setAttribute(attr, tr);
       });
     });
-    const note = document.getElementById('readingFrNote');
-    if (note) note.hidden = currentLang === 'fr';
   }
 
   function fillLangSelects() {
@@ -2832,6 +2833,8 @@
     renderAllV12();
     // v1.6.0 : tous les écrans dynamiques (historique, lune, conseils, tendances)
     try { renderHistory(); renderTrends(); renderPhaseGuide(); renderLunarSurfaces(); } catch (_) { /* ignore */ }
+    // v1.7.0 : textes longs (tarot, méditations, thème natal, lecture complète, Krizoua)
+    try { rerenderReading(); } catch (_) { /* ignore */ }
     applyI18n();
   }
 
@@ -4174,9 +4177,6 @@
   function icon(id, cls) {
     return '<svg class="ico ' + (cls || '') + '" aria-hidden="true" focusable="false"><use href="#' + id + '"/></svg>';
   }
-  function frNoteSync() {
-    document.querySelectorAll('[data-fr-note]').forEach((n) => { n.hidden = currentLang === 'fr'; });
-  }
 
   /* —— Petite icône de phase lunaire (SVG) —— */
   function moonIconSvg(idx, size) {
@@ -4340,9 +4340,9 @@
     if (mean) {
       mean.hidden = !st.flipped;
       document.getElementById('tarotName').textContent = ROMAN[st.card] + ' · ' + t(c.name);
-      document.getElementById('tarotKeys').textContent = c.keys;
-      document.getElementById('tarotText').textContent = c.text + ' ' + 'Une piste, pas une sentence.';
-      document.getElementById('tarotQuestion').textContent = c.q;
+      document.getElementById('tarotKeys').textContent = t(c.keys);
+      document.getElementById('tarotText').textContent = t(c.text) + ' ' + t('Une piste, pas une sentence.');
+      document.getElementById('tarotQuestion').textContent = t(c.q);
     }
     renderSpread(st, false);
   }
@@ -4367,8 +4367,8 @@
         '<p class="spread-pos"><strong>' + escapeHtml(t(SPREAD_POS[k][0])) + '</strong><span>' + escapeHtml(t(SPREAD_POS[k][1])) + '</span></p>' +
         '<div class="spread-card">' + tarotFrontSvg(ci) + '</div>' +
         '<p class="spread-name">' + escapeHtml(ROMAN[ci] + ' · ' + t(c.name)) + '</p>' +
-        '<p class="spread-keys">' + escapeHtml(c.keys) + '</p>' +
-        '<p class="spread-text">' + escapeHtml(c.text) + '</p>' +
+        '<p class="spread-keys">' + escapeHtml(t(c.keys)) + '</p>' +
+        '<p class="spread-text">' + escapeHtml(t(c.text)) + '</p>' +
         '</article>';
     }).join('');
     if (animate) {
@@ -4528,7 +4528,7 @@
   function meditBodyHtml(m, head, cls) {
     return '<p class="medit-head ' + (cls || '') + '">' + head + '</p>' +
       '<p class="medit-title">' + escapeHtml(t(m.title)) + '</p>' +
-      m.text.map((p, i) => '<p class="body medit-p' + (i ? '' : ' medit-first') + '">' + escapeHtml(p) + '</p>').join('');
+      m.text.map((p, i) => '<p class="body medit-p' + (i ? '' : ' medit-first') + '">' + escapeHtml(t(p)) + '</p>').join('');
   }
   function renderMeditCycle() {
     const tabs = document.getElementById('meditCycleTabs');
@@ -4733,7 +4733,7 @@
       lon = c.lon;
       zone = c.tz;
       off = c.off;
-      placeLabel = c.fr;
+      placeLabel = t(c.fr);
     }
     const hasTime = /^\d{1,2}:\d{2}$/.test(time);
     const hh = hasTime ? Number(time.split(':')[0]) : 12;
@@ -4763,7 +4763,7 @@
     const tz = document.getElementById('natalTz');
     if (!sel) return;
     const keep = sel.value;
-    sel.innerHTML = NATAL_CITIES.map((c) => '<option value="' + c.id + '">' + escapeHtml(c.fr) + '</option>').join('') +
+    sel.innerHTML = NATAL_CITIES.map((c) => '<option value="' + c.id + '">' + escapeHtml(t(c.fr)) + '</option>').join('') +
       '<option value="manual">' + escapeHtml(t('Autre lieu (latitude / longitude)')) + '</option>';
     if (tz && !tz.options.length) {
       const offs = [];
@@ -4843,9 +4843,9 @@
       const items = [];
       if (res.asc != null) {
         const a = lonParts(res.asc);
-        items.push(natalItem('AS', t('Ascendant'), fmtLon(res.asc), t('Maison {n}', { n: 1 }), 'Ta manière d’aborder le monde se vit ' + SIGN_STYLE[a.sign] + '.', 'is-angle'));
+        items.push(natalItem('AS', t('Ascendant'), fmtLon(res.asc), t('Maison {n}', { n: 1 }), t('{theme} se vit {style}.', { theme: t('Ta manière d’aborder le monde'), style: t(SIGN_STYLE[a.sign]) }), 'is-angle'));
         const m = lonParts(res.mc);
-        items.push(natalItem('MC', t('Milieu du ciel'), fmtLon(res.mc), t('Maison {n}', { n: 10 }), 'Ta direction de vie se vit ' + SIGN_STYLE[m.sign] + '.', 'is-angle'));
+        items.push(natalItem('MC', t('Milieu du ciel'), fmtLon(res.mc), t('Maison {n}', { n: 10 }), t('{theme} se vit {style}.', { theme: t('Ta direction de vie'), style: t(SIGN_STYLE[m.sign]) }), 'is-angle'));
       }
       res.planets.forEach((p, i) => {
         const b = NATAL_BODIES[i];
@@ -4854,7 +4854,7 @@
         if (res.cusps) sub.push(t('Maison {n}', { n: houseOf(p.lon, res.cusps) }));
         if (p.retro) sub.push(t('rétrograde'));
         if (b.slow) sub.push(t('planète lente, commune à une génération'));
-        items.push(natalItem(b.glyph + '\uFE0E', t(b.fr), fmtLon(p.lon), sub.join(' · '), b.theme + ' se vit ' + SIGN_STYLE[lp.sign] + '.', ''));
+        items.push(natalItem(b.glyph + '\uFE0E', t(b.fr), fmtLon(p.lon), sub.join(' · '), t('{theme} se vit {style}.', { theme: t(b.theme), style: t(SIGN_STYLE[lp.sign]) }), ''));
       });
       list.innerHTML = items.join('');
     }
@@ -5134,7 +5134,7 @@
     renderNatal(natalInputFromForm(), natalWho(def));
     renderTarot();
     renderRituel();
-    toast('Données astro supprimées');
+    toast(t('Données astro supprimées'));
   }
 
   function bindV13() {
@@ -5157,7 +5157,6 @@
     syncNatalManual();
     if (natalLast) renderNatal(natalLast.inp, natalLast.who);
     renderRituel();
-    frNoteSync();
   }
 
   function init() {

@@ -1,5 +1,28 @@
 # Cycle & Astro — v1.6.0
 
+## v1.7.0 — Tout est traduit (7 langues, i18n piloté par les données)
+
+- **Tout le contenu suit la langue** : méditations (phases du cycle + phases lunaires), les 22 arcanes du tarot (noms, mots-clés, textes, questions, positions du tirage à 3 cartes), phrases « planète en signe » du thème natal + maisons, lectures du chemin de vie / profil complet (chemins 1 à 9 : mission, forces, ombres, relations, travail, énergie, plan 7 jours, questions miroir, couleurs & parfums de chance), lecture verbatim Krizoua, noms de villes (exonymes).
+- Les notes « Le texte détaillé est en français » sont supprimées.
+- Le pont `kdb-lang` (postMessage du Market) re-rend aussi la lecture affichée, le tarot, les méditations et le thème natal, sans recharger.
+- Langues livrées : fr, en, es, pt, zh, de (LTR) et ar (RTL).
+
+### Architecture i18n
+- `i18n/langs.js` : registre `CA_LANG_REGISTRY` = `[{ code, label, name, html, dir }]`.
+- `i18n/<code>.js` : un pack par langue (`months`, `weekdays`, `dows`, `datePattern`, `html`, `strings` = { texte FR → traduction }).
+- `i18n.js` : moteur sans traduction ; il assemble le registre + les packs (`DICT`, `HTML`, `formatDate`, `resolveLang`…).
+
+### Ajouter une langue
+1. Ajouter une entrée dans `i18n/langs.js` (avec `dir: 'rtl'` si besoin).
+2. Créer `i18n/<code>.js` (copier `i18n/en.js` et traduire chaque valeur).
+3. Ajouter `<script src="i18n/<code>.js">` dans `index.html` (avant `i18n.js`) et `./i18n/<code>.js` dans `CORE` de `sw.js`.
+4. `node tests/i18n-complete.test.js` vérifie que chaque clé existe dans toutes les langues.
+
+### Tests
+`node tests/i18n-complete.test.js` (15) · `node tests/lang.test.js` (11) · `node tests/cycle-calc.test.js` (20) · `node tests/moon-calc.test.js` (8).
+
+Note : le moteur réduit toujours le chemin de vie à 1–9 (pas de nombres maîtres 11/22/33) ; il n’y a donc pas de lecture « nombre maître » à traduire.
+
 ## v1.6.0 — Langue pilotée par le Market (7 langues)
 
 Langues : fr, en, es, pt, zh, de, ar (ar → `dir="rtl"`). Normalisation : `en-US`→`en`, `zh-CN`→`zh`, inconnue→`fr`.

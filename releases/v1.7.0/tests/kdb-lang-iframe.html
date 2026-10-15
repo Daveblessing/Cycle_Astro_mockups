@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Test Market · kdb-lang</title>
+<style>body{font-family:sans-serif;color:#1A1A1A;background:#FBF7EE}button{margin:2px;padding:6px 10px}iframe{width:390px;height:780px;border:1px solid #7A5A14}</style></head>
+<body>
+<p>Simulation du Market : un seul sélecteur, envoi <code>{type:'kdb-lang', lang}</code> à l’iframe.</p>
+<div id="btns"></div>
+<p id="log"></p>
+<iframe id="app" src="../index.html#/today"></iframe>
+<script>
+['fr','en','es','pt','zh','de','ar','en-US','xx'].forEach(function (l) {
+  var b = document.createElement('button'); b.textContent = l;
+  b.onclick = function () { document.getElementById('app').contentWindow.postMessage({ type: 'kdb-lang', lang: l }, '*'); document.getElementById('log').textContent = 'envoyé : ' + l; };
+  document.getElementById('btns').appendChild(b);
+});
+window.addEventListener('message', function (e) { if (e.data && e.data.type === 'cycle-astro:back-to-market') document.getElementById('log').textContent = 'reçu : retour au Market'; });
+</script>
+</body></html>

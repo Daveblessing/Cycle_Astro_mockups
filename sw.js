@@ -1,12 +1,12 @@
-/* Cycle & Astro · service worker (v1.6.0)
+/* Cycle & Astro · service worker (v1.7.0)
  * - index.html, styles.css, app.js, i18n.js : RÉSEAU D’ABORD (le cache ne sert qu’hors connexion),
  *   pour que le téléphone ne reste jamais bloqué sur une ancienne version.
  * - images et polices : cache d’abord.
  * - Les instantanés figés (/releases/...) ne passent pas par ce service worker.
  */
-const VERSION = '1.6.0';
+const VERSION = '1.7.0';
 const CACHE = 'cycle-astro-v' + VERSION;
-const CORE = ['./', './index.html', './styles.css', './app.js', './i18n.js', './cycle-calc.js', './moon-calc.js', './manifest.webmanifest', './assets/logo-3-5.png', './assets/icon-192.png', './assets/vendor/astronomy.browser.min.js'];
+const CORE = ['./', './index.html', './styles.css', './app.js', './i18n.js', './i18n/langs.js', './i18n/fr.js', './i18n/en.js', './i18n/es.js', './i18n/pt.js', './i18n/zh.js', './i18n/de.js', './i18n/ar.js', './cycle-calc.js', './moon-calc.js', './manifest.webmanifest', './assets/logo-3-5.png', './assets/icon-192.png', './assets/vendor/astronomy.browser.min.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
