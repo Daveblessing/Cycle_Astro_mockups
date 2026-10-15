@@ -4711,3 +4711,21 @@ html[data-lang="zh"] .phone .plans-badge {
 .phone #moonSignLine, .phone #astroMoonMeta { color: #7A5A14; }
 .phone #moonMonthGrid .card { min-height: 0; }
 .phone #secLunaire .planetary-list { margin-top: 8px; }
+
+/* —— v1.6.0 : arabe (dir=rtl) —— */
+html[dir="rtl"] .phone { direction: rtl; text-align: right; }
+html[dir="rtl"] .phone .cal-grid,
+html[dir="rtl"] .phone .pt-bar,
+html[dir="rtl"] .phone .hx-bar,
+html[dir="rtl"] .phone .cycle-ring,
+html[dir="rtl"] .phone .natal-wheel,
+html[dir="rtl"] .phone svg { direction: ltr; }
+html[dir="rtl"] .phone .moon-gestures { padding-left: 0; padding-right: 1.2em; }
+html[dir="rtl"] .phone .ambiance-title,
+html[dir="rtl"] .phone .ambiance-sub,
+html[dir="rtl"] .phone .ambiance-today,
+html[dir="rtl"] .phone .ambiance-next,
+html[dir="rtl"] .phone .ambiance-d0 { text-align: center; }
+html[dir="rtl"] .phone .h-serif, html[dir="rtl"] .phone .ambiance-title { letter-spacing: 0; }
+.phone .hub-chip { hyphens: auto; -webkit-hyphens: auto; }
+html[lang="de"] .phone .hub-chips .hub-chip { font-size: 11.5px; padding-left: 4px; padding-right: 4px; }

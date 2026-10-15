@@ -112,7 +112,7 @@
         if (d >= start) {
           const sg = moonSignAt(d);
           const idx = q.quarter * 2;
-          out.push({ quarter: q.quarter, name: QUARTER_FR[q.quarter], date: d, sign: sg, signFr: SIGNS_FR[sg], text: PHASE_MSG[idx].text + ' ' + SIGN_MSG[sg] });
+          out.push({ quarter: q.quarter, name: QUARTER_FR[q.quarter], date: d, sign: sg, signFr: SIGNS_FR[sg], text: PHASE_MSG[idx].text + ' ' + SIGN_MSG[sg], phaseText: PHASE_MSG[idx].text, signText: SIGN_MSG[sg] });
         }
         q = A.NextMoonQuarter(q);
       }

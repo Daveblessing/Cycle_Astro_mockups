@@ -1,5 +1,5 @@
 /**
- * Cycle & Astro · v1.5.0
+ * Cycle & Astro · v1.6.0
  * Navigation hash légère + profil complet multi-personnes (pas de backend)
  * King Daveblessing · Abidjan · FR + EN/ES/PT/中文 · bien-être, pas un avis médical
  */
@@ -10,7 +10,7 @@
    * « Retour au Market » : aucune adresse codée en dur (v1.3.1).
    * Dans un cadre : message au parent seulement. Seule : ?market=, puis référent, puis historique, puis le hub.
    */
-  const APP_VERSION = '1.5.0';
+  const APP_VERSION = '1.6.0';
 
   /* Clés localStorage (tout reste sur le téléphone, aucun serveur). */
   const LANG_KEY = 'ca_lang_v1';
@@ -20,18 +20,25 @@
   const CYCLE_DATA_KEYS = ['ca_calc_v1', JOURNAL_KEY, 'ca_period_edits_v1', 'ca_periods_v1', CONSENT_KEY];
 
   const I18N = window.CA_I18N || null;
-  /* v1.5.0 : moteur de calcul pur, partagé avec tests/cycle-calc.test.js */
+  /* v1.6.0 : moteur de calcul pur, partagé avec tests/cycle-calc.test.js */
   const CC = window.CycleCalc;
   const MC = window.MoonCalc || null;
   const CAL_MAX = { year: 2028, month: 11 };
   let currentLang = 'fr';
 
+  /**
+   * v1.6.0 — langue (contrat Market) : 1) ?lang=xx (search ou query du hash) 2) message {type:'kdb-lang', lang}
+   * (géré dans bindLangBridge) 3) localStorage 'lang' puis ca_lang_v1 4) navigator.language 5) fr.
+   */
   function getLang() {
-    try {
-      const v = localStorage.getItem(LANG_KEY);
-      if (I18N && I18N.CODES.includes(v)) return v;
-    } catch (_) { /* ignore */ }
-    return 'fr';
+    if (!I18N || !I18N.resolveLang) return 'fr';
+    let lsLang = null, lsCa = null;
+    try { lsLang = localStorage.getItem('lang'); lsCa = localStorage.getItem(LANG_KEY); } catch (_) { /* ignore */ }
+    const r = I18N.resolveLang({
+      search: location.search, hash: location.hash, lsLang: lsLang, lsCa: lsCa,
+      navigatorLanguages: navigator.languages || [], navigatorLanguage: navigator.language,
+    });
+    return r.lang;
   }
 
   /** t('Texte français', { d: '...' }) → traduction dans la langue choisie. */
@@ -218,7 +225,7 @@
   const clockEl = document.getElementById('clock');
 
   function parseHash() {
-    const raw = (location.hash || '#/today').replace(/^#\/?/, '');
+    const raw = (location.hash || '#/today').replace(/^#\/?/, '').split('?')[0];
     let screen = raw.split('/')[0] || 'today';
     if (SCREEN_ALIASES[screen]) screen = SCREEN_ALIASES[screen];
     return SCREENS.includes(screen) ? screen : 'today';
@@ -335,7 +342,7 @@
       el.textContent = d;
       container.appendChild(el);
     });
-    // v1.5.0 : grille calculée pour le mois affiché (‹ › fonctionnent), couleurs = moteur D0/P/C
+    // v1.6.0 : grille calculée pour le mois affiché (‹ › fonctionnent), couleurs = moteur D0/P/C
     // (même entrées que le calculateur) ; après le jour C, un nouveau cycle recommence.
     const Y = calMonth.year, M = calMonth.month;
     const g = CC.monthGrid(Y, M);
@@ -397,7 +404,7 @@
       el.textContent = d;
       container.appendChild(el);
     });
-    // v1.5.0 : mois navigable jusqu’à déc. 2028 ; phases principales via astronomy-engine
+    // v1.6.0 : mois navigable jusqu’à déc. 2028 ; phases principales via astronomy-engine
     if (typeof moonCalMonth === 'undefined' || !moonCalMonth) {
       const t0 = productToday();
       moonCalMonth = { year: t0.getFullYear(), month: t0.getMonth() };
@@ -1924,7 +1931,7 @@
   function clampPeriod(n) { return CC.clampPeriod(n); }
 
   function productToday() {
-    // v1.5.0 : date locale réelle si elle tombe dans la fenêtre démo (oct. 2026), sinon DEMO.today.
+    // v1.6.0 : date locale réelle si elle tombe dans la fenêtre démo (oct. 2026), sinon DEMO.today.
     const now = new Date();
     const local = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
     if (local.getFullYear() === 2026 && local.getMonth() === 9) return local;
@@ -1932,7 +1939,7 @@
   }
 
   function computeCalc(lastStart, periodLen, cycleLen, today) {
-    // v1.5.0 : D0 dans le futur → res.future (jour et phase non calculés)
+    // v1.6.0 : D0 dans le futur → res.future (jour et phase non calculés)
     return CC.computeCalc(lastStart, periodLen, cycleLen, today || productToday());
   }
 
@@ -2041,7 +2048,7 @@
         return;
       }
       if (res.future) {
-        // v1.5.0 : une date de début future est refusée (rien n’est enregistré).
+        // v1.6.0 : une date de début future est refusée (rien n’est enregistré).
         renderCalcResults(res);
         toast('Le début des dernières règles ne peut pas être dans le futur');
         return;
@@ -2052,7 +2059,7 @@
       guidePhase = null;
       renderPhaseGuide();
       renderTrends();
-      // v1.5.0 : calendrier, hub et écran Cycle suivent les nouvelles entrées
+      // v1.6.0 : calendrier, hub et écran Cycle suivent les nouvelles entrées
       buildCycleCalendar(document.getElementById('cycleCalendar'));
       renderProductSurfaces();
       renderCycleV12();
@@ -2175,7 +2182,7 @@
 
 
   function renderProductSurfaces() {
-    // v1.5.0 : tout le hub et l’en-tête Cycle viennent du même moteur (avant : valeurs écrites en dur, anneau faux).
+    // v1.6.0 : tout le hub et l’en-tête Cycle viennent du même moteur (avant : valeurs écrites en dur, anneau faux).
     const inp = activeCalcInputs();
     let res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
     if (!res || res.future) res = computeCalc(DEMO.cycle.lastPeriodStart, DEMO.cycle.avgPeriod, DEMO.cycle.avgCycle);
@@ -2185,6 +2192,13 @@
     if (msg) {
       msg.textContent = t('Prochaines règles · vers le {d}', { d: fmtDate(res.nextStart, { year: false }) });
     }
+    // v1.6.0 : dates d’en-tête toujours = aujourd’hui, dans la langue choisie
+    const todayHead = fmtDate(productToday(), { weekday: true, cap: true });
+    const hd = document.getElementById('hubDate');
+    if (hd) hd.textContent = todayHead;
+    document.querySelectorAll('#view-astro .ambiance-today, #view-astro .card-row .h-serif, .gate-lead').forEach((n) => { n.textContent = todayHead; });
+    const rd = document.getElementById('rituelDate');
+    if (rd) rd.textContent = fmtDate(productToday(), { weekday: true, year: false });
     setTxt('hubDayNum', String(res.dayInCycle));
     setTxt('hubNextNum', String(res.nextStart.getDate()));
     if (I18N) setTxt('hubMonth', I18N.MONTHS[currentLang][res.nextStart.getMonth()]);
@@ -2366,7 +2380,7 @@
       });
     }
 
-    // Period edit : v1.5.0 → écran Historique (#/historique)
+    // Period edit : v1.6.0 → écran Historique (#/historique)
 
     // Forfaits : « Choisir » n’active rien (paiement plus tard)
     document.querySelectorAll('[data-plan-choose]').forEach((btn) => {
@@ -2801,6 +2815,7 @@
     const meta = I18N ? I18N.LANGS.find((l) => l.code === code) : null;
     document.documentElement.lang = meta ? meta.html : 'fr';
     document.documentElement.setAttribute('data-lang', code);
+    document.documentElement.dir = meta && meta.dir === 'rtl' ? 'rtl' : 'ltr';
     fillLangSelects();
     // Re-rendu des textes dynamiques puis des textes statiques
     buildCycleCalendar(document.getElementById('cycleCalendar'));
@@ -2815,7 +2830,25 @@
     renderConsentStatus();
     renderJournalHistory();
     renderAllV12();
+    // v1.6.0 : tous les écrans dynamiques (historique, lune, conseils, tendances)
+    try { renderHistory(); renderTrends(); renderPhaseGuide(); renderLunarSurfaces(); } catch (_) { /* ignore */ }
     applyI18n();
+  }
+
+  /** v1.6.0 : pont Market — message {type:'kdb-lang', lang} → re-rendu immédiat sans rechargement. */
+  function bindLangBridge() {
+    window.addEventListener('message', (e) => {
+      const d = e && e.data;
+      if (!d || typeof d !== 'object' || d.type !== 'kdb-lang' || !I18N) return;
+      const code = I18N.normalizeLang(d.lang) || 'fr';
+      setLang(code); // persiste dans ca_lang_v1
+    });
+    window.addEventListener('hashchange', () => {
+      if (!/[?&]lang=/.test(location.hash)) return;
+      const m = /[?&]lang=([^&#]+)/.exec(location.hash);
+      const code = I18N && I18N.normalizeLang(decodeURIComponent(m[1]));
+      setLang(code || 'fr', true);
+    });
   }
 
   /* —— Hors connexion : service worker (pas dans les instantanés figés) —— */
@@ -2891,7 +2924,7 @@
   }
 
   function phaseOfDate(date) {
-    // v1.5.0 : historique enregistré d’abord (cycle réellement vécu), sinon projection D0/P/C.
+    // v1.6.0 : historique enregistré d’abord (cycle réellement vécu), sinon projection D0/P/C.
     const inp = activeCalcInputs();
     const hist = currentPeriods();
     const r = hist.example ? CC.phaseOnDate(inp.lastStart, inp.periodLen, inp.cycleLen, date)
@@ -2974,7 +3007,7 @@
   ];
 
   function skyAt(utcMs) {
-    // v1.5.0 : astronomy-engine partout quand il est chargé (cohérence hub / Lune / Astro).
+    // v1.6.0 : astronomy-engine partout quand il est chargé (cohérence hub / Lune / Astro).
     const AE = window.Astronomy;
     if (AE) {
       const d = new Date(utcMs);
@@ -3038,7 +3071,7 @@
     return 'waning';
   }
 
-  /* —— v1.5.0 : Message lunaire du jour (astronomy-engine via MoonCalc) —— */
+  /* —— v1.6.0 : Message lunaire du jour (astronomy-engine via MoonCalc) —— */
   let moonMonth = null; // {year, month} for « Phases du mois »
   let moonCalMonth = null;
   const MOON_VIS = ['new', 'waxing', 'half', 'waxing', 'full', 'waning', 'lq', 'waning'];
@@ -3080,7 +3113,7 @@
     if (!st || !MC) return;
     const msg = MC.message(st);
     const text = document.getElementById(textId);
-    if (text) text.textContent = t(msg.text);
+    if (text) text.textContent = [t(msg.phaseText), t(msg.signText)].concat(st.aspect ? [t(st.aspect.text)] : []).join(currentLang === 'zh' ? '' : ' ');
     fillGestures(document.getElementById(gestId), msg.gestures);
     const meta = document.getElementById(metaId);
     if (meta) {
@@ -3154,7 +3187,7 @@
         '<div class="h-serif" style="font-size:10px;">' + escapeHtml(t(q.name)) + '</div>' +
         '<div class="tiny">' + escapeHtml(fmtMoonWhen(q.date)) + '</div>' +
         '<div class="tiny">' + escapeHtml(t('Lune en {s}', { s: t(q.signFr) })) + '</div>' +
-        '<p class="tiny moon-q-msg">' + escapeHtml(t(q.text)) + '</p></div>'
+        '<p class="tiny moon-q-msg">' + escapeHtml(t(q.phaseText) + (currentLang === 'zh' ? '' : ' ') + t(q.signText)) + '</p></div>'
       );
     }).join('');
   }
@@ -3293,7 +3326,7 @@
   ];
 
   function loadPeriods() {
-    // v1.5.0 : entrées {start, end} ; l’ancien format v1.2 {start, len} est converti à la lecture.
+    // v1.6.0 : entrées {start, end} ; l’ancien format v1.2 {start, len} est converti à la lecture.
     try {
       const raw = localStorage.getItem(PERIODS_KEY);
       const list = raw ? JSON.parse(raw) : null;
@@ -3319,7 +3352,7 @@
     return currentLang === 'fr' || currentLang === 'es' || currentLang === 'pt' ? s.replace('.', ',') : s;
   }
 
-  /* —— v1.5.0 : écran « Historique » (#/historique) — remplace la carte historique v1.2 du Cycle —— */
+  /* —— v1.6.0 : écran « Historique » (#/historique) — remplace la carte historique v1.2 du Cycle —— */
   let histEditing = null; // date de début de l’entrée en cours de modification
 
   function histPhaseBar(len, C, current) {
@@ -3596,7 +3629,7 @@
     return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
   }
   function icsFold(line) {
-    // v1.5.0 : pliage RFC 5545 à 75 octets UTF-8 (avant : 60 caractères, trop long avec accents/chinois).
+    // v1.6.0 : pliage RFC 5545 à 75 octets UTF-8 (avant : 60 caractères, trop long avec accents/chinois).
     const enc = (s) => unescape(encodeURIComponent(s)).length;
     const out = [];
     let cur = '';
@@ -3912,7 +3945,7 @@
 
   /* —— Écran Cycle : frise, liste, sauts de section —— */
   function renderCycleV12() {
-    // v1.5.0 : mêmes entrées que le calculateur et les conseils (avant : valeurs démo figées),
+    // v1.6.0 : mêmes entrées que le calculateur et les conseils (avant : valeurs démo figées),
     // et la liste part du début du cycle EN COURS (avant : D0, faux dès le 2e cycle).
     const inp = activeCalcInputs();
     const res = computeCalc(inp.lastStart, inp.periodLen, inp.cycleLen);
@@ -5129,6 +5162,7 @@
 
   function init() {
     currentLang = getLang();
+    bindLangBridge();
     document.documentElement.lang = (I18N && (I18N.LANGS.find((l) => l.code === currentLang) || {}).html) || 'fr';
     document.querySelectorAll('#symptomList .symptom-item').forEach((item) => {
       item.dataset.fr = item.textContent.trim();

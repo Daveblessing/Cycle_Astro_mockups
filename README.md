@@ -1,4 +1,21 @@
-# Cycle & Astro — v1.5.0
+# Cycle & Astro — v1.6.0
+
+## v1.6.0 — Langue pilotée par le Market (7 langues)
+
+Langues : fr, en, es, pt, zh, de, ar (ar → `dir="rtl"`). Normalisation : `en-US`→`en`, `zh-CN`→`zh`, inconnue→`fr`.
+
+### Contrat d’intégration
+Priorité de résolution :
+1. `?lang=xx` dans l’URL (search ou query du hash, ex. `#/today?lang=de`)
+2. `postMessage({type:'kdb-lang', lang:'de'}, '*')` vers l’iframe → re-rendu immédiat, persisté dans `localStorage.ca_lang_v1`
+3. `localStorage.lang`, puis `localStorage.ca_lang_v1`
+4. `navigator.language(s)`
+5. `fr`
+
+Retour Market inchangé : `{type:'cycle-astro:back-to-market'}`. Page de test : `tests/kdb-lang-iframe.html`.
+
+### Textes longs restés en français
+Méditations (cycle/lune), cartes de tarot (clés, textes, questions), phrases planète-en-signe du thème natal, lecture chemin de vie / profil complet, verbatim Krizoua, noms de villes. Une note l’indique dans l’interface.
 
 ## v1.5.0 (14 octobre 2026) — Message lunaire en temps réel, jusqu’en 2028
 
